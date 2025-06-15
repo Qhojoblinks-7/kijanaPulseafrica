@@ -1,5 +1,6 @@
 /* src/index.css */
 @import "tailwindcss";
+@tailwind utilities;
 
 /* Hide scrollbar for the trending carousel */
 .scrollbar-hide::-webkit-scrollbar {
@@ -9,11 +10,8 @@
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
 }
-/* No other @tailwind directives needed here, as the Vite plugin handles them. */
 
-/* Existing Tailwind directives and other global styles */
-
-/* Custom scrollbar styles (add these) */
+/* Custom scrollbar styles */
 .custom-scrollbar::-webkit-scrollbar {
   width: 8px;
   height: 8px; /* For horizontal scrollbars */
@@ -45,53 +43,72 @@
     50% { transform: scale(1.1); opacity: 0.8; }
     100% { transform: scale(1); opacity: 1; }
 }
-/* Add this to your global CSS file */
+
+/* Toggle Switch Styling */
+/* This now uses the new 'success-green' for the checked state */
 .switch input:checked + .slider {
-  background-color: #EF4444; /* gamepulse-orange */
+  background-color: var(--color-success-green); /* Using the CSS variable for success green */
 }
 
 .switch input:checked + .slider:before {
   transform: translateX(20px);
 }
-/* Custom Tailwind Colors */
+
+/* Custom Tailwind Colors via CSS Variables */
 @layer base {
   :root {
-    --color-gamepulse-dark: #0A1128;
-    --color-gamepulse-blue-dark: #034078;
+    /* Primary Brand Color */
     --color-gamepulse-blue: #1282A2;
+    --color-gamepulse-blue-dark: #034078;
     --color-gamepulse-blue-light: #B4CED9;
+
+    /* Secondary Accent Color */
     --color-gamepulse-yellow: #FCCA46;
-    --color-gamepulse-green: #00C9A7;
-    --color-gamepulse-red: #E71D36;
+
+    /* Neutral Palette (Grays, Blacks, Whites) */
+    --color-gamepulse-dark: #0A1128; /* This is often used for very dark backgrounds */
+    --color-neutral-black: #000000;
+    --color-neutral-dark-gray: #333333;
+    --color-neutral-medium-gray: #6B7280;
+    --color-neutral-light-gray: #F3F4F6;
+    --color-neutral-white: #FFFFFF;
+
+    /* Support/Alert Colors */
+    --color-success-green: #00C9A7;
+    --color-warning-orange: #FF9800;
+    --color-error-red: #E71D36;
   }
 }
 
 @layer utilities {
-  .bg-gamepulse-dark {
-    background-color: var(--color-gamepulse-dark);
-  }
-  .bg-gamepulse-blue-dark {
-    background-color: var(--color-gamepulse-blue-dark);
-  }
-  .bg-gamepulse-blue {
-    background-color: var(--color-gamepulse-blue);
-  }
-  .text-gamepulse-blue-light {
-    color: var(--color-gamepulse-blue-light);
-  }
-  .text-gamepulse-blue {
-    color: var(--color-gamepulse-blue);
-  }
-  .text-gamepulse-yellow {
-    color: var(--color-gamepulse-yellow);
-  }
-  .text-gamepulse-green {
-    color: var(--color-gamepulse-green);
-  }
-  .text-gamepulse-red {
-    color: var(--color-gamepulse-red);
-  }
+  /* Background colors */
+  .bg-gamepulse-dark { background-color: var(--color-gamepulse-dark); }
+  .bg-gamepulse-blue-dark { background-color: var(--color-gamepulse-blue-dark); }
+  .bg-gamepulse-blue { background-color: var(--color-gamepulse-blue); }
+  .bg-gamepulse-yellow { background-color: var(--color-gamepulse-yellow); }
+  .bg-neutral-black { background-color: var(--color-neutral-black); }
+  .bg-neutral-dark-gray { background-color: var(--color-neutral-dark-gray); }
+  .bg-neutral-medium-gray { background-color: var(--color-neutral-medium-gray); }
+  .bg-neutral-light-gray { background-color: var(--color-neutral-light-gray); }
+  .bg-neutral-white { background-color: var(--color-neutral-white); }
+  .bg-success-green { background-color: var(--color-success-green); }
+  .bg-warning-orange { background-color: var(--color-warning-orange); }
+  .bg-error-red { background-color: var(--color-error-red); }
 
+  /* Text colors */
+  .text-gamepulse-blue-light { color: var(--color-gamepulse-blue-light); }
+  .text-gamepulse-blue { color: var(--color-gamepulse-blue); }
+  .text-gamepulse-yellow { color: var(--color-gamepulse-yellow); }
+  .text-neutral-black { color: var(--color-neutral-black); }
+  .text-neutral-dark-gray { color: var(--color-neutral-dark-gray); }
+  .text-neutral-medium-gray { color: var(--color-neutral-medium-gray); }
+  .text-neutral-light-gray { color: var(--color-neutral-light-gray); }
+  .text-neutral-white { color: var(--color-neutral-white); }
+  .text-success-green { color: var(--color-success-green); }
+  .text-warning-orange { color: var(--color-warning-orange); }
+  .text-error-red { color: var(--color-error-red); }
+
+  /* Gradient 'from' colors (for Tailwind's gradient utilities) */
   .from-gamepulse-blue-dark {
     --tw-gradient-from: var(--color-gamepulse-blue-dark) var(--tw-gradient-from-position);
     --tw-gradient-to: rgb(var(--color-gamepulse-blue-dark) / 0) var(--tw-gradient-to-position);
@@ -104,18 +121,17 @@
   }
 
   .custom-scrollbar::-webkit-scrollbar-track {
-    background: #2d3748; /* bg-gray-800 */
+    background: #2d3748; /* bg-gray-800 - Consider using a neutral color variable here too if defined */
     border-radius: 10px;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #1282A2; /* gamepulse-blue */
+    background: var(--color-gamepulse-blue); /* Using the primary blue */
     border-radius: 10px;
-    border: 2px solid #2d3748; /* bg-gray-800 */
+    border: 2px solid #2d3748; /* bg-gray-800 - Match track color */
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #106f8c; /* A slightly darker blue on hover */
+    background: #106f8c; /* A slightly darker blue on hover - Consider deriving from var(--color-gamepulse-blue) */
   }
-
 }

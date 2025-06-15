@@ -12,30 +12,31 @@ const MobileMenuOverlay = ({ mobileNavLinks, isLoggedIn, userType, handleLogout,
       <div className="w-full flex flex-col items-center space-y-6 text-xl font-bold">
         {mobileNavLinks.map((link, index) => (
           link.type === 'button' ? (
-            <button key={index} className={`w-full px-6 py-3 rounded-full ${link.className} text-white font-bold text-lg shadow-md flex items-center justify-center`} onClick={link.onClick || onCloseMenus}>
+            <button key={index} className={`w-full px-6 py-3 rounded-full ${link.className} text-neutral-white font-bold text-lg shadow-md flex items-center justify-center`} onClick={link.onClick || onCloseMenus}>
               {link.label}
             </button>
           ) : (
+            // NavLink is expected to handle its own coloring based on props or internal logic
             <NavLink key={index} to={link.to}>{link.label}</NavLink>
           )
         ))}
 
         {/* Mobile-specific CTA / Logout buttons at the bottom */}
-        <div className="w-full pt-6 border-t border-gray-700 mt-6 flex flex-col items-center space-y-4">
+        <div className="w-full pt-6 border-t border-neutral-medium-gray mt-6 flex flex-col items-center space-y-4">
           {!isLoggedIn ? (
             <>
               <Link to="/login" className="w-full" onClick={onCloseMenus}>
-                <button className="w-full px-6 py-3 rounded-full border border-gamepulse-orange text-gamepulse-orange hover:bg-gamepulse-orange hover:text-white transition-all duration-300 font-semibold text-lg">
+                <button className="w-full px-6 py-3 rounded-full border border-gamepulse-yellow text-gamepulse-yellow hover:bg-gamepulse-yellow hover:text-gamepulse-dark transition-all duration-300 font-semibold text-lg">
                   Login
                 </button>
               </Link>
               <Link to="/signup" className="w-full" onClick={onCloseMenus}>
-                <button className="w-full px-6 py-3 rounded-full bg-gamepulse-orange text-white font-bold text-lg shadow-md hover:bg-orange-700 transition-colors duration-300">
+                <button className="w-full px-6 py-3 rounded-full bg-gamepulse-yellow text-gamepulse-dark font-bold text-lg shadow-md hover:bg-gamepulse-yellow/80 transition-colors duration-300">
                   Sign Up
                 </button>
               </Link>
               <button
-                className="w-full px-6 py-3 rounded-full bg-gamepulse-teal text-white font-bold text-lg shadow-md flex items-center justify-center hover:bg-gamepulse-teal-dark transition-colors duration-300"
+                className="w-full px-6 py-3 rounded-full bg-gamepulse-blue text-neutral-white font-bold text-lg shadow-md flex items-center justify-center hover:bg-gamepulse-blue-dark transition-colors duration-300"
                 onClick={() => { navigate('/download-app'); onCloseMenus(); }}
               >
                 <FaDownload className="mr-2" /> Download App
@@ -53,7 +54,7 @@ const MobileMenuOverlay = ({ mobileNavLinks, isLoggedIn, userType, handleLogout,
               ) : null}
               <NavLink to="/settings">Settings</NavLink>
               <NavLink to="/help">Help & Support</NavLink>
-              <button onClick={handleLogout} className="w-full text-left px-6 py-3 text-red-400 hover:text-red-500 font-bold transition-colors duration-200">
+              <button onClick={handleLogout} className="w-full text-left px-6 py-3 text-error-red hover:text-red-600 font-bold transition-colors duration-200">
                 Logout
               </button>
             </>

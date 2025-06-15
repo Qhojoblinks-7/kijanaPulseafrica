@@ -1,9 +1,10 @@
 // src/components/Header/Header.jsx
 
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom'; // <--- Added useNavigate
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import {FaPlus} from 'react-icons/fa'
+import { FaPlus } from 'react-icons/fa';
+
 // Import newly created sub-components
 import Logo from './Logo';
 import DesktopNav from './DesktopNav';
@@ -16,7 +17,7 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate(); // <--- Initialized useNavigate
+  const navigate = useNavigate();
 
   // Close mobile menu when screen size changes (e.g., from mobile to desktop)
   useEffect(() => {
@@ -29,12 +30,34 @@ const Header = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      // You might need to add a ref to the dropdown container to precisely check outside clicks
+      // For now, this just closes on any outside click if it's open, which might be too aggressive
+      // if you have other interactive elements. A more robust solution involves `useRef` and `contains`.
+      // Ensure DesktopUserActions has a className="user-actions-container" on its root div
+      if (isDropdownOpen && !event.target.closest('.user-actions-container')) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [isDropdownOpen]);
+
+  // Close all menus/dropdowns if route changes
+  useEffect(() => {
+    closeMenus(); // This will close both mobile menu and dropdown on route change
+  }, [location.pathname]); // Dependency array includes location.pathname
+
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+    setIsDropdownOpen(false); // Close dropdown when opening/closing mobile menu
   };
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
+    setIsMobileMenuOpen(false); // Close mobile menu when opening/closing dropdown
   };
 
   const handleLogout = () => {
@@ -67,10 +90,10 @@ const Header = () => {
     const dropdownOnlyPaths = [
       "/my-profile",
       "/settings",
-      "/help", // Help & Support
-      "/help-and-support", // Alternative common help link
-      "/messages", // Messages are often also accessible from the dropdown or a dedicated page
-      "/reports" // Scouting Reports might also be a secondary link
+      "/help",
+      "/help-and-support",
+      "/messages",
+      "/reports"
     ];
 
     const dashboardPath = getUserDashboardPath(type);
@@ -102,10 +125,11 @@ const Header = () => {
               type: 'button',
               label: <><FaPlus className="mr-1" /> Upload</>,
               onClick: () => {
-                navigate('/upload-highlight'); // <--- Navigates to upload page
+                navigate('/upload-highlight');
                 closeMenus();
               },
-              className: "px-4 py-1.5 rounded-full bg-gamepulse-teal text-white font-semibold text-sm flex items-center hover:bg-teal-600 transition-colors duration-300"
+              // *** HARDCODED COLORS FOR UPLOAD BUTTON ***
+              className: "px-4 py-1.5 rounded-full bg-[#1282A2] text-[#FFFFFF] font-semibold text-sm flex items-center hover:bg-[#034078] transition-colors duration-300"
             }
           );
           break;
@@ -138,32 +162,26 @@ const Header = () => {
     let filteredLinks = links.filter(link => !dropdownOnlyPaths.includes(link.to));
 
     // Special handling for the upload button if it's a 'button' type
-    // We want the upload button to potentially be the 4th link, not count towards the first 3
     const uploadButton = filteredLinks.find(link => link.type === 'button');
     const regularLinks = filteredLinks.filter(link => link.type !== 'button');
 
     // Ensure no more than 3 regular links + 1 upload button (total 4) or 4 regular links
     if (uploadButton) {
-      // If upload button is present, take up to 3 regular links and then add the upload button
       return [...regularLinks.slice(0, 3), uploadButton];
     } else {
-      // Otherwise, just take the first 4 regular links
       return regularLinks.slice(0, 4);
     }
   };
 
   const navLinks = getNavLinks(userType, location.pathname);
-  // For mobile, we might allow more links in the overlay as it's not limited by horizontal space
-  // Here, I'm passing true to `isMobile` for mobile, which the current `getNavLinks` doesn't differentiate heavily on number,
-  // but it *could* if you wanted more links there.
-  const mobileNavLinks = getNavLinks(userType, location.pathname, true);
+  const mobileNavLinks = getNavLinks(userType, location.pathname, true); // `true` for mobile differentiation if needed
 
   // Determine the default dashboard link for logo click
   const dashboardHomeLink = isLoggedIn ? getUserDashboardPath(userType) : '/';
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 py-3 px-4 md:px-8
-                       bg-gradient-to-r from-gamepulse-blue to-gamepulse-dark shadow-lg">
+                        bg-gradient-to-r from-[#1282A2] to-[#0A1128] shadow-lg"> {/* HARDCODED HEADER GRADIENT */}
       <div className="container mx-auto flex justify-between items-center h-12">
 
         <Logo dashboardHomeLink={dashboardHomeLink} onCloseMenus={closeMenus} />
