@@ -1,0 +1,121 @@
+/* src/index.css */
+@import "tailwindcss";
+
+/* Hide scrollbar for the trending carousel */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+/* No other @tailwind directives needed here, as the Vite plugin handles them. */
+
+/* Existing Tailwind directives and other global styles */
+
+/* Custom scrollbar styles (add these) */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px; /* For horizontal scrollbars */
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #333; /* Dark track */
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #666; /* Gray thumb */
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
+
+/* Hide horizontal scrollbar but allow scrolling */
+.custom-scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+.custom-scrollbar-hidden {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Basic animation for score change */
+@keyframes scoreChange {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+/* Add this to your global CSS file */
+.switch input:checked + .slider {
+  background-color: #EF4444; /* gamepulse-orange */
+}
+
+.switch input:checked + .slider:before {
+  transform: translateX(20px);
+}
+/* Custom Tailwind Colors */
+@layer base {
+  :root {
+    --color-gamepulse-dark: #0A1128;
+    --color-gamepulse-blue-dark: #034078;
+    --color-gamepulse-blue: #1282A2;
+    --color-gamepulse-blue-light: #B4CED9;
+    --color-gamepulse-yellow: #FCCA46;
+    --color-gamepulse-green: #00C9A7;
+    --color-gamepulse-red: #E71D36;
+  }
+}
+
+@layer utilities {
+  .bg-gamepulse-dark {
+    background-color: var(--color-gamepulse-dark);
+  }
+  .bg-gamepulse-blue-dark {
+    background-color: var(--color-gamepulse-blue-dark);
+  }
+  .bg-gamepulse-blue {
+    background-color: var(--color-gamepulse-blue);
+  }
+  .text-gamepulse-blue-light {
+    color: var(--color-gamepulse-blue-light);
+  }
+  .text-gamepulse-blue {
+    color: var(--color-gamepulse-blue);
+  }
+  .text-gamepulse-yellow {
+    color: var(--color-gamepulse-yellow);
+  }
+  .text-gamepulse-green {
+    color: var(--color-gamepulse-green);
+  }
+  .text-gamepulse-red {
+    color: var(--color-gamepulse-red);
+  }
+
+  .from-gamepulse-blue-dark {
+    --tw-gradient-from: var(--color-gamepulse-blue-dark) var(--tw-gradient-from-position);
+    --tw-gradient-to: rgb(var(--color-gamepulse-blue-dark) / 0) var(--tw-gradient-to-position);
+  }
+
+  /* Custom scrollbar for better UX and consistency */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px; /* For vertical scrollbar */
+    height: 8px; /* For horizontal scrollbar */
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #2d3748; /* bg-gray-800 */
+    border-radius: 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #1282A2; /* gamepulse-blue */
+    border-radius: 10px;
+    border: 2px solid #2d3748; /* bg-gray-800 */
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #106f8c; /* A slightly darker blue on hover */
+  }
+
+}
