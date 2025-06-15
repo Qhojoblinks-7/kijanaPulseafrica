@@ -16,7 +16,7 @@ import UserDashboardPage from './pages/UserDashboardPage';
 import { AuthProvider } from './context/AuthContext';
 
 // Import the Highlights components
-import ViewHighlightsPage from './components/Highlights/ViewHighlightsPage';
+import ViewHighlightsPage from './components/highlights/ViewHighlightsPage';
 // Import the new UploadHighlightPage
 import UploadHighlightPage from './pages/UploadHighlightPage';
 import AthleteSearchPage from './pages/AthleteSearchPage';
