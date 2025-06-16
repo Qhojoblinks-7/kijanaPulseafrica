@@ -19,6 +19,8 @@ import scoutingMockup from './../assets/Gemini_Generated_Image_r4sxdzr4sxdzr4sx.
 
 import LivestreamMockup  from './../assets/Gemini_Generated_Image_z8lrs0z8lrs0z8lr.png'
 
+import Hero from './../assets/freepik__the-style-is-candid-image-photography-with-natural__69798.jpeg'
+
 const HomePage = () => {
   // Enhanced download handler for better user experience
   const handleDownloadClick = () => {
@@ -40,16 +42,16 @@ const HomePage = () => {
   return (
     <div className="min-h-screen mt-5 bg-gradient-to-br from-gamepulse-blue to-gray-200 font-sans text-gray-900 overflow-hidden">
 
-      {/* Hero Section */}
-      <section
-        className="relative h-screen  flex items-center justify-center text-white p-4 overflow-hidden"
+    {/* Hero Section */}
+    <section
+        className="relative h-screen flex items-center justify-center text-white p-4 overflow-hidden"
         style={{
-          backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.75)), url(src/assets/freepik__the-style-is-candid-image-photography-with-natural__69798.jpeg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed', // Creates a parallax effect
+            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.75)), url(${Hero})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundAttachment: 'fixed', // Creates a parallax effect
         }}
-      >
+    >
         {/* Subtle UI overlay hint for mobile-first emphasis */}
         {/* <div className="absolute bottom-4 right-4 md:bottom-8 md:right-8 lg:bottom-12 lg:right-12 p-2 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 shadow-lg animate-fade-in-up-slow">
           <div className="w-24 h-40 md:w-32 md:h-56 bg-gamepulse-dark rounded-lg flex flex-col items-center justify-center relative overflow-hidden">
