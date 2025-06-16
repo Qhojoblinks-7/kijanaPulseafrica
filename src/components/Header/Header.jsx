@@ -1,6 +1,6 @@
 // src/components/Header/Header.jsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react'; // Added useRef
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { FaPlus } from 'react-icons/fa';
@@ -19,25 +19,33 @@ const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Close mobile menu when screen size changes (e.g., from mobile to desktop)
+  // Ref for the desktop user actions container to handle outside clicks more robustly
+  const desktopUserActionsRef = useRef(null);
+
+  // Close mobile menu and dropdown when screen size changes
   useEffect(() => {
     const handleResize = () => {
+      // If screen becomes desktop size, close mobile menu
       if (window.innerWidth >= 768) {
         setIsMobileMenuOpen(false);
       }
+      // If screen becomes mobile size, close dropdown
+      if (window.innerWidth < 768) {
+        setIsDropdownOpen(false);
+      }
     };
+
     window.addEventListener('resize', handleResize);
+    // Initial check on mount
+    handleResize();
+
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleOutsideClick = (event) => {
-      // You might need to add a ref to the dropdown container to precisely check outside clicks
-      // For now, this just closes on any outside click if it's open, which might be too aggressive
-      // if you have other interactive elements. A more robust solution involves `useRef` and `contains`.
-      // Ensure DesktopUserActions has a className="user-actions-container" on its root div
-      if (isDropdownOpen && !event.target.closest('.user-actions-container')) {
+      if (isDropdownOpen && desktopUserActionsRef.current && !desktopUserActionsRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
       }
     };
@@ -52,12 +60,12 @@ const Header = () => {
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
-    setIsDropdownOpen(false); // Close dropdown when opening/closing mobile menu
+    setIsDropdownOpen(false); // Always close dropdown if mobile menu is toggled
   };
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
-    setIsMobileMenuOpen(false); // Close mobile menu when opening/closing dropdown
+    setIsMobileMenuOpen(false); // Always close mobile menu if dropdown is toggled
   };
 
   const handleLogout = () => {
@@ -128,7 +136,7 @@ const Header = () => {
                 navigate('/upload-highlight');
                 closeMenus();
               },
-              // *** HARDCODED COLORS FOR UPLOAD BUTTON ***
+              // Hardcoded colors for now as requested
               className: "px-4 py-1.5 rounded-full bg-[#1282A2] text-[#FFFFFF] font-semibold text-sm flex items-center hover:bg-[#034078] transition-colors duration-300"
             }
           );
@@ -181,13 +189,14 @@ const Header = () => {
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 py-3 px-4 md:px-8
-                        bg-gradient-to-r from-[#1282A2] to-[#0A1128] shadow-lg"> {/* HARDCODED HEADER GRADIENT */}
-      <div className="container mx-auto flex justify-between items-center h-12">
+                        bg-gradient-to-r from-[#1282A2] to-[#0A1128] shadow-lg">
+      <div className="container mx-auto flex justify-between items-center h-16">
 
         <Logo dashboardHomeLink={dashboardHomeLink} onCloseMenus={closeMenus} />
 
         <DesktopNav navLinks={navLinks} onCloseMenus={closeMenus} />
 
+        {/* Passed ref to DesktopUserActions for robust outside click detection */}
         <DesktopUserActions
           isLoggedIn={isLoggedIn}
           userAvatarUrl={userAvatarUrl}
@@ -196,6 +205,7 @@ const Header = () => {
           toggleDropdown={toggleDropdown}
           handleLogout={handleLogout}
           onCloseMenus={closeMenus}
+          ref={desktopUserActionsRef} // Pass the ref here
         />
 
         <MobileToggle

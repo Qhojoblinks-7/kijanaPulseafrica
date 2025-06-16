@@ -1,13 +1,13 @@
 // src/components/Header/DesktopUserActions.jsx
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaSearch, FaBell, FaDownload } from 'react-icons/fa';
 
-const DesktopUserActions = ({ isLoggedIn, userAvatarUrl, userType, isDropdownOpen, toggleDropdown, handleLogout, onCloseMenus }) => {
-  const navigate = useNavigate(); // useNavigate is used here for buttons like Download App, Search, Notifications
+const DesktopUserActions = forwardRef(({ isLoggedIn, userAvatarUrl, userType, isDropdownOpen, toggleDropdown, handleLogout, onCloseMenus }, ref) => {
+  const navigate = useNavigate();
 
   return (
-    <div className="hidden md:flex items-center space-x-4">
+    <div className="hidden md:flex items-center space-x-4 user-actions-container" ref={ref}>
       {!isLoggedIn ? (
         <>
           {/* Login Button */}
@@ -34,22 +34,21 @@ const DesktopUserActions = ({ isLoggedIn, userAvatarUrl, userType, isDropdownOpe
         <>
           {/* Search Bar (Desktop) */}
           <div className="relative">
-            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-medium-gray" /> {/* Changed text color */}
+            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-medium-gray" />
             <input
               type="text"
               placeholder="Search..."
-              className="w-48 pl-10 pr-4 py-2 rounded-full bg-neutral-dark-gray text-neutral-white placeholder-neutral-medium-gray focus:outline-none focus:ring-2 focus:ring-gamepulse-blue text-base" // Updated colors
+              className="w-48 pl-10 pr-4 py-2 rounded-full bg-neutral-dark-gray text-neutral-white placeholder-neutral-medium-gray focus:outline-none focus:ring-2 focus:ring-gamepulse-blue text-base"
             />
           </div>
 
           {/* Notifications */}
           <button
-            className="relative text-neutral-white text-2xl cursor-pointer hover:text-gamepulse-yellow transition-colors duration-200" // Updated colors
+            className="relative text-neutral-white text-2xl cursor-pointer hover:text-gamepulse-yellow transition-colors duration-200"
             onClick={() => { navigate('/notifications'); onCloseMenus(); }}
           >
             <FaBell />
-            {/* Notification Badge - uses error-red for urgency */}
-            <span className="absolute -top-1 -right-1 bg-error-red text-neutral-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">3</span> {/* Updated colors */}
+            <span className="absolute -top-1 -right-1 bg-error-red text-neutral-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">3</span>
           </button>
 
           {/* User Avatar & Dropdown */}
@@ -58,21 +57,30 @@ const DesktopUserActions = ({ isLoggedIn, userAvatarUrl, userType, isDropdownOpe
               <img
                 src={userAvatarUrl || "/images/default-avatar.webp"}
                 alt="User Avatar"
-                className="w-10 h-10 rounded-full cursor-pointer border-2 border-gamepulse-yellow object-cover transition-transform duration-200 hover:scale-105" // Updated border color
+                className="w-10 h-10 rounded-full cursor-pointer border-2 border-gamepulse-yellow object-cover transition-transform duration-200 hover:scale-105"
               />
             </button>
             {isDropdownOpen && (
-              <div className="absolute top-full right-0 mt-2 w-48 bg-neutral-white rounded-md shadow-lg py-1 z-50 origin-top-right animate-fade-in-down"> {/* Updated background */}
-                <Link to="/my-profile" className="block px-4 py-2 text-neutral-dark-gray hover:bg-neutral-light-gray" onClick={onCloseMenus}>My Profile</Link> {/* Updated colors */}
+              <div className="absolute top-full right-0 mt-2 w-48 bg-neutral-white rounded-md shadow-lg py-1 z-50 origin-top-right animate-fade-in-down">
+                <Link to="/my-profile" className="block px-4 py-2 text-neutral-dark-gray hover:bg-neutral-light-gray" onClick={onCloseMenus}>My Profile</Link>
                 {userType === 'coach' || userType === 'scout' || userType === 'fan' || userType === 'parent' ? (
-                  <Link to="/messages" className="block px-4 py-2 text-neutral-dark-gray hover:bg-neutral-light-gray" onClick={onCloseMenus}>Messages</Link> 
+                  <Link to="/messages" className="block px-4 py-2 text-neutral-dark-gray hover:bg-neutral-light-gray" onClick={onCloseMenus}>Messages</Link>
                 ) : null}
                 {userType === 'scout' ? (
-                  <Link to="/reports" className="block px-4 py-2 text-neutral-dark-gray hover:bg-neutral-light-gray" onClick={onCloseMenus}>Scouting Reports</Link> 
+                  <Link to="/reports" className="block px-4 py-2 text-neutral-dark-gray hover:bg-neutral-light-gray" onClick={onCloseMenus}>Scouting Reports</Link>
                 ) : null}
-                <Link to="/settings" className="block px-4 py-2 text-neutral-dark-gray hover:bg-neutral-light-gray" onClick={onCloseMenus}>Settings</Link> {/* Updated colors */}
-                <Link to="/help" className="block px-4 py-2 text-neutral-dark-gray hover:bg-neutral-light-gray" onClick={onCloseMenus}>Help & Support</Link> {/* Updated colors */}
-                <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-error-red hover:bg-neutral-light-gray">Logout</button> {/* Updated colors */}
+                <Link to="/settings" className="block px-4 py-2 text-neutral-dark-gray hover:bg-neutral-light-gray" onClick={onCloseMenus}>Settings</Link>
+                <Link to="/help" className="block px-4 py-2 text-neutral-dark-gray hover:bg-neutral-light-gray" onClick={onCloseMenus}>Help & Support</Link>
+                <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-error-red hover:bg-neutral-light-gray">Logout</button>
+
+                {/* NEW: Explicit Close Button for the dropdown */}
+                <div className="border-t border-neutral-light-gray my-1"></div> {/* Optional: a subtle separator */}
+                <button
+                  onClick={onCloseMenus} // This will call closeMenus from Header, closing the dropdown
+                  className="w-full text-left px-4 py-2 text-neutral-medium-gray hover:bg-neutral-light-gray hover:text-neutral-dark-gray transition-colors duration-200"
+                >
+                  Close
+                </button>
               </div>
             )}
           </div>
@@ -80,6 +88,6 @@ const DesktopUserActions = ({ isLoggedIn, userAvatarUrl, userType, isDropdownOpe
       )}
     </div>
   );
-};
+});
 
 export default DesktopUserActions;

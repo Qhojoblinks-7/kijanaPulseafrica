@@ -39,7 +39,7 @@ function App() {
       {/* Conditionally render the global Header */}
       {!isHighlightsOrUploadPage && <Header />}
 
-      <div className={`min-h-screen flex flex-col ${!isHighlightsOrUploadPage ? 'pt-16 md:pt-20' : ''}`}>
+      <div className={`min-h-screen flex flex-col ${!isHighlightsOrUploadPage ? 'pt-16 md:pt-6' : ''}`}>
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<HomePage />} />

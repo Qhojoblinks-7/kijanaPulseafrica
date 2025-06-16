@@ -1,7 +1,7 @@
 // src/components/Header/MobileMenuOverlay.jsx
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaDownload } from 'react-icons/fa';
+import { FaDownload, FaTimes } from 'react-icons/fa'; // Import FaTimes
 import NavLink from './NavLink'; // Import NavLink
 
 const MobileMenuOverlay = ({ mobileNavLinks, isLoggedIn, userType, handleLogout, onCloseMenus }) => {
@@ -9,6 +9,15 @@ const MobileMenuOverlay = ({ mobileNavLinks, isLoggedIn, userType, handleLogout,
 
   return (
     <div className="fixed inset-0 bg-gamepulse-dark z-40 flex flex-col items-center justify-center py-16 px-8 animate-fade-in">
+      {/* NEW: Close button at top right for mobile menu */}
+      <button
+        onClick={onCloseMenus} // Calls the closeMenus function passed from Header
+        className="absolute top-4 right-4 text-neutral-white text-3xl focus:outline-none hover:text-gamepulse-yellow transition-colors duration-200"
+        aria-label="Close menu"
+      >
+        <FaTimes />
+      </button>
+
       <div className="w-full flex flex-col items-center space-y-6 text-xl font-bold">
         {mobileNavLinks.map((link, index) => (
           link.type === 'button' ? (
@@ -16,8 +25,7 @@ const MobileMenuOverlay = ({ mobileNavLinks, isLoggedIn, userType, handleLogout,
               {link.label}
             </button>
           ) : (
-            // NavLink is expected to handle its own coloring based on props or internal logic
-            <NavLink key={index} to={link.to}>{link.label}</NavLink>
+            <NavLink key={index} to={link.to} onClick={onCloseMenus}>{link.label}</NavLink>
           )
         ))}
 
@@ -45,15 +53,15 @@ const MobileMenuOverlay = ({ mobileNavLinks, isLoggedIn, userType, handleLogout,
           ) : (
             <>
               {/* Additional mobile-only dropdown-like links for logged in users */}
-              <NavLink to="/my-profile">My Profile</NavLink>
+              <NavLink to="/my-profile" onClick={onCloseMenus}>My Profile</NavLink>
               {userType === 'coach' || userType === 'scout' || userType === 'fan' || userType === 'parent' ? (
-                <NavLink to="/messages">Messages</NavLink>
+                <NavLink to="/messages" onClick={onCloseMenus}>Messages</NavLink>
               ) : null}
               {userType === 'scout' ? (
-                <NavLink to="/reports">Scouting Reports</NavLink>
+                <NavLink to="/reports" onClick={onCloseMenus}>Scouting Reports</NavLink>
               ) : null}
-              <NavLink to="/settings">Settings</NavLink>
-              <NavLink to="/help">Help & Support</NavLink>
+              <NavLink to="/settings" onClick={onCloseMenus}>Settings</NavLink>
+              <NavLink to="/help" onClick={onCloseMenus}>Help & Support</NavLink>
               <button onClick={handleLogout} className="w-full text-left px-6 py-3 text-error-red hover:text-red-600 font-bold transition-colors duration-200">
                 Logout
               </button>
