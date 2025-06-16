@@ -2,6 +2,9 @@
 @import "tailwindcss";
 @tailwind utilities;
 
+.bold{
+  font-weight: bold;
+}
 /* Hide scrollbar for the trending carousel */
 .scrollbar-hide::-webkit-scrollbar {
     display: none;

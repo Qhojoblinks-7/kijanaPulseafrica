@@ -1,27 +1,40 @@
 // src/pages/HomePage.jsx
 
-import React from 'react';
+import React, { useEffect } from 'react'; // Import useEffect
+import { Link } from 'react-router-dom'; // Import Link for internal navigation
 import {
-  FaPlayCircle, FaDownload, FaGlobeAfrica, // Hero Section icons
-  FaChartBar, FaCalendarAlt, FaVideo, FaSearch, // Feature Section icons
-  FaFacebook, FaTwitter, FaInstagram, FaWhatsapp, FaTiktok, FaYoutube, // Social Media icons
-  // FaChevronRight, FaPlusCircle // Removed unused icons for cleaner import
+  FaPlayCircle, // Removed, as it's not used in the final version of the Hero button
+  FaDownload,
+  FaGlobeAfrica, // Not explicitly used but kept for potential future use
+  FaChartBar,
+  FaCalendarAlt,
+  FaVideo,
+  FaSearch,
+  FaFacebook,
+  FaTwitter,
+  FaInstagram,
+  FaWhatsapp,
+  FaTiktok,
+  FaYoutube,
 } from 'react-icons/fa';
 
-import athlete1 from './../assets/Young-female-athlete with-determined-expression.jpeg'
+import athlete1 from './../assets/Young-female-athlete with-determined-expression.jpeg';
 import athlete2 from './../assets/playing-football-on-a-dusty-field.jpeg';
 import athlete3 from './../assets/freepik__the-style-is-candid-image-photography-with-natural__69796.jpeg';
 import athlete4 from './../assets/freepik__the-style-is-candid-image-photography-with-natural__69797.jpeg';
 import profileMockup from './../assets/Gemini_Generated_Image_luire7luire7luir.png';
-import scoresAndMalendarMockup  from './../assets/Gemini_Generated_Image_js2nr3js2nr3js2n.png';
-
-import scoutingMockup from './../assets/Gemini_Generated_Image_r4sxdzr4sxdzr4sx.png'
-
-import LivestreamMockup  from './../assets/Gemini_Generated_Image_z8lrs0z8lrs0z8lr.png'
-
-import Hero from './../assets/freepik__the-style-is-candid-image-photography-with-natural__69798.jpeg'
+import scoresAndMalendarMockup from './../assets/Gemini_Generated_Image_js2nr3js2nr3js2n.png';
+import scoutingMockup from './../assets/Gemini_Generated_Image_r4sxdzr4sxdzr4sx.png';
+import LivestreamMockup from './../assets/Gemini_Generated_Image_z8lrs0z8lrs0z8lr.png';
+import Hero from './../assets/freepik__the-style-is-candid-image-photography-with-natural__69798.jpeg';
 
 const HomePage = () => {
+  // Use useEffect to set the document title once on component mount
+  useEffect(() => {
+    document.title = "Home | GamePulse Africa";
+    window.scrollTo(0, 0); // Scroll to top on page load
+  }, []);
+
   // Enhanced download handler for better user experience
   const handleDownloadClick = () => {
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -29,11 +42,12 @@ const HomePage = () => {
     const androidPlayStoreLink = 'https://play.google.com/store/apps/details?id=com.yourcompany.gamepulse'; // REPLACE with actual Android Play Store link
 
     if (/android/i.test(userAgent)) {
-      window.location.href = androidPlayStoreLink;
+      window.open(androidPlayStoreLink, '_blank'); // Open in new tab
     } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-      window.location.href = iOSAppStoreLink;
+      window.open(iOSAppStoreLink, '_blank'); // Open in new tab
     } else {
       // Fallback for desktop or unrecognized devices
+      // Consider a more user-friendly modal here, or separate links
       alert('To get the full experience, download the GamePulse Africa app! Available on the App Store and Google Play.');
       // Optionally, you could open a modal here with links to both stores
     }
@@ -42,16 +56,16 @@ const HomePage = () => {
   return (
     <div className="min-h-screen mt-5 bg-gradient-to-br from-gamepulse-blue to-gray-200 font-sans text-gray-900 overflow-hidden">
 
-    {/* Hero Section */}
-    <section
+      {/* Hero Section */}
+      <section
         className="relative h-screen flex items-center justify-center text-white p-4 overflow-hidden"
         style={{
-            backgroundImage: `url(${Hero})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundAttachment: 'fixed', // Parallax effect
+          backgroundImage: `url(${Hero})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed', // Parallax effect
         }}
-    >
+      >
         {/* Transparent blur overlay */}
         <div className="absolute inset-0 bg-black/30 backdrop-blur-sm z-0"></div>
 
@@ -62,17 +76,18 @@ const HomePage = () => {
           <h2 className="text-lg md:text-xl lg:text-2xl leading-relaxed mb-8 drop-shadow-md">
             Your talent, visible. Your journey, tracked. Your opportunities, limitless. GamePulse Africa connects high school athletes with the world.
           </h2>
+          {/* Changed button to use handleDownloadClick */}
           <button
             onClick={handleDownloadClick}
             className="inline-flex items-center bg-gamepulse-orange hover:bg-gamepulse-dark text-white font-bold py-3 px-8 md:py-4 md:px-10 rounded-full text-lg md:text-xl shadow-xl transform hover:scale-105 transition-all duration-300 ring-2 ring-gamepulse-orange hover:ring-gamepulse-dark animate-fade-in-up-slow delay-500"
             aria-label="Download GamePulse Africa App"
           >
-            <FaDownload className="mr-3" /> Download GamePulse Africa
+            <FaDownload className="mr-3" /> Get Started
           </button>
         </div>
-    </section>
+      </section>
 
-    {/* Feature Highlights Section */}
+      {/* Features Section */}
       <section className="py-16 md:py-24 bg-white shadow-inner-lg">
         <div className="container mx-auto px-4 md:px-8 max-w-7xl">
           <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-12 text-center font-heading">
@@ -87,6 +102,7 @@ const HomePage = () => {
                   src={profileMockup}
                   alt="Athlete profile mockup on phone screen"
                   className="rounded-lg shadow-md border border-gray-200 object-cover w-full h-auto max-h-64 lg:max-h-80 transform group-hover:scale-[1.02] transition-transform duration-300"
+                  loading="lazy" // Add lazy loading for images
                 />
               </div>
               <div className="lg:w-1/2">
@@ -94,7 +110,7 @@ const HomePage = () => {
                   <FaChartBar className="text-gamepulse-orange mr-3" /> Build Your Digital Sporting Legacy.
                 </h3>
                 <p className="text-gamepulse-medium-gray leading-relaxed text-base">
-                  Create a dynamic profile showcasing your stats, achievements, and highlights. Track your progress over time, making it easy for scouts and coaches to spot your potential – providing **early exposure** and addressing **talent drain**.
+                  Create a dynamic profile showcasing your stats, achievements, and highlights. Track your progress over time, making it easy for scouts and coaches to spot your potential – providing <span className='bold'>early exposure</span> and addressing <span className='bold'>talent drain</span>.
                 </p>
               </div>
             </div>
@@ -106,6 +122,7 @@ const HomePage = () => {
                   src={scoresAndMalendarMockup}
                   alt="Live scores and calendar mockup on phone screen"
                   className="rounded-lg shadow-md border border-gray-200 object-cover w-full h-auto max-h-64 lg:max-h-80 transform group-hover:scale-[1.02] transition-transform duration-300"
+                  loading="lazy"
                 />
               </div>
               <div className="lg:w-1/2">
@@ -113,7 +130,7 @@ const HomePage = () => {
                   <FaCalendarAlt className="text-gamepulse-orange mr-3" /> Never Miss a Moment, Live.
                 </h3>
                 <p className="text-gamepulse-medium-gray leading-relaxed text-base">
-                  Stay updated with real-time scores and upcoming high school games across Africa. Get instant notifications for your favorite teams, combating the **lack of formal structure** and **limited media attention** for local tournaments.
+                  Stay updated with real-time scores and upcoming high school games across Africa. Get instant notifications for your favorite teams, combating the <span className='bold'>lack of formal structure</span> and <span className='bold'>limited media attention</span> for local tournaments.
                 </p>
               </div>
             </div>
@@ -125,6 +142,7 @@ const HomePage = () => {
                   src={LivestreamMockup}
                   alt="Live stream mockup on phone screen"
                   className="rounded-lg shadow-md border border-gray-200 object-cover w-full h-auto max-h-64 lg:max-h-80 transform group-hover:scale-[1.02] transition-transform duration-300"
+                  loading="lazy"
                 />
               </div>
               <div className="lg:w-1/2">
@@ -132,7 +150,7 @@ const HomePage = () => {
                   <FaVideo className="text-gamepulse-orange mr-3" /> Experience the Game, Anywhere.
                 </h3>
                 <p className="text-gamepulse-medium-gray leading-relaxed text-base">
-                  Stream high school games live and watch on-demand video highlights of key plays. This provides **unprecedented access** and leverages Africa's **high social media and live streaming penetration**, ensuring content is accessible even in **low bandwidth environments**.
+                  Stream high school games live and watch on-demand video highlights of key plays. This provides <span className='bold'>unprecedented access</span> and leverages Africa's <span className='bold'>high social media and live streaming penetration</span>, ensuring content is accessible even in <span className='bold'>low bandwidth environments</span>.
                 </p>
               </div>
             </div>
@@ -144,6 +162,7 @@ const HomePage = () => {
                   src={scoutingMockup}
                   alt="Scouting interface mockup on phone screen"
                   className="rounded-lg shadow-md border border-gray-200 object-cover w-full h-auto max-h-64 lg:max-h-80 transform group-hover:scale-[1.02] transition-transform duration-300"
+                  loading="lazy"
                 />
               </div>
               <div className="lg:w-1/2">
@@ -151,7 +170,7 @@ const HomePage = () => {
                   <FaSearch className="text-gamepulse-orange mr-3" /> Discover Tomorrow's Stars Today.
                 </h3>
                 <p className="text-gamepulse-medium-gray leading-relaxed text-base">
-                  For scouts and coaches, easily search and filter athlete profiles by sport, location, and key statistics. This foundational **talent directory** is the first step in creating a direct **digital bridge** to opportunities.
+                  For scouts and coaches, easily search and filter athlete profiles by sport, location, and key statistics. This foundational <span className='bold'>talent directory</span> is the first step in creating a direct <span className='bold'>digital bridge</span> to opportunities.
                 </p>
               </div>
             </div>
@@ -172,7 +191,7 @@ const HomePage = () => {
                 GamePulse Africa is proudly developed by Africans, for African conditions, understanding the unique challenges and vast potential of our continent's youth. We deeply understand the nuances of local high school sports, from the vibrant energy of a local football match in Accra to the fierce competition on the basketball courts in Nairobi.
               </p>
               <p className="text-lg leading-relaxed text-gray-300">
-                Join the movement transforming African sports – from addressing fragmented systems and inadequate infrastructure to unlocking the continent's **raw, untapped sporting talent**. Our investment in sports goes beyond commercial gain; it's about driving **wealth and job creation, societal cohesion, and community upliftment**, fostering **local content development**, and **enhancing the visibility of African athletes**. We are building a legacy, one athlete at a time.
+                Join the movement transforming African sports – from addressing fragmented systems and inadequate infrastructure to unlocking the continent's <span className='bold'>raw</span>, untapped sporting <span className='bold'>talent</span>. Our investment in sports goes beyond commercial gain; it's about driving <span className='bold'>wealth and job creation</span>,<span className='bold'>local content development</span>, and <span className='bold'>enhancing the visibility of African athletes</span>. We are building a legacy, one athlete at a time.
               </p>
               {/* Optional Testimonial */}
               <div className="mt-8 p-4 bg-gamepulse-blue/20 rounded-lg border border-gamepulse-blue/30 italic text-gamepulse-teal">
@@ -183,13 +202,10 @@ const HomePage = () => {
             <div className="lg:w-1/2">
               <div className="grid grid-cols-2 gap-4">
                 {/* Authentic images representing diverse African talent/regions */}
-                <img src={athlete2} alt="African youth playing football on a dusty field" className="rounded-xl shadow-lg object-cover h-48 md:h-64 w-full transform hover:scale-[1.03] transition-transform duration-300" />
-
-                <img src={athlete1} alt="Young female athlete with determined expression" className="rounded-xl shadow-lg object-cover h-48 md:h-64 w-full transform hover:scale-[1.03] transition-transform duration-300" />
-
-                <img src={athlete3} alt="Group of diverse young African high school athletes smiling" className="rounded-xl shadow-lg object-cover h-48 md:h-64 w-full transform hover:scale-[1.03] transition-transform duration-300" />
-
-                <img src={athlete4} alt="Rugby players in action on a field" className="rounded-xl shadow-lg object-cover h-48 md:h-64 w-full transform hover:scale-[1.03] transition-transform duration-300" />
+                <img src={athlete2} alt="African youth playing football on a dusty field" className="rounded-xl shadow-lg object-cover h-48 md:h-64 w-full transform hover:scale-[1.03] transition-transform duration-300" loading="lazy" />
+                <img src={athlete1} alt="Young female athlete with determined expression" className="rounded-xl shadow-lg object-cover h-48 md:h-64 w-full transform hover:scale-[1.03] transition-transform duration-300" loading="lazy" />
+                <img src={athlete3} alt="Group of diverse young African high school athletes smiling" className="rounded-xl shadow-lg object-cover h-48 md:h-64 w-full transform hover:scale-[1.03] transition-transform duration-300" loading="lazy" />
+                <img src={athlete4} alt="Rugby players in action on a field" className="rounded-xl shadow-lg object-cover h-48 md:h-64 w-full transform hover:scale-[1.03] transition-transform duration-300" loading="lazy" />
               </div>
             </div>
           </div>
@@ -205,12 +221,13 @@ const HomePage = () => {
           <p className="text-xl leading-relaxed mb-10">
             Start your journey with GamePulse Africa. Download the app now and be part of the change that's building a stronger future for sports across the continent.
           </p>
+          {/* Changed button to use handleDownloadClick */}
           <button
             onClick={handleDownloadClick}
             className="inline-flex items-center bg-white text-gamepulse-orange hover:bg-gray-200 font-bold py-3 px-8 md:py-4 md:px-10 rounded-full text-lg md:text-xl shadow-xl transform hover:scale-105 transition-all duration-300 ring-2 ring-white hover:ring-gray-200"
             aria-label="Download GamePulse Africa App"
           >
-            <FaDownload className="mr-3" /> Download GamePulse Africa
+            <FaDownload className="mr-3" /> Get Started
           </button>
         </div>
       </section>
@@ -228,10 +245,11 @@ const HomePage = () => {
             <div className="text-left md:text-center">
               <h3 className="text-xl font-bold mb-4 text-gamepulse-orange font-heading">Quick Links</h3>
               <ul className="space-y-2 text-sm">
-                <li><a href="/about-us" className="text-gray-300 hover:text-gamepulse-orange transition-colors duration-200">About Us</a></li>
-                <li><a href="/contact" className="text-gray-300 hover:text-gamepulse-orange transition-colors duration-200">Contact</a></li>
-                <li><a href="/privacy-policy" className="text-gray-300 hover:text-gamepulse-orange transition-colors duration-200">Privacy Policy</a></li>
-                <li><a href="/terms-of-service" className="text-gray-300 hover:text-gamepulse-orange transition-colors duration-200">Terms of Service</a></li>
+                {/* Use Link component for internal navigation */}
+                <li><Link to="/about-us" className="text-gray-300 hover:text-gamepulse-orange transition-colors duration-200">About Us</Link></li>
+                <li><Link to="/contact" className="text-gray-300 hover:text-gamepulse-orange transition-colors duration-200">Contact</Link></li>
+                <li><Link to="/privacy-policy" className="text-gray-300 hover:text-gamepulse-orange transition-colors duration-200">Privacy Policy</Link></li>
+                <li><Link to="/terms-of-service" className="text-gray-300 hover:text-gamepulse-orange transition-colors duration-200">Terms of Service</Link></li>
               </ul>
             </div>
             <div className="text-left md:text-center">
