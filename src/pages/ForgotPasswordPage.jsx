@@ -81,12 +81,7 @@ const ForgotPasswordPage = () => {
       <div className="w-full lg:w-1/2 flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8">
         <div className="relative z-10 w-full max-w-md bg-white rounded-xl shadow-lg p-6 sm:p-8 md:p-10 border border-gray-200">
           <div className="text-center mb-8">
-            <img
-              src="/images/gamepulse-logo.webp"
-              alt="GamePulse Africa Logo"
-              className="mx-auto h-16 md:h-20 w-auto animate-fadeIn lg:hidden"
-              loading="lazy"
-            />
+            
             <h1 className="mt-4 text-3xl md:text-4xl font-extrabold text-gray-900 font-heading">
               Reset Your Password
             </h1>
