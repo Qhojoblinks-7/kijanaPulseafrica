@@ -1,22 +1,25 @@
 // src/pages/AboutUsPage.jsx
 
-import React from 'react';
 import {
   FaGlobeAfrica, FaChartLine, FaLightbulb, FaUsers, FaHandshake, FaBullhorn, FaBriefcase,
   FaMapMarkedAlt, FaMobileAlt, FaBolt, FaDownload, FaConnectdevelop, FaBrain, FaRegCommentDots,
   FaFacebook, FaTwitter, FaInstagram, FaWhatsapp, FaTiktok, FaYoutube, FaEnvelope, FaChevronRight, FaPlusCircle
 } from 'react-icons/fa'; // Importing a comprehensive set of relevant icons
 
+import AboutHero from './../assets/aboutHero.jpeg';
+import GrassRoot from './../assets/grassroot.png';
+import InforGraphic from './../assets/infographics.png'
+
 const AboutUsPage = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 font-sans text-gray-900 overflow-hidden">
+    <div className="min-h-screen  bg-gradient-to-br mt-15 from-gray-50 to-gray-200 font-sans text-gray-900 overflow-hidden">
 
       {/* Hero Section: Our Mission */}
       <section
-        className="relative h-[65vh] md:h-[75vh] flex items-center justify-center text-white p-4"
+        className="relative h-[100vh] md:h-[80vh] flex items-center justify-center text-white p-4"
         style={{
           // Authentic, aspirational image of diverse African high school athletes
-          backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), url(https://images.unsplash.com/photo-1627962635203-d716ed5d2466?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)',
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), url(${AboutHero})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundAttachment: 'fixed',
@@ -60,7 +63,7 @@ const AboutUsPage = () => {
             <div className="lg:w-1/2 order-1 lg:order-2">
               {/* Collage or map highlighting initial focus/grassroots */}
               <img
-                src="https://images.unsplash.com/photo-1547849843-059904ee23d0?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                src={GrassRoot}
                 alt="Grassroots sports and community engagement"
                 className="rounded-xl shadow-2xl object-cover w-full h-80 md:h-96 transform hover:scale-[1.01] transition-transform duration-300"
               />
@@ -132,7 +135,7 @@ const AboutUsPage = () => {
             {/* Example Team Member 1 */}
             <div className="flex flex-col items-center text-center bg-gray-700/50 p-6 rounded-xl shadow-lg transform hover:scale-[1.02] transition-transform duration-300">
               <img
-                src="https://via.placeholder.com/150/FF7F00/FFFFFF?text=Team+Member" // Replace with actual headshot
+                src={InforGraphic} // Replace with actual headshot
                 alt="Gordon Gogo - Advocate"
                 className="w-32 h-32 rounded-full mb-4 object-cover border-4 border-gamepulse-orange"
               />
@@ -190,7 +193,7 @@ const AboutUsPage = () => {
           <div className="flex flex-col lg:flex-row items-center lg:space-x-12">
             <div className="lg:w-1/2 mb-10 lg:mb-0">
               <img
-                src="https://images.unsplash.com/photo-1628108493132-15f5d3b66d3a?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                src={InforGraphic}
                 alt="Infographic for market growth"
                 className="rounded-xl shadow-2xl object-cover w-full h-80 md:h-96 transform hover:scale-[1.01] transition-transform duration-300"
               />
@@ -208,13 +211,13 @@ const AboutUsPage = () => {
               <div className="mt-8 text-center lg:text-left">
                 <button
                   onClick={() => alert('Simulating: Redirect to Partnership Inquiry Form.')}
-                  className="inline-flex items-center bg-gamepulse-orange hover:bg-gamepulse-dark text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg transform hover:scale-105 transition-all duration-300 mr-4 mb-4 md:mb-0"
+                  className="inline-flex items-center bg-gamepulse-blue hover:bg-gamepulse-dark text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg transform hover:scale-105 transition-all duration-300 mr-4 mb-4 md:mb-0"
                 >
                   <FaHandshake className="mr-3" /> Partner With Us
                 </button>
                 <button
                   onClick={() => alert('Simulating: Redirect to Investor Relations Info.')}
-                  className="inline-flex items-center bg-gamepulse-teal hover:bg-gamepulse-blue text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg transform hover:scale-105 transition-all duration-300"
+                  className="inline-flex items-center bg-gamepulse-yellow hover:bg-gamepulse-blue text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg transform hover:scale-105 transition-all duration-300"
                 >
                   <FaBriefcase className="mr-3" /> Invest in African Talent
                 </button>
@@ -254,7 +257,7 @@ const AboutUsPage = () => {
           <div className="mt-12">
             <h3 className="text-2xl font-bold text-gray-900 mb-6 font-heading">Follow Our Journey</h3>
             <div className="flex justify-center space-x-6">
-              <a href="https://facebook.com/gamepulseafrica" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Facebook" className="text-gray-700 hover:text-gamepulse-blue transition-colors duration-200 transform hover:scale-110"><FaFacebook className="text-4xl" /></a>
+              <a href={"https://facebook.com/gamepulseafrica"} target="_blank" rel="noopener noreferrer" aria-label="Follow us on Facebook" className="text-gray-700 hover:text-gamepulse-blue transition-colors duration-200 transform hover:scale-110"><FaFacebook className="text-4xl" /></a>
               <a href="https://twitter.com/gamepulseafrica" target="_blank" rel="noopener noreferrer" aria-label="Follow us on X (Twitter)" className="text-gray-700 hover:text-gamepulse-blue transition-colors duration-200 transform hover:scale-110"><FaTwitter className="text-4xl" /></a>
               <a href="https://instagram.com/gamepulseafrica" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram" className="text-gray-700 hover:text-gamepulse-blue transition-colors duration-200 transform hover:scale-110"><FaInstagram className="text-4xl" /></a>
               <a href="https://wa.me/yourwhatsappnumber" target="_blank" rel="noopener noreferrer" aria-label="Contact us on WhatsApp" className="text-gray-700 hover:text-gamepulse-blue transition-colors duration-200 transform hover:scale-110"><FaWhatsapp className="text-4xl" /></a>

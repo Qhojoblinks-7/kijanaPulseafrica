@@ -25,6 +25,7 @@ import MatchDetailsPage from './pages/MatchDetailsPage';
 
 // NEW IMPORT: UpcomingGamesPage
 import UpcomingGamesPage from './pages/UpcomingGamesPage';
+import AboutUsPage from './pages/AboutUsPage';
 
 
 function App() {
@@ -43,7 +44,7 @@ function App() {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/about-us" element={<div>About Us Page (Implement Me)</div>} />
+            <Route path="/about-us" element={<AboutUsPage />} />
             <Route path="/contact-us" element={<ContactUsPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
             <Route path="/terms-of-service" element={<TermsOfServicePage />} />

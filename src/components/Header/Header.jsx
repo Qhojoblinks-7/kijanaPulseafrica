@@ -114,7 +114,6 @@ const Header = () => {
       links = [
         { to: "/", label: "Home" },
         { to: "/about-us", label: "About Us" },
-        { to: "/features", label: "Features" },
         { to: "/contact-us", label: "Contact Us" },
       ];
     } else {
