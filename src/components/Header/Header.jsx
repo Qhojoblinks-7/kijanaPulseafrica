@@ -1,8 +1,8 @@
 // src/components/Header/Header.jsx
 
-import React, { useState, useEffect, useRef } from 'react'; // Added useRef
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from './../../context/AuthContext'
 import { FaPlus } from 'react-icons/fa';
 
 // Import newly created sub-components
@@ -12,12 +12,18 @@ import DesktopUserActions from './DesktopUserActions';
 import MobileToggle from './MobileToggle';
 import MobileMenuOverlay from './MobileMenuOverlay';
 
+// NEW IMPORT: DarkModeContext
+import { useDarkMode } from '../../context/DarkModeContext';
+
 const Header = () => {
   const { isLoggedIn, userAvatarUrl, userType, logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+
+  // NEW: Use DarkModeContext
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
 
   // Ref for the desktop user actions container to handle outside clicks more robustly
   const desktopUserActionsRef = useRef(null);
@@ -26,7 +32,7 @@ const Header = () => {
   useEffect(() => {
     const handleResize = () => {
       // If screen becomes desktop size, close mobile menu
-      if (window.innerWidth >= 768) {
+      if (window.innerWidth >= 768) { // Using md breakpoint
         setIsMobileMenuOpen(false);
       }
       // If screen becomes mobile size, close dropdown
@@ -93,7 +99,7 @@ const Header = () => {
   };
 
   // --- Define Navigation Links based on User Type ---
-  const getNavLinks = (type, currentPath, isMobile = false) => {
+  const getNavLinks = (type, currentPath) => {
     // Links that should always be in the dropdown, not main nav
     const dropdownOnlyPaths = [
       "/my-profile",
@@ -134,8 +140,10 @@ const Header = () => {
                 navigate('/upload-highlight');
                 closeMenus();
               },
-              // Hardcoded colors for now as requested
-              className: "px-4 py-1.5 rounded-full bg-[#1282A2] text-[#FFFFFF] font-semibold text-sm flex items-center hover:bg-[#034078] transition-colors duration-300"
+              // Hardcoded colors for now as requested (ensure these are defined in your Tailwind config or replace with theme colors)
+              className: `px-4 py-1.5 rounded-full bg-[#1282A2] text-[#FFFFFF] font-semibold text-sm flex items-center
+                          hover:bg-[#034078] transition-colors duration-300
+                          dark:bg-gamepulse-teal dark:text-dark-text-primary dark:hover:bg-[#006B6B]` // Dark mode specific styles
             }
           );
           break;
@@ -180,19 +188,26 @@ const Header = () => {
   };
 
   const navLinks = getNavLinks(userType, location.pathname);
-  const mobileNavLinks = getNavLinks(userType, location.pathname, true); // `true` for mobile differentiation if needed
+  // Mobile nav links might require additional items (like profile, settings)
+  // that are usually in a desktop dropdown but need to be in the main mobile menu.
+  // For now, we'll keep it the same as desktop nav for simplicity in this function,
+  // but the MobileMenuOverlay explicitly adds those if isLoggedIn.
+  const mobileNavLinks = getNavLinks(userType, location.pathname);
+
 
   // Determine the default dashboard link for logo click
   const dashboardHomeLink = isLoggedIn ? getUserDashboardPath(userType) : '/';
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 py-3 px-4 md:px-8
-                        bg-gradient-to-r from-[#1282A2] to-[#0A1128] shadow-lg">
+                       bg-gradient-to-r from-[#1282A2] to-[#0A1128] shadow-lg
+                       dark:from-dark-background-primary dark:to-dark-background-primary dark:shadow-xl-dark
+                       transition-colors duration-300">
       <div className="container mx-auto flex justify-between items-center h-16">
 
-        <Logo dashboardHomeLink={dashboardHomeLink} onCloseMenus={closeMenus} />
+        <Logo dashboardHomeLink={dashboardHomeLink} onCloseMenus={closeMenus} isDarkMode={isDarkMode} />
 
-        <DesktopNav navLinks={navLinks} onCloseMenus={closeMenus} />
+        <DesktopNav navLinks={navLinks} onCloseMenus={closeMenus} isDarkMode={isDarkMode} />
 
         {/* Passed ref to DesktopUserActions for robust outside click detection */}
         <DesktopUserActions
@@ -203,7 +218,9 @@ const Header = () => {
           toggleDropdown={toggleDropdown}
           handleLogout={handleLogout}
           onCloseMenus={closeMenus}
-          ref={desktopUserActionsRef} // Pass the ref here
+          ref={desktopUserActionsRef}
+          isDarkMode={isDarkMode}
+          toggleDarkMode={toggleDarkMode}
         />
 
         <MobileToggle
@@ -211,6 +228,8 @@ const Header = () => {
           isMobileMenuOpen={isMobileMenuOpen}
           toggleMobileMenu={toggleMobileMenu}
           onCloseMenus={closeMenus}
+          isDarkMode={isDarkMode}
+          toggleDarkMode={toggleDarkMode}
         />
       </div>
 
@@ -221,6 +240,8 @@ const Header = () => {
           userType={userType}
           handleLogout={handleLogout}
           onCloseMenus={closeMenus}
+          isDarkMode={isDarkMode}
+          toggleDarkMode={toggleDarkMode}
         />
       )}
     </header>
