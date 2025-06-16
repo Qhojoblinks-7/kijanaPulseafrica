@@ -1,7 +1,7 @@
 // src/App.jsx
 
 import React from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Link } from 'react-router-dom';
 import Header from './components/Header/Header';
 import HomePage from './pages/HomePage';
 import ContactUsPage from './pages/ContactUsPage';
@@ -12,31 +12,34 @@ import MyProfilePage from './pages/MyProfilePage';
 import SignUpPage from './pages/SignUpPage';
 import LoginPage from './pages/LoginPage';
 import UserDashboardPage from './pages/UserDashboardPage';
-// Import AuthProvider
 import { AuthProvider } from './context/AuthContext';
 
-// Import the Highlights components
+// Highlights components
 import ViewHighlightsPage from './components/highlights/ViewHighlightsPage';
-// Import the new UploadHighlightPage
 import UploadHighlightPage from './pages/UploadHighlightPage';
+
+// Other feature pages
 import AthleteSearchPage from './pages/AthleteSearchPage';
 import LiveMatchesDashboard from './components/Dashboard/LiveMatchesDashboard';
 import MatchDetailsPage from './pages/MatchDetailsPage';
-
-// NEW IMPORT: UpcomingGamesPage
 import UpcomingGamesPage from './pages/UpcomingGamesPage';
 import AboutUsPage from './pages/AboutUsPage';
+
+// NEW IMPORTS: Forgot Password and Reset Password Pages
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 
 
 function App() {
   const location = useLocation();
 
   // Determine if the current path should NOT have the global Header
-  // This now includes '/upload-highlight', '/login', and '/signup'
   const noHeaderPaths = [
     '/upload-highlight',
     '/login',
-    '/signup'
+    '/signup',
+    '/forgot-password',   // Added this
+    '/reset-password'     // Added this (matches /reset-password/:token)
   ];
 
   const shouldHideHeader = noHeaderPaths.some(path => location.pathname.startsWith(path));
@@ -65,7 +68,11 @@ function App() {
             <Route path="/my-profile" element={<MyProfilePage />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/forgot-password" element={<div>Forgot Password Page (Implement Me)</div>} />
+            {/* CORRECTED ROUTE: Use the actual ForgotPasswordPage component */}
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            {/* NEW ROUTE: For resetting password with a token */}
+            <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+
 
             {/* --- User-specific Dashboard Routes --- */}
             <Route path="/dashboard" element={<UserDashboardPage />} />
@@ -76,6 +83,7 @@ function App() {
 
             {/* --- Highlights Hub Routes --- */}
             <Route path="/highlights" element={<ViewHighlightsPage />} />
+            <Route path="/upload-highlight" element={<UploadHighlightPage />} /> {/* Ensure this is here */}
 
 
             {/* --- Quick Links & Feature Pages --- */}
@@ -88,10 +96,8 @@ function App() {
             <Route path="/download-app" element={<div>Download App Page (Implement Me)</div>} />
             <Route path="/notifications" element={<div>Notifications Page (Implement Me)</div>} />
             <Route path="/search" element={<div>Mobile Search Page (Implement Me)</div>} />
-            <Route path="/upload-highlight" element={<UploadHighlightPage />} />
             <Route path="/messages" element={<div>Messages Page (Implement Me)</div>} />
             <Route path="/reports" element={<div>Scouting Reports Page (Implement Me)</div>} />
-            {/* UPDATED ROUTE: Pointing to the new UpcomingGamesPage component */}
             <Route path="/upcoming-matches" element={<UpcomingGamesPage />} />
             <Route path="/latest-highlights" element={<div>Latest Highlights Page (Implement Me)</div>} />
 
@@ -113,9 +119,13 @@ function App() {
 
             {/* --- Catch-all for 404 Not Found --- */}
             <Route path="*" element={
-              <div className="min-h-screen flex items-center justify-center bg-gray-100 text-gray-700">
-                <h2 className="text-3xl font-bold">404 - Page Not Found</h2>
-                <p className="mt-2">The page you're looking for doesn't exist.</p>
+              <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 text-gray-700 p-4">
+                <h2 className="text-4xl font-extrabold text-red-600 mb-4">404</h2>
+                <p className="text-xl font-semibold mb-2">Page Not Found</p>
+                <p className="text-lg text-center">The page you're looking for doesn't exist or has been moved.</p>
+                <Link to="/" className="mt-6 px-6 py-3 bg-gamepulse-orange text-white rounded-md font-semibold hover:bg-orange-700 transition-colors">
+                  Go to Homepage
+                </Link>
               </div>
             } />
           </Routes>

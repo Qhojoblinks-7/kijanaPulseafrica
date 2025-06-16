@@ -63,7 +63,12 @@ export const AuthProvider = ({ children }) => {
         break;
     }
 
-    if (currentPath !== targetPath && !currentPath.includes('/login') && !currentPath.includes('/signup') && !currentPath.includes('/forgot-password') && !currentPath.includes('/reset-password')) {
+    // Do not redirect if on login, signup, forgot-password, or reset-password pages
+    if (currentPath !== targetPath &&
+        !currentPath.includes('/login') &&
+        !currentPath.includes('/signup') &&
+        !currentPath.includes('/forgot-password') &&
+        !currentPath.includes('/reset-password')) {
       navigate(targetPath);
     }
   };
@@ -99,8 +104,7 @@ export const AuthProvider = ({ children }) => {
         simulatedUser = {
           id: 'scout1', fullName: 'Global Scout Network', email: 'scout@example.com', userType: 'scout',
           avatarUrl: '/images/scout-avatar.webp', regionsOfInterest: ['Greater Accra', 'Ashanti'],
-          trackedAthletes: [{ id: 'ath1', name: 'Amaani Okoro', sport: 'Football', potential: 'High' }],
-          newHighlights: [{ id: 1, title: 'Striker Showcase' }],
+          trackedAthletes: [{ id: 'ath1', name: 'Amaani Okoro' }], newHighlights: [{ id: 1, title: 'Striker Showcase' }],
         };
       } else if (emailOrUsername === 'fan@example.com' && password === 'password123') {
         simulatedUser = {
@@ -145,21 +149,15 @@ export const AuthProvider = ({ children }) => {
     navigate('/login');
   };
 
-  // --- NEW: Password Reset Functions ---
+  // --- NEW/RE-ADDED: Password Reset Functions ---
 
   const sendPasswordResetEmail = async (email) => {
     try {
       await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call delay
 
-      // In a real app, you'd send an API request here.
-      // The backend would check if the email exists and send a reset link.
       console.log(`Simulating sending password reset email to: ${email}`);
 
-      // Mock success/failure for demonstration
       if (email.includes('@example.com') || email === 'immanueleshun9@gmail.com') {
-        // For demonstration, we'll return a mock token.
-        // In a real app, the email would actually be sent, and no token returned to frontend.
-        // The user would receive a link like http://your-app.com/reset-password?token=MOCK_RESET_TOKEN_FOR_EMAIL
         console.log(`Password reset link sent to ${email}. Check console for mock token.`);
         return { success: true, message: 'If an account with that email exists, a password reset link has been sent.', mockToken: 'MOCK_RESET_TOKEN_FOR_EMAIL_123' };
       } else {
@@ -167,7 +165,7 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Error sending password reset email:", error);
-      throw error; // Re-throw for component to handle
+      throw error;
     }
   };
 
@@ -175,11 +173,8 @@ export const AuthProvider = ({ children }) => {
     try {
       await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call delay
 
-      // In a real app, you'd send an API request here with the token and new password.
-      // The backend would validate the token and update the user's password.
       console.log(`Simulating password reset for token: ${token} with new password: ${newPassword}`);
 
-      // Mock success/failure for demonstration
       if (token === 'MOCK_RESET_TOKEN_FOR_EMAIL_123' && newPassword.length >= 8) { // Basic validation
         console.log("Password reset successful!");
         return { success: true, message: 'Your password has been reset successfully. You can now log in.' };
@@ -188,7 +183,7 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Error resetting password:", error);
-      throw error; // Re-throw for component to handle
+      throw error;
     }
   };
 
