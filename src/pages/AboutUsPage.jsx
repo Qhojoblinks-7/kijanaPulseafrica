@@ -283,7 +283,7 @@ const AboutUsPage = () => {
               <ul className="space-y-2 text-sm">
                 <li><a href="/privacy-policy" className="text-gray-300 hover:text-gamepulse-orange transition-colors duration-200">Privacy Policy</a></li>
                 <li><a href="/terms-of-service" className="text-gray-300 hover:text-gamepulse-orange transition-colors duration-200">Terms of Service</a></li>
-                <li><a href="/help-support" className="text-gray-300 hover:text-gamepulse-orange transition-colors duration-200">Help & Support</a></li>
+                <li><a href="/help-center" className="text-gray-300 hover:text-gamepulse-orange transition-colors duration-200">Help & Support</a></li>
               </ul>
             </div>
             <div className="text-left md:text-center lg:text-right">
