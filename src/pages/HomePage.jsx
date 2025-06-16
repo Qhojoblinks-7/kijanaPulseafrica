@@ -234,7 +234,7 @@ const handleDownloadClick = () => {
               <ul className="space-y-2 text-sm">
                 {/* Use Link component for internal navigation */}
                 <li><Link to="/about-us" className="text-gray-300 hover:text-gamepulse-orange transition-colors duration-200">About Us</Link></li>
-                <li><Link to="/contact" className="text-gray-300 hover:text-gamepulse-orange transition-colors duration-200">Contact</Link></li>
+                <li><Link to="/contact-us" className="text-gray-300 hover:text-gamepulse-orange transition-colors duration-200">Contact</Link></li>
                 <li><Link to="/privacy-policy" className="text-gray-300 hover:text-gamepulse-orange transition-colors duration-200">Privacy Policy</Link></li>
                 <li><Link to="/terms-of-service" className="text-gray-300 hover:text-gamepulse-orange transition-colors duration-200">Terms of Service</Link></li>
               </ul>

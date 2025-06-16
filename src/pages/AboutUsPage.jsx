@@ -12,7 +12,7 @@ import InforGraphic from './../assets/infographics.png'
 
 const AboutUsPage = () => {
   return (
-    <div className="min-h-screen  bg-gradient-to-br mt-15 from-gray-50 to-gray-200 font-sans text-gray-900 overflow-hidden">
+    <div className="min-h-screen  bg-gradient-to-br mt-10 from-gray-50 to-gray-200 font-sans text-gray-900 overflow-hidden">
 
       {/* Hero Section: Our Mission */}
       <section

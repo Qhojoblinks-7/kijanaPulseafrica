@@ -28,6 +28,7 @@ import AboutUsPage from './pages/AboutUsPage';
 // NEW IMPORTS: Forgot Password and Reset Password Pages
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import HelpAndSupportPage from './pages/HelpAndSupportPage'
 
 
 function App() {
@@ -90,9 +91,7 @@ function App() {
             <Route path="/live-matches" element={<LiveMatchesDashboard />} />
             <Route path="/discover-talent" element={<AthleteSearchPage />} />
             <Route path="/settings" element={<div>Settings (Implement Me)</div>} />
-            <Route path="/help" element={<div>Help Center (Implement Me)</div>} />
-            <Route path="/features" element={<div>Features Page (Implement Me)</div>} />
-            <Route path="/digital-classroom" element={<div>Digital Classroom (Implement Me)</div>} />
+            <Route path="/help-center" element={<HelpAndSupportPage />}/>      <Route path="/digital-classroom" element={<div>Digital Classroom (Implement Me)</div>} />
             <Route path="/download-app" element={<div>Download App Page (Implement Me)</div>} />
             <Route path="/notifications" element={<div>Notifications Page (Implement Me)</div>} />
             <Route path="/search" element={<div>Mobile Search Page (Implement Me)</div>} />
