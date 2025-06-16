@@ -26,7 +26,7 @@ import profileMockup from './../assets/Gemini_Generated_Image_luire7luire7luir.p
 import scoresAndMalendarMockup from './../assets/Gemini_Generated_Image_js2nr3js2nr3js2n.png';
 import scoutingMockup from './../assets/Gemini_Generated_Image_r4sxdzr4sxdzr4sx.png';
 import LivestreamMockup from './../assets/Gemini_Generated_Image_z8lrs0z8lrs0z8lr.png';
-import Hero from './../assets/freepik__the-style-is-candid-image-photography-with-natural__69798.jpeg';
+import Hero from './../assets/contactusHero.png';
 
 const HomePage = () => {
   // Use useEffect to set the document title once on component mount
@@ -36,29 +36,16 @@ const HomePage = () => {
   }, []);
 
   // Enhanced download handler for better user experience
-  const handleDownloadClick = () => {
-    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-    const iOSAppStoreLink = 'https://apps.apple.com/us/app/your-gamepulse-ios-app-id'; // REPLACE with actual iOS App Store link
-    const androidPlayStoreLink = 'https://play.google.com/store/apps/details?id=com.yourcompany.gamepulse'; // REPLACE with actual Android Play Store link
-
-    if (/android/i.test(userAgent)) {
-      window.open(androidPlayStoreLink, '_blank'); // Open in new tab
-    } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-      window.open(iOSAppStoreLink, '_blank'); // Open in new tab
-    } else {
-      // Fallback for desktop or unrecognized devices
-      // Consider a more user-friendly modal here, or separate links
-      alert('To get the full experience, download the GamePulse Africa app! Available on the App Store and Google Play.');
-      // Optionally, you could open a modal here with links to both stores
-    }
-  };
+const handleDownloadClick = () => {
+    window.location.href = '/login';
+};
 
   return (
     <div className="min-h-screen mt-5 bg-gradient-to-br from-gamepulse-blue to-gray-200 font-sans text-gray-900 overflow-hidden">
 
       {/* Hero Section */}
       <section
-        className="relative h-screen flex items-center justify-center text-white p-4 overflow-hidden"
+        className="relative h-screen flex items-center justify-center text-white  overflow-hidden"
         style={{
           backgroundImage: `url(${Hero})`,
           backgroundSize: 'cover',
