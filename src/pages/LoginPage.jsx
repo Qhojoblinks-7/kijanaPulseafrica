@@ -1,18 +1,14 @@
 // src/pages/LoginPage.jsx
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useFormik } from 'formik'; // Import useFormik
+import * as Yup from 'yup'; // Import Yup for validation
 import { FaEye, FaEyeSlash, FaGoogle, FaFacebook, FaApple, FaPhoneAlt, FaExclamationCircle } from 'react-icons/fa';
-import { useAuth } from '../context/AuthContext'; // Import useAuth hook
-import Backdrop from './../assets/backdrop.png'
+import { useAuth } from '../context/AuthContext';
+import Backdrop from './../assets/backdrop.png';
 
 const LoginPage = () => {
-  const [formData, setFormData] = useState({
-    emailOrUsername: '',
-    password: '',
-    rememberMe: false,
-  });
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [errors, setErrors] = useState({});
   const [networkError, setNetworkError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -20,46 +16,39 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    window.scrollTo(0, 0); // Scroll to top on page load
-    document.title = "Login | GamePulse Africa"; // Set page title
+    window.scrollTo(0, 0);
+    document.title = "Login | GamePulse Africa";
   }, []);
 
-  const validateForm = () => {
-    let newErrors = {};
-    if (!formData.emailOrUsername.trim()) {
-      newErrors.emailOrUsername = 'Email or Username is required.';
-    }
-    if (!formData.password) {
-      newErrors.password = 'Password is required.';
-    }
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  // Define Yup validation schema for the login form
+  const LoginSchema = Yup.object().shape({
+    emailOrUsername: Yup.string()
+      .trim() // Trim whitespace
+      .required('Email or Username is required.')
+      .min(3, 'Email or Username must be at least 3 characters.'), // Added a min length for robustness
+    password: Yup.string()
+      .required('Password is required.')
+      .min(6, 'Password must be at least 6 characters.'), // Added a min length, adapt as needed
+  });
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
-    // Clear error for the field being changed
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
-    }
-    setNetworkError(''); // Clear general network error on input change
-  };
+  // Initialize Formik
+  const formik = useFormik({
+    initialValues: {
+      emailOrUsername: '',
+      password: '',
+      rememberMe: false,
+    },
+    validationSchema: LoginSchema, // Connect Yup schema
+    onSubmit: async (values) => {
+      setNetworkError('');
+      setLoading(true);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setNetworkError('');
-    setLoading(true);
-
-    if (validateForm()) {
       try {
-        const loggedInUser = await login(formData.emailOrUsername, formData.password, formData.rememberMe);
+        const loggedInUser = await login(values.emailOrUsername, values.password, values.rememberMe);
 
         if (loggedInUser) {
           console.log('Login successful for user:', loggedInUser);
+          // Redirect based on userType from loggedInUser
           switch (loggedInUser.userType) {
             case 'athlete':
               navigate('/athlete-dashboard');
@@ -71,26 +60,27 @@ const LoginPage = () => {
               navigate('/scout-dashboard');
               break;
             case 'fan':
-            case 'parent':
+            case 'parent': // Assuming 'parent' also goes to fan dashboard
               navigate('/fan-dashboard');
               break;
             default:
-              navigate('/dashboard');
+              navigate('/dashboard'); // Default fallback
               break;
           }
         } else {
+          // This else block might be hit if the login function returns null/false
+          // and doesn't throw an error directly.
           setNetworkError('Incorrect email/username or password. Please try again.');
         }
       } catch (err) {
-        setNetworkError(err.message || 'Login failed. Please check your credentials.');
+        // Catch errors thrown directly from the login function (e.g., API errors)
+        setNetworkError(err.message || 'Login failed. Please check your credentials and network connection.');
         console.error('Login error:', err);
       } finally {
         setLoading(false);
       }
-    } else {
-      setLoading(false); // Stop loading if validation fails
-    }
-  };
+    },
+  });
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col lg:flex-row items-stretch justify-center font-sans">
@@ -98,10 +88,10 @@ const LoginPage = () => {
       <div
         className="relative w-full lg:w-1/2 flex flex-col items-center justify-center text-white py-12 px-4 sm:px-6 lg:px-8 bg-cover bg-center bg-no-repeat transition-all duration-500 ease-in-out"
         style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url(${Backdrop})`, // Enhanced background image for clarity
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url(${Backdrop})`,
         }}
       >
-        <div className="text-center z-10 p-4  bg-opacity-20 rounded-lg lg:bg-transparent lg:p-0">
+        <div className="text-center z-10 p-4 bg-opacity-20 rounded-lg lg:bg-transparent lg:p-0">
           <h2 className="text-3xl md:text-5xl font-extrabold font-heading leading-tight drop-shadow-lg">
             Where Africa's Sporting Stars Rise.
           </h2>
@@ -109,13 +99,12 @@ const LoginPage = () => {
             Connect to compete, discover, and unlock your true potential.
           </p>
 
-          {/* Social Login Options (Moved to Backdrop) */}
           <div className="mt-8 text-center text-white">
             <span className="relative inline-block px-3 mb-4 text-lg font-semibold block">
               Log in with
             </span>
           </div>
-          <div className="space-y-3 max-w-xs mx-auto"> {/* Added max-width for better button alignment */}
+          <div className="space-y-3 max-w-xs mx-auto">
             <button
               type="button"
               className="w-full flex items-center justify-center px-4 py-2 border border-white/50 rounded-md shadow-sm text-white bg-transparent hover:bg-white/10 transition-colors"
@@ -137,7 +126,6 @@ const LoginPage = () => {
             >
               <FaApple className="mr-3 text-lg" /> Continue with Apple
             </button>
-            {/* VITAL for Africa: Phone Number OTP */}
             <button
               type="button"
               className="w-full flex items-center justify-center px-4 py-2 border border-gamepulse-orange rounded-md shadow-sm text-white bg-gamepulse-orange hover:bg-orange-700 transition-colors"
@@ -147,29 +135,24 @@ const LoginPage = () => {
             </button>
           </div>
 
-          {/* IV. Credibility & Value Reinforcement (Remains on Backdrop) */}
           <div className="mt-10 text-center text-white text-lg font-semibold italic max-w-xs mx-auto">
             "Connecting African high school talent to unprecedented opportunities."
           </div>
 
-          {/* VI. Footer (Remains on Backdrop) */}
-          <div className="mt-10 text-center text-sm text-whit space-x-4">
+          <div className="mt-10 text-center text-sm text-white space-x-4"> {/* Corrected text-whit to text-white */}
             <Link to="/privacy-policy" className="hover:underline hover:text-white">Privacy Policy</Link>
             <Link to="/terms-of-service" className="hover:underline hover:text-white">Terms of Service</Link>
             <Link to="/help" className="hover:underline hover:text-white">Help & Support</Link>
           </div>
-
-        </div> {/* End of backdrop content container */}
-      </div> {/* End of left column */}
+        </div>
+      </div>
 
       {/* Right Column (Login Form) */}
       <div className="w-full lg:w-1/2 flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8">
         <div className="relative z-10 w-full max-w-md bg-white rounded-xl shadow-lg p-6 sm:p-8 md:p-10 border border-gray-200">
-          {/* Page Header & Branding (for Right Column - visible on all screens) */}
           <div className="text-center mb-8">
-            {/* Logo hidden on large screens since it's on the left backdrop */}
             <img
-              src="/images/gamepulse-logo.webp" // Your primary logo path for light backgrounds
+              src="/images/gamepulse-logo.webp"
               alt="GamePulse Africa Logo"
               className="mx-auto h-16 md:h-20 w-auto animate-fadeIn lg:hidden"
               loading="lazy"
@@ -182,8 +165,7 @@ const LoginPage = () => {
             </h2>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Separator for email/password section */}
+          <form onSubmit={formik.handleSubmit} className="space-y-6">
             <div className="text-center text-gray-500 my-6">
               <span className="relative inline-block px-3 before:absolute before:left-0 before:top-1/2 before:w-full before:h-px before:bg-gray-300 after:absolute after:left-0 after:top-1/2 after:w-full after:h-px after:bg-gray-300">
                 <span className="relative z-10 bg-white px-2">Or log in with your account</span>
@@ -197,14 +179,17 @@ const LoginPage = () => {
                 type="text"
                 id="emailOrUsername"
                 name="emailOrUsername"
-                value={formData.emailOrUsername}
-                onChange={handleChange}
+                value={formik.values.emailOrUsername}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur} // Add onBlur for validation
                 placeholder="Enter your email or username"
-                className={`block w-full px-4 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:ring-gamepulse-blue focus:border-gamepulse-blue sm:text-sm ${errors.emailOrUsername ? 'border-red-500' : 'border-gray-300'}`}
-                aria-invalid={errors.emailOrUsername ? "true" : "false"}
-                aria-describedby={errors.emailOrUsername ? "emailOrUsername-error" : undefined}
+                className={`block w-full px-4 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:ring-gamepulse-blue focus:border-gamepulse-blue sm:text-sm ${formik.touched.emailOrUsername && formik.errors.emailOrUsername ? 'border-red-500' : 'border-gray-300'}`}
+                aria-invalid={formik.touched.emailOrUsername && formik.errors.emailOrUsername ? "true" : "false"}
+                aria-describedby={formik.touched.emailOrUsername && formik.errors.emailOrUsername ? "emailOrUsername-error" : undefined}
               />
-              {errors.emailOrUsername && <p id="emailOrUsername-error" className="mt-1 text-sm text-red-600 flex items-center"><FaExclamationCircle className="mr-1" />{errors.emailOrUsername}</p>}
+              {formik.touched.emailOrUsername && formik.errors.emailOrUsername && (
+                <p id="emailOrUsername-error" className="mt-1 text-sm text-red-600 flex items-center"><FaExclamationCircle className="mr-1" />{formik.errors.emailOrUsername}</p>
+              )}
             </div>
 
             <div className="mt-4">
@@ -214,12 +199,13 @@ const LoginPage = () => {
                   type={passwordVisible ? 'text' : 'password'}
                   id="password"
                   name="password"
-                  value={formData.password}
-                  onChange={handleChange}
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur} // Add onBlur for validation
                   placeholder="Enter your password"
-                  className={`block w-full px-4 py-2 pr-10 border rounded-md shadow-sm placeholder-gray-400 focus:ring-gamepulse-blue focus:border-gamepulse-blue sm:text-sm ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
-                  aria-invalid={errors.password ? "true" : "false"}
-                  aria-describedby={errors.password ? "password-error" : undefined}
+                  className={`block w-full px-4 py-2 pr-10 border rounded-md shadow-sm placeholder-gray-400 focus:ring-gamepulse-blue focus:border-gamepulse-blue sm:text-sm ${formik.touched.password && formik.errors.password ? 'border-red-500' : 'border-gray-300'}`}
+                  aria-invalid={formik.touched.password && formik.errors.password ? "true" : "false"}
+                  aria-describedby={formik.touched.password && formik.errors.password ? "password-error" : undefined}
                 />
                 <button
                   type="button"
@@ -230,7 +216,9 @@ const LoginPage = () => {
                   {passwordVisible ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
-              {errors.password && <p id="password-error" className="mt-1 text-sm text-red-600 flex items-center"><FaExclamationCircle className="mr-1" />{errors.password}</p>}
+              {formik.touched.password && formik.errors.password && (
+                <p id="password-error" className="mt-1 text-sm text-red-600 flex items-center"><FaExclamationCircle className="mr-1" />{formik.errors.password}</p>
+              )}
             </div>
 
             <div className="flex items-center justify-between mt-4">
@@ -239,8 +227,8 @@ const LoginPage = () => {
                   id="rememberMe"
                   name="rememberMe"
                   type="checkbox"
-                  checked={formData.rememberMe}
-                  onChange={handleChange}
+                  checked={formik.values.rememberMe}
+                  onChange={formik.handleChange} // Formik handles this automatically
                   className="h-4 w-4 text-gamepulse-blue border-gray-300 rounded focus:ring-gamepulse-blue"
                 />
                 <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-900">
@@ -257,27 +245,27 @@ const LoginPage = () => {
             {/* Login Button */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !formik.isValid || formik.isSubmitting} // Disable if loading, form is invalid, or already submitting
               className="w-full bg-gamepulse-orange text-white py-3 rounded-md font-semibold text-lg hover:bg-orange-700 transition-colors duration-300 shadow-lg flex items-center justify-center mt-6"
               aria-label={loading ? 'Logging In...' : 'Log In'}
             >
-              {loading ? (
+              {loading || formik.isSubmitting ? ( // Use formik.isSubmitting for better control
                 <svg className="animate-spin h-5 w-5 text-white mr-3" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
               ) : null}
-              {loading ? 'Logging In...' : 'Log In'}
+              {loading || formik.isSubmitting ? 'Logging In...' : 'Log In'}
             </button>
 
-            {/* VII. Error Handling */}
+            {/* Error Handling */}
             {networkError && (
               <p className="mt-4 text-sm text-red-600 text-center flex items-center justify-center">
                 <FaExclamationCircle className="mr-2" /> {networkError}
               </p>
             )}
 
-            {/* V. New User Call to Action (Moved back to form) */}
+            {/* New User Call to Action */}
             <div className="mt-8 text-center">
               <p className="text-gray-600">Don't have an account?</p>
               <Link to="/signup" className="font-semibold text-gamepulse-blue hover:text-blue-700 transition-colors">
@@ -285,7 +273,6 @@ const LoginPage = () => {
               </Link>
             </div>
           </form>
-
         </div>
       </div>
     </div>

@@ -1,10 +1,11 @@
 // src/pages/SignUpPage.jsx
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useFormik } from 'formik'; // Import useFormik hook
+import * as Yup from 'yup'; // Import Yup for validation schema
 import { FaEye, FaEyeSlash, FaGoogle, FaFacebook, FaApple, FaPhoneAlt, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 import { FaFootballBall, FaUserTie, FaSearch, FaUsers } from 'react-icons/fa'; // Specific icons for user types
-import Backdrop from './../assets/backdrop.png'
-
+import Backdrop from './../assets/backdrop.png'; // Correct path to your backdrop image
 
 // Assume a base path for dashboards or specific onboarding flows
 const DASHBOARD_ROUTES = {
@@ -15,76 +16,67 @@ const DASHBOARD_ROUTES = {
 };
 
 const SignUpPage = () => {
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    userType: '', // 'athlete', 'coach', 'scout', 'fan'
-  });
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-  const [errors, setErrors] = useState({});
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [networkError, setNetworkError] = useState('');
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   useEffect(() => {
     window.scrollTo(0, 0); // Scroll to top on page load
     document.title = "Sign Up | GamePulse Africa"; // Set page title
   }, []);
 
-  const validateForm = () => {
-    let newErrors = {};
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = 'Full Name is required.';
-    }
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required.';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Invalid email format.';
-    }
-    if (!formData.password) {
-      newErrors.password = 'Password is required.';
-    } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters long.';
-    }
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match.';
-    }
-    if (!formData.userType) {
-      newErrors.userType = 'Please select your user type.';
-    }
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  // Define Yup validation schema
+  const SignUpSchema = Yup.object().shape({
+    fullName: Yup.string()
+      .trim() // Trim whitespace
+      .required('Full Name is required.')
+      .min(2, 'Full Name must be at least 2 characters.')
+      .max(100, 'Full Name cannot exceed 100 characters.'),
+    email: Yup.string()
+      .trim()
+      .email('Invalid email format. E.g., user@example.com')
+      .required('Email is required.')
+      .max(255, 'Email cannot exceed 255 characters.'),
+    password: Yup.string()
+      .required('Password is required.')
+      .min(8, 'Password must be at least 8 characters long.')
+      .max(50, 'Password cannot exceed 50 characters.')
+      .matches(/[a-z]/, 'Password must contain at least one lowercase letter.')
+      .matches(/[A-Z]/, 'Password must contain at least one uppercase letter.')
+      .matches(/[0-9]/, 'Password must contain at least one number.')
+      .matches(/[^a-zA-Z0-9]/, 'Password must contain at least one special character (e.g., !@#$%^&*).'),
+    confirmPassword: Yup.string()
+      .required('Confirm Password is required.')
+      .oneOf([Yup.ref('password'), null], 'Passwords do not match.'),
+    userType: Yup.string()
+      .oneOf(['athlete', 'coach', 'scout', 'fan'], 'Please select a valid user type.')
+      .required('Please select your user type.'),
+  });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear error for the field being changed
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
-    }
-  };
+  // Initialize Formik
+  const formik = useFormik({
+    initialValues: {
+      fullName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      userType: '',
+    },
+    validationSchema: SignUpSchema,
+    onSubmit: async (values) => {
+      setNetworkError('');
+      setSubmitSuccess(false);
 
-  const handleUserTypeSelect = (type) => {
-    setFormData(prev => ({ ...prev, userType: type }));
-    if (errors.userType) {
-      setErrors(prev => ({ ...prev, userType: '' }));
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setNetworkError('');
-    setSubmitSuccess(false);
-
-    if (validateForm()) {
-      // Simulate API call
       try {
-        // In a real app, you'd send formData to your backend:
-        // const response = await fetch('/api/signup', { method: 'POST', body: JSON.stringify(formData) });
+        // Simulate API call
+        // In a real app, you'd send 'values' to your backend:
+        // const response = await fetch('/api/signup', {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json' },
+        //   body: JSON.stringify(values),
+        // });
         // const data = await response.json();
         // if (response.ok) { ... } else { ... }
 
@@ -94,11 +86,11 @@ const SignUpPage = () => {
         // Simulate success or failure
         const isSuccess = Math.random() > 0.1; // 90% success rate for demo
         if (isSuccess) {
-          console.log('Sign up data:', formData);
+          console.log('Sign up data:', values);
           setSubmitSuccess(true);
 
           // Determine the redirection path based on userType
-          const redirectTo = DASHBOARD_ROUTES[formData.userType] || '/dashboard'; // Default to /dashboard if type not found
+          const redirectTo = DASHBOARD_ROUTES[values.userType] || '/dashboard'; // Default to /dashboard if type not found
 
           // Redirect after a short delay for the success message to be seen
           setTimeout(() => {
@@ -111,7 +103,13 @@ const SignUpPage = () => {
         setNetworkError('Unable to connect. Please check your internet connection and try again.');
         console.error('Sign up error:', err);
       }
-    }
+    },
+  });
+
+  // Helper for user type selection to update Formik's state
+  const handleUserTypeSelect = (type) => {
+    formik.setFieldValue('userType', type);
+    formik.setFieldTouched('userType', true, false); // Mark as touched to show errors immediately if invalid
   };
 
   return (
@@ -120,22 +118,19 @@ const SignUpPage = () => {
       <div
         className="relative w-full lg:w-1/2 flex flex-col items-center justify-center text-white py-12 px-4 sm:px-6 lg:px-8 bg-cover bg-center bg-no-repeat transition-all duration-500 ease-in-out"
         style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url(${Backdrop})`, // Using provided signup bg image
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url(${Backdrop})`,
         }}
       >
-        <div className="text-center z-10 p-4  bg-opacity-20 rounded-lg lg:bg-transparent lg:p-0">
-          {/* Logo removed from here to prevent extra space */}
+        <div className="text-center z-10 p-4 bg-opacity-20 rounded-lg lg:bg-transparent lg:p-0">
           <h2 className="text-3xl md:text-5xl font-extrabold font-heading leading-tight drop-shadow-lg">
             Where Africa's Sporting Stars Rise.
           </h2>
 
-          {/* Credibility & Value Reinforcement (Remains on Backdrop) */}
           <div className="mt-10 text-center text-white text-lg font-semibold italic max-w-xs mx-auto">
             "Connecting African high school talent to unprecedented opportunities."
           </div>
 
-          {/* Social/Quick Sign-Up Options (Remains on Backdrop) */}
-          <div className="space-y-3 max-w-xs mx-auto">
+          <div className="space-y-3 max-w-xs mx-auto mt-8"> {/* Added mt-8 for spacing */}
             <button
               type="button"
               className="w-full flex items-center justify-center px-4 py-2 border border-white/50 rounded-md shadow-sm text-white bg-transparent hover:bg-white/10 transition-colors"
@@ -157,7 +152,6 @@ const SignUpPage = () => {
             >
               <FaApple className="mr-3 text-lg" /> Continue with Apple
             </button>
-            {/* VITAL for Africa: Phone Number OTP */}
             <button
               type="button"
               className="w-full flex items-center justify-center px-4 py-2 border border-gamepulse-orange rounded-md shadow-sm text-white bg-gamepulse-orange hover:bg-orange-700 transition-colors"
@@ -171,23 +165,19 @@ const SignUpPage = () => {
               Or Fill in the form below
             </span>
           </div>
-          {/* Existing User Call to Action (Moved back to form) */}
-              <div className="mt-8 text-center">
-                <p className="text-yellow-300 ">Already have an account?</p>
-                <Link to="/login" className="font-semibold text-gamepulse-yellow hover:text-amber-500 transition-colors">
-                  Log In
-                </Link>
-              </div>
-
-        </div> {/* End of backdrop content container */}
-      </div> {/* End of left column */}
+          <div className="mt-8 text-center">
+            <p className="text-yellow-300 ">Already have an account?</p>
+            <Link to="/login" className="font-semibold text-gamepulse-yellow hover:text-amber-500 transition-colors">
+              Log In
+            </Link>
+          </div>
+        </div>
+      </div>
 
       {/* Right Column (Sign Up Form) */}
       <div className="w-full lg:w-1/2 flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8">
         <div className="relative z-10 w-full max-w-md bg-white rounded-xl shadow-lg p-6 sm:p-8 md:p-10 border border-gray-200">
-          {/* Page Header & Branding (for Right Column - visible on all screens) */}
           <div className="text-center mb-8">
-            {/* Logo in the right column, visible on all screen sizes */}
             <h1 className="mt-4 text-3xl md:text-4xl font-extrabold text-gray-900 font-heading">
               Join Us
             </h1>
@@ -200,15 +190,14 @@ const SignUpPage = () => {
             <div className="text-center text-gamepulse-teal py-8">
               <FaCheckCircle className="mx-auto text-6xl mb-4" />
               <h3 className="text-2xl font-bold mb-2">Registration Successful!</h3>
-              <p className="text-lg">Welcome to GamePulse Africa, {formData.fullName}.</p>
+              <p className="text-lg">Welcome to GamePulse Africa, {formik.values.fullName}.</p>
               <p className="mt-2">Redirecting you to your dashboard...</p>
-              {/* The Link below is primarily for users whose redirect might fail, or for immediate interaction */}
-              <Link to={DASHBOARD_ROUTES[formData.userType] || '/dashboard'} className="mt-6 inline-block bg-gamepulse-blue text-white px-6 py-3 rounded-full font-semibold shadow-md hover:bg-blue-700 transition-colors">
+              <Link to={DASHBOARD_ROUTES[formik.values.userType] || '/dashboard'} className="mt-6 inline-block bg-gamepulse-blue text-white px-6 py-3 rounded-full font-semibold shadow-md hover:bg-blue-700 transition-colors">
                 Go to Dashboard Now
               </Link>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={formik.handleSubmit} className="space-y-6">
               {/* Core Registration Form */}
               <div>
                 <div>
@@ -217,14 +206,17 @@ const SignUpPage = () => {
                     type="text"
                     id="fullName"
                     name="fullName"
-                    value={formData.fullName}
-                    onChange={handleChange}
+                    value={formik.values.fullName}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur} // Add onBlur for validation on field exit
                     placeholder="Enter your full name"
-                    className={`block w-full px-4 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:ring-gamepulse-blue focus:border-gamepulse-blue sm:text-sm ${errors.fullName ? 'border-red-500' : 'border-gray-300'}`}
-                    aria-invalid={errors.fullName ? "true" : "false"}
-                    aria-describedby={errors.fullName ? "fullName-error" : undefined}
+                    className={`block w-full px-4 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:ring-gamepulse-blue focus:border-gamepulse-blue sm:text-sm ${formik.touched.fullName && formik.errors.fullName ? 'border-red-500' : 'border-gray-300'}`}
+                    aria-invalid={formik.touched.fullName && formik.errors.fullName ? "true" : "false"}
+                    aria-describedby={formik.touched.fullName && formik.errors.fullName ? "fullName-error" : undefined}
                   />
-                  {errors.fullName && <p id="fullName-error" className="mt-1 text-sm text-red-600">{errors.fullName}</p>}
+                  {formik.touched.fullName && formik.errors.fullName && (
+                    <p id="fullName-error" className="mt-1 text-sm text-red-600">{formik.errors.fullName}</p>
+                  )}
                 </div>
 
                 <div className="mt-4">
@@ -233,14 +225,17 @@ const SignUpPage = () => {
                     type="email"
                     id="email"
                     name="email"
-                    value={formData.email}
-                    onChange={handleChange}
+                    value={formik.values.email}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
                     placeholder="Enter your email address"
-                    className={`block w-full px-4 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:ring-gamepulse-blue focus:border-gamepulse-blue sm:text-sm ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
-                    aria-invalid={errors.email ? "true" : "false"}
-                    aria-describedby={errors.email ? "email-error" : undefined}
+                    className={`block w-full px-4 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:ring-gamepulse-blue focus:border-gamepulse-blue sm:text-sm ${formik.touched.email && formik.errors.email ? 'border-red-500' : 'border-gray-300'}`}
+                    aria-invalid={formik.touched.email && formik.errors.email ? "true" : "false"}
+                    aria-describedby={formik.touched.email && formik.errors.email ? "email-error" : undefined}
                   />
-                  {errors.email && <p id="email-error" className="mt-1 text-sm text-red-600">{errors.email}</p>}
+                  {formik.touched.email && formik.errors.email && (
+                    <p id="email-error" className="mt-1 text-sm text-red-600">{formik.errors.email}</p>
+                  )}
                 </div>
 
                 <div className="mt-4">
@@ -250,12 +245,13 @@ const SignUpPage = () => {
                       type={passwordVisible ? 'text' : 'password'}
                       id="password"
                       name="password"
-                      value={formData.password}
-                      onChange={handleChange}
+                      value={formik.values.password}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
                       placeholder="Create a password"
-                      className={`block w-full px-4 py-2 pr-10 border rounded-md shadow-sm placeholder-gray-400 focus:ring-gamepulse-blue focus:border-gamepulse-blue sm:text-sm ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
-                      aria-invalid={errors.password ? "true" : "false"}
-                      aria-describedby={errors.password ? "password-error" : undefined}
+                      className={`block w-full px-4 py-2 pr-10 border rounded-md shadow-sm placeholder-gray-400 focus:ring-gamepulse-blue focus:border-gamepulse-blue sm:text-sm ${formik.touched.password && formik.errors.password ? 'border-red-500' : 'border-gray-300'}`}
+                      aria-invalid={formik.touched.password && formik.errors.password ? "true" : "false"}
+                      aria-describedby={formik.touched.password && formik.errors.password ? "password-error" : undefined}
                     />
                     <button
                       type="button"
@@ -266,7 +262,9 @@ const SignUpPage = () => {
                       {passwordVisible ? <FaEyeSlash /> : <FaEye />}
                     </button>
                   </div>
-                  {errors.password && <p id="password-error" className="mt-1 text-sm text-red-600">{errors.password}</p>}
+                  {formik.touched.password && formik.errors.password && (
+                    <p id="password-error" className="mt-1 text-sm text-red-600">{formik.errors.password}</p>
+                  )}
                 </div>
 
                 <div className="mt-4">
@@ -276,12 +274,13 @@ const SignUpPage = () => {
                       type={confirmPasswordVisible ? 'text' : 'password'}
                       id="confirmPassword"
                       name="confirmPassword"
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
+                      value={formik.values.confirmPassword}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
                       placeholder="Re-enter your password"
-                      className={`block w-full px-4 py-2 pr-10 border rounded-md shadow-sm placeholder-gray-400 focus:ring-gamepulse-blue focus:border-gamepulse-blue sm:text-sm ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'}`}
-                      aria-invalid={errors.confirmPassword ? "true" : "false"}
-                      aria-describedby={errors.confirmPassword ? "confirmPassword-error" : undefined}
+                      className={`block w-full px-4 py-2 pr-10 border rounded-md shadow-sm placeholder-gray-400 focus:ring-gamepulse-blue focus:border-gamepulse-blue sm:text-sm ${formik.touched.confirmPassword && formik.errors.confirmPassword ? 'border-red-500' : 'border-gray-300'}`}
+                      aria-invalid={formik.touched.confirmPassword && formik.errors.confirmPassword ? "true" : "false"}
+                      aria-describedby={formik.touched.confirmPassword && formik.errors.confirmPassword ? "confirmPassword-error" : undefined}
                     />
                     <button
                       type="button"
@@ -292,7 +291,9 @@ const SignUpPage = () => {
                       {confirmPasswordVisible ? <FaEyeSlash /> : <FaEye />}
                     </button>
                   </div>
-                  {errors.confirmPassword && <p id="confirmPassword-error" className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>}
+                  {formik.touched.confirmPassword && formik.errors.confirmPassword && (
+                    <p id="confirmPassword-error" className="mt-1 text-sm text-red-600">{formik.errors.confirmPassword}</p>
+                  )}
                 </div>
               </div>
 
@@ -301,36 +302,39 @@ const SignUpPage = () => {
                 <h3 className="text-xl font-bold text-gray-800 mb-4">What Best Describes You?</h3>
                 <div className="grid grid-cols-2 gap-4">
                   {[
-                    { type: 'athlete', label: 'Athlete', icon: FaFootballBall },
-                    { type: 'coach', label: 'Coach', icon: FaUserTie },
-                    { type: 'scout', label: 'Scout', icon: FaSearch },
-                    { type: 'fan', label: 'Fan / Parent',  icon: FaUsers },
+                    { type: 'athlete', label: 'Athlete', description: 'High School Player looking for exposure and growth.', icon: FaFootballBall },
+                    { type: 'coach', label: 'Coach', description: 'Managing a team, spotting and nurturing talent.', icon: FaUserTie },
+                    { type: 'scout', label: 'Scout', description: 'Discovering promising talent across Africa.', icon: FaSearch },
+                    { type: 'fan', label: 'Fan / Parent', description: 'Following games, supporting athletes, staying updated.', icon: FaUsers },
                   ].map((userTypeOption) => (
                     <button
                       key={userTypeOption.type}
                       type="button"
                       onClick={() => handleUserTypeSelect(userTypeOption.type)}
                       className={`flex flex-col items-center p-4 border rounded-lg text-center transition-all duration-200
-                        ${formData.userType === userTypeOption.type
+                        ${formik.values.userType === userTypeOption.type
                           ? 'border-gamepulse-blue ring-2 ring-gamepulse-blue bg-gamepulse-blue/5 shadow-md'
                           : 'border-gray-300 hover:border-gamepulse-blue/50 hover:shadow-sm'
                         }`}
                     >
-                      <userTypeOption.icon className={`text-3xl mb-2 ${formData.userType === userTypeOption.type ? 'text-gamepulse-blue' : 'text-gray-500'}`} />
+                      <userTypeOption.icon className={`text-3xl mb-2 ${formik.values.userType === userTypeOption.type ? 'text-gamepulse-blue' : 'text-gray-500'}`} />
                       <p className="font-semibold text-gray-800 mb-1">{userTypeOption.label}</p>
                       <p className="text-xs text-gray-600">{userTypeOption.description}</p>
                     </button>
                   ))}
                 </div>
-                {errors.userType && <p className="mt-2 text-sm text-red-600 text-center">{errors.userType}</p>}
+                {formik.touched.userType && formik.errors.userType && (
+                  <p className="mt-2 text-sm text-red-600 text-center">{formik.errors.userType}</p>
+                )}
               </div>
 
               {/* Submit Button */}
               <button
                 type="submit"
                 className="w-full bg-gamepulse-orange text-white py-3 rounded-md font-semibold text-lg hover:bg-orange-700 transition-colors duration-300 shadow-lg"
+                disabled={formik.isSubmitting} // Disable button while submitting
               >
-                Sign Up
+                {formik.isSubmitting ? 'Signing Up...' : 'Sign Up'}
               </button>
 
               {/* Error Handling */}
@@ -340,8 +344,7 @@ const SignUpPage = () => {
                 </p>
               )}
 
-              
-              {/* Footer (Moved back to form) */}
+              {/* Footer */}
               <div className="mt-10 text-center text-sm text-gray-500 space-x-4">
                 <Link to="/privacy-policy" className="hover:underline">Privacy Policy</Link>
                 <Link to="/terms-of-service" className="hover:underline">Terms of Service</Link>
@@ -349,7 +352,6 @@ const SignUpPage = () => {
               </div>
             </form>
           )}
-
         </div>
       </div>
     </div>
