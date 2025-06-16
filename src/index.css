@@ -90,6 +90,7 @@
   .bg-gamepulse-blue-light { background-color: var(--color-gamepulse-blue-light); }
   .bg-gamepulse-blue { background-color: var(--color-gamepulse-blue); }
   .bg-gamepulse-yellow { background-color: var(--color-gamepulse-yellow); }
+  .border-gamepulse-yellow { background-color: var(--color-gamepulse-yellow); }
   .bg-neutral-black { background-color: var(--color-neutral-black); }
   .bg-neutral-dark-gray { background-color: var(--color-neutral-dark-gray); }
   .bg-neutral-medium-gray { background-color: var(--color-neutral-medium-gray); }

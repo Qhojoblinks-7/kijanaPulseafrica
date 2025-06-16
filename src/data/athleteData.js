@@ -1,123 +1,89 @@
-// src/data/athleteData.js
-
-// Import icons needed for stats (ensure you have react-icons installed)
-import {
-  FaFutbol, FaHandsHelping, FaCalendarAlt, FaShieldAlt, // Football
-  FaBasketballBall, FaRetweet, FaLifeRing, FaBullseye,     // Basketball (example)
-  FaRunning, FaRulerHorizontal,                          // Athletics (example)
-  FaTrophy, FaMapMarkerAlt, FaPlus, FaUserPlus, FaVideo, FaPlayCircle, FaLink,
-  FaUserGraduate, FaStar, FaGraduationCap, FaEnvelope, FaAt, FaShareAlt, FaUsers,
-  FaTiktok, FaInstagram, FaTwitter, FaHandshake, FaChartLine
-} from 'react-icons/fa';
+// src/data/athleteData.js (or adjust your myProfileData.js)
 
 export const dummyAthleteData = {
-  profilePicture: '/images/athlete-amaani.webp', // Placeholder - place in public/images
-  bannerImage: '/images/profile-banner-football.webp', // Placeholder - place in public/images
-  fullName: 'Amaani Okoro',
+  id: 'amaani-okoro-123',
+  firstName: 'Amaani', // New field
+  lastName: 'Okoro',   // New field
+  fullName: 'Amaani Okoro', // Keep for other components if needed
   primarySport: 'Football',
   position: 'Striker',
-  schoolTeam: 'Accra High School Spartans',
+  schoolAffiliation: 'Accra High School Spartans',
   location: 'Accra, Ghana',
-  bio: 'Aspiring Olympian | Dedicated Team Player | Dreamer of the World Cup stage.',
-  followers: 234,
-  xpRank: '#12 Region (U17)', // XP Ranking for talent identification
-  stats: {
+  aspirationalQuote: 'Aspiring Olympian | Dedicated Team Player | Dreamer of the World Cup stage.',
+
+  // New fields for the updated ProfileHeader
+  height: '5 ft 10 in', // Example height
+  weight: '160 lbs',    // Example weight
+  bornDate: '01/15/2007', // Example born date
+  fromLocation: 'Accra, Ghana', // Example 'from' location
+  sportsDebut: '2022', // Example sports debut year
+  previousLocation: 'Youth Academy FC', // Example previous club/location
+
+  // Placeholder images and details for the new layout
+  athleteFullImage: 'https://via.placeholder.com/600x800/A0A0A0/FFFFFF?text=Amaani+Okoro+Full', // Large image for div2
+  schoolLogo: 'https://via.placeholder.com/50x50?text=School+Logo', // Placeholder for school logo
+  teamLogo: 'https://via.placeholder.com/50x50?text=Team+Logo',     // Placeholder for team logo
+  jerseyNumber: '#10', // Example jersey number
+
+
+  // Stats for Div3, mimicking the Stephen Curry layout
+  postseasonStats: {
+    mp: '37',
+    fg: '45.1%',
+    '3p': '39.5%',
+    ft: '95.7%',
+    ppg: '25.5',
+    rpg: '6.1',
+    apg: '5.4',
+    bpg: '0.7',
+  },
+  careerStats: {
+    mp: '34.4',
+    fg: '47.7%',
+    '3p': '43.6%',
+    ft: '90.3%',
+    ppg: '23.1',
+    rpg: '4.4',
+    apg: '6.8',
+    bpg: '0.2',
+  },
+
+  // --- Keep existing data for other components ---
+  profilePhoto: 'https://via.placeholder.com/150/0000FF/FFFFFF?text=AO', // Smaller headshot, might not be used here now
+  bannerPhoto: 'https://via.placeholder.com/800x200/2C3E50/FFFFFF?text=Amaani+Banner', // Might not be used now
+
+  xpRank: '#12 Region (U17)',
+  followers: '234',
+  goals: '15',
+
+  detailedStats: {
     football: [
-      { label: 'Goals', value: 15, icon: FaFutbol },
-      { label: 'Assists', value: 8, icon: FaHandsHelping },
-      { label: 'Appearances', value: 20, icon: FaCalendarAlt },
-      { label: 'Tackle Success', value: '75%', icon: FaShieldAlt },
+      { id: 'g1', name: 'Goals', value: 15, icon: 'FaFutbol' },
+      // ... rest of detailed stats
     ],
-    basketball: [
-      { label: 'PPG', value: 18.5, icon: FaBasketballBall },
-      { label: 'RPG', value: 7.2, icon: FaRetweet },
-      { label: 'APG', value: 4.1, icon: FaLifeRing },
-      { label: 'FG%', value: '45%', icon: FaBullseye },
-    ],
-    athletics: [
-      { label: '100m PB', value: '10.8s', icon: FaRunning },
-      { label: 'Long Jump PB', value: '6.8m', icon: FaRulerHorizontal },
-      { label: 'Season Rank', value: '#3', icon: FaTrophy },
-    ]
   },
-  progressData: [ // Simple data for a placeholder chart
-    { name: 'Jan', goals: 2 },
-    { name: 'Feb', goals: 3 },
-    { name: 'Mar', goals: 4 },
-    { name: 'Apr', goals: 6 },
-    { name: 'May', goals: 0 }, // Example dip
-    { name: 'Jun', goals: 8 },
-  ],
-  achievements: [
-    { text: 'League Top Scorer 2024', icon: FaTrophy },
-    { text: 'National High School All-Star Team', icon: FaTrophy },
-    { text: 'MVP Regional Tournament 2023', icon: FaTrophy },
-    { text: 'Golden Boot Winner U16 League', icon: FaTrophy }
-  ],
-  featuredVideo: 'https://www.youtube.com/embed/dQw4w9WgXcQ?modestbranding=1&rel=0&showinfo=0&controls=0', // Replace with a real embed
-  videoThumbnails: [
-    { id: 1, src: '/images/video-thumb-1.webp', alt: 'Goal vs Rivals', type: 'video', videoUrl: 'https://www.youtube.com/watch?v=...' },
-    { id: 2, src: '/images/video-thumb-2.webp', alt: 'Dribbling Skills', type: 'video', videoUrl: 'https://www.youtube.com/watch?v=...' },
-  ],
-  photoThumbnails: [
-    { id: 3, src: '/images/photo-action-1.webp', alt: 'Celebration Shot', type: 'photo' },
-    { id: 4, src: '/images/photo-training-2.webp', alt: 'Training Focus', type: 'photo' },
-    { id: 5, src: '/images/photo-team-3.webp', alt: 'Team Huddle', type: 'photo' },
-    { id: 6, src: '/images/photo-action-4.webp', alt: 'Game intensity', type: 'photo' },
-  ],
-  liveStreamLinks: [
-    { label: 'Watch Full Match Replay (vs. City Rivals - Oct 2024)', url: '#' },
-    { label: 'Upcoming Match: vs. Green Eagles (Aug 15)', url: '#' },
-  ],
-  personalStatement: "My journey in football began on the dusty pitches of Accra, fueled by a simple dream: to play professionally and make my country proud. I thrive under pressure, constantly push my limits, and believe in the power of teamwork. Every game is an opportunity to learn, grow, and deliver excellence.",
-  skills: ['Leadership', 'Vision', 'Teamwork', 'Dedication', 'Mental Toughness', 'Coachability'],
-  digitalClassroomProgress: [
-    { name: 'Nutrition for Athletes Module', completed: true },
-    { name: 'Mental Toughness Certified (GamePulse Academy)', completed: true },
-    { name: 'Injury Prevention Fundamentals', completed: false }
-  ],
-  contactOptions: {
-    inAppMessaging: true, // If in-app messaging is available
-    publicEmail: 'amaani.okoro.athlete@gamepulse.africa', // If athlete chooses to make it public
+  stats: {
+    "2023-2024 Season": {
+      goals: 15,
+      // ... rest of season stats
+    },
   },
-  coachAgentContact: {
-    name: 'Coach Kwame Nkrumah',
-    phone: '+233 55 123 4567',
-    email: 'coach.kwame@school.com',
-  },
-  socialMediaLinks: [
-    { platform: 'TikTok', url: 'https://tiktok.com/@amaani_football', icon: FaTiktok },
-    { platform: 'Instagram', url: 'https://instagram.com/amaani_athlete', icon: FaInstagram },
-    { platform: 'Twitter', url: 'https://twitter.com/amaani_sports', icon: FaTwitter },
-  ],
-  // Pass icons for these as well
-  icons: {
-    FaMapMarkerAlt: FaMapMarkerAlt,
-    FaPlus: FaPlus,
-    FaUserPlus: FaUserPlus,
-    FaVideo: FaVideo,
-    FaPlayCircle: FaPlayCircle,
-    FaLink: FaLink,
-    FaUserGraduate: FaUserGraduate,
-    FaStar: FaStar,
-    FaGraduationCap: FaGraduationCap,
-    FaEnvelope: FaEnvelope,
-    FaAt: FaAt,
-    FaShareAlt: FaShareAlt,
-    FaUsers: FaUsers,
-    FaHandshake: FaHandshake,
-    FaChartLine: FaChartLine,
-  }
+  videoHighlights: [],
+  gameLog: [],
+  academicProfile: {},
+  testimonials: [],
+  socialMedia: {},
+  sports: ['Football'],
+  progressData: {},
+  icons: {},
 };
 
+
+// Keep other dummy exports as they were
 export const dummySimilarAthletes = [
-  { id: 1, name: 'Kwame Adjei', sport: 'Football - Midfielder', profilePicture: '/images/athlete-kwame.webp' },
-  { id: 2, name: 'Selah Kojo', sport: 'Football - Defender', profilePicture: '/images/athlete-selah.webp' },
-  { id: 3, name: 'Nala Mensah', sport: 'Basketball - Forward', profilePicture: '/images/athlete-nala.webp' },
-  { id: 4, name: 'Jelani Asante', sport: 'Athletics - Sprinter', profilePicture: '/images/athlete-jelani.webp' },
+  // ... similar athlete objects
 ];
 
 export const dummySchoolAthletes = [
-  { id: 5, name: 'Zara Abubakar', sport: 'Football - Goalkeeper', profilePicture: '/images/athlete-zara.webp' },
-  { id: 6, name: 'Kofi Owusu', sport: 'Basketball - Center', profilePicture: '/images/athlete-kofi.webp' },
+  // ... school athlete objects
 ];

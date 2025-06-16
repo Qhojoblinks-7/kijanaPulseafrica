@@ -44,8 +44,6 @@ const UserDashboardPage = () => {
   // Render dashboard content based on user type from AuthContext
   const renderDashboardContent = () => {
     switch (currentUser.userType) { // Use currentUser.userType
-      case 'athlete':
-        return <AthleteDashboard user={currentUser} />; // Pass currentUser as 'user' prop
       case 'coach':
         return <CoachDashboard user={currentUser} />;   // Pass currentUser as 'user' prop
       case 'scout':

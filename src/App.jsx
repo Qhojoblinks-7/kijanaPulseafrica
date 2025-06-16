@@ -29,6 +29,7 @@ import HelpAndSupportPage from './pages/HelpAndSupportPage';
 
 // NEW IMPORT: DarkModeProvider
 import { DarkModeProvider } from './context/DarkModeContext';
+import SettingsPage from './pages/SettingsPage';
 
 
 function App() {
@@ -80,7 +81,7 @@ function App() {
 
               <Route path="/live-matches" element={<LiveMatchesDashboard />} />
               <Route path="/discover-talent" element={<AthleteSearchPage />} />
-              <Route path="/settings" element={<div>Settings (Implement Me)</div>} />
+              <Route path="/settings" element={<SettingsPage/>} />
               <Route path="/help" element={<HelpAndSupportPage />} />
               <Route path="/features" element={<div>Features Page (Implement Me)</div>} />
               <Route path="/digital-classroom" element={<div>Digital Classroom (Implement Me)</div>} />
