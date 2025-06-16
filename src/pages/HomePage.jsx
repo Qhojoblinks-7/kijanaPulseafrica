@@ -46,23 +46,14 @@ const HomePage = () => {
     <section
         className="relative h-screen flex items-center justify-center text-white p-4 overflow-hidden"
         style={{
-            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.75)), url(${Hero})`,
+            backgroundImage: `url(${Hero})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            backgroundAttachment: 'fixed', // Creates a parallax effect
+            backgroundAttachment: 'fixed', // Parallax effect
         }}
     >
-        {/* Subtle UI overlay hint for mobile-first emphasis */}
-        {/* <div className="absolute bottom-4 right-4 md:bottom-8 md:right-8 lg:bottom-12 lg:right-12 p-2 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 shadow-lg animate-fade-in-up-slow">
-          <div className="w-24 h-40 md:w-32 md:h-56 bg-gamepulse-dark rounded-lg flex flex-col items-center justify-center relative overflow-hidden">
-            <div className="absolute inset-0 bg-gamepulse-blue opacity-15 animate-pulse-slow"></div>
-            <FaGlobeAfrica className="text-white text-3xl md:text-5xl mb-2 z-10 opacity-90" />
-            <p className="text-white text-xs md:text-sm font-bold z-10">GamePulse App</p>
-            <div className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-gamepulse-dark to-transparent flex items-end justify-center pb-2">
-              <FaPlayCircle className="text-gamepulse-orange text-2xl md:text-3xl animate-bounce-custom" />
-            </div>
-          </div>
-        </div> */}
+        {/* Transparent blur overlay */}
+        <div className="absolute inset-0 bg-black/30 backdrop-blur-sm z-0"></div>
 
         <div className="text-center max-w-4xl mx-auto z-10 animate-fade-in-down-slow">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold leading-tight mb-4 font-heading drop-shadow-lg">
@@ -79,9 +70,9 @@ const HomePage = () => {
             <FaDownload className="mr-3" /> Download GamePulse Africa
           </button>
         </div>
-      </section>
+    </section>
 
-      {/* Feature Highlights Section */}
+    {/* Feature Highlights Section */}
       <section className="py-16 md:py-24 bg-white shadow-inner-lg">
         <div className="container mx-auto px-4 md:px-8 max-w-7xl">
           <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-12 text-center font-heading">
