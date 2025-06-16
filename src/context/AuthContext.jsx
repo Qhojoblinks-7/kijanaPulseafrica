@@ -7,9 +7,8 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  const [userAvatarUrl, setUserAvatarUrl] = useState('/images/default-avatar.webp'); // Default avatar
-  // Add userType state to be explicitly managed and exposed
-  const [userType, setUserType] = useState(null); // Initialize userType state
+  const [userAvatarUrl, setUserAvatarUrl] = useState('/images/default-avatar.webp');
+  const [userType, setUserType] = useState(null);
 
   const navigate = useNavigate();
 
@@ -23,36 +22,29 @@ export const AuthProvider = ({ children }) => {
         const parsedUser = JSON.parse(storedUser);
         setIsLoggedIn(true);
         setCurrentUser(parsedUser);
-        // Set userType from parsed user data
         setUserType(parsedUser.userType);
-        // Set avatar from parsed user data, or fallback to a default/sample
         setUserAvatarUrl(parsedUser.avatarUrl || parsedUser.profilePictureUrl || '/images/sample-athlete-avatar.webp');
 
-        // Optional: Redirect user to their specific dashboard on app load
-        // This is useful if they refresh the page while logged in.
-        // You might refine this to only happen if they are on a generic page like '/'
         redirectToUserDashboard(parsedUser.userType);
 
       } catch (error) {
         console.error("Failed to parse stored user data:", error);
-        // Clear invalid stored data to prevent issues
         localStorage.removeItem('gamepulse_current_user');
         localStorage.removeItem('gamepulse_auth_token');
         setIsLoggedIn(false);
         setCurrentUser(null);
-        setUserType(null); // Reset userType on error
+        setUserType(null);
         setUserAvatarUrl('/images/default-avatar.webp');
       }
     }
-  }, []); // Empty dependency array means this runs once on mount
+  }, []);
 
   // Helper function to redirect based on user type
-  const redirectToUserDashboard = (type) => { // Renamed parameter to 'type' to avoid confusion with state 'userType'
-    // Only navigate if the current path isn't already the target dashboard
+  const redirectToUserDashboard = (type) => {
     const currentPath = window.location.pathname;
     let targetPath;
 
-    switch (type) { // Use the 'type' parameter
+    switch (type) {
       case 'athlete':
         targetPath = '/athlete-dashboard';
         break;
@@ -71,140 +63,137 @@ export const AuthProvider = ({ children }) => {
         break;
     }
 
-    // Only navigate if the current path is not already the target dashboard
-    // and if the current path is not specifically a login/signup page after successful login
-    if (currentPath !== targetPath && !currentPath.includes('/login') && !currentPath.includes('/signup')) {
+    if (currentPath !== targetPath && !currentPath.includes('/login') && !currentPath.includes('/signup') && !currentPath.includes('/forgot-password') && !currentPath.includes('/reset-password')) {
       navigate(targetPath);
     }
   };
 
-
-  // Modified login function to accept full user data
-  // In a real app, this `userData` would come from your backend's login response
   const login = async (emailOrUsername, password, rememberMe) => {
     try {
-      // --- START: Simulate actual API call and response ---
-      // In a real application, you would replace this with an actual fetch/axios call to your backend
-      // Example: const response = await fetch('/api/login', { /* ... */ });
-      // const data = await response.json();
-      // if (!response.ok) throw new Error(data.message || 'Login failed');
-
-      // Simulating a backend response for different user types
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       let simulatedUser = null;
-      let token = 'dummy-jwt-token-123'; // Simulate a token
+      let token = 'dummy-jwt-token-123';
 
-      // This is where you'd typically check credentials against a backend
       if (emailOrUsername === 'athlete@example.com' && password === 'password123') {
         simulatedUser = {
-          id: 'ath1',
-          fullName: 'Amaani Okoro',
-          email: 'athlete@example.com',
-          userType: 'athlete', // Crucial: userType is set here
-          avatarUrl: '/images/sample-athlete-avatar.webp',
-          // Example athlete specific data:
-          sport: 'Football',
-          school: 'Accra High Spartans',
-          stats: { goals: 15, assists: 10 },
-          highlights: [{ id: 1, title: 'Epic Goal vs Kumasi' }],
-          upcomingEvents: [{id:1, title: 'Match Day', date: '2025-06-25'}],
-          bio: 'Young and talented striker with a powerful shot.',
+          id: 'ath1', fullName: 'Amaani Okoro', email: 'athlete@example.com', userType: 'athlete',
+          avatarUrl: '/images/sample-athlete-avatar.webp', sport: 'Football', school: 'Accra High Spartans',
+          stats: { goals: 15, assists: 10 }, highlights: [{ id: 1, title: 'Epic Goal vs Kumasi' }],
+          upcomingEvents: [{ id: 1, title: 'Match Day', date: '2025-06-25' }], bio: 'Young and talented striker with a powerful shot.',
         };
       } else if (emailOrUsername === 'coach@example.com' && password === 'password123') {
         simulatedUser = {
-          id: 'coach1',
-          fullName: 'Coach Mensah',
-          email: 'coach@example.com',
-          userType: 'coach', // Crucial: userType is set here
-          avatarUrl: '/images/coach-avatar.webp',
-          teamName: 'Accra High Spartans',
-          roster: [{ id: 'ath1', name: 'Amaani Okoro' }],
-          matchReports: [],
-          teams: [{id:1, name: 'U17 Spartans'}],
-          notifications: [{id:1, message: 'New athlete joined your team'}],
+          id: 'coach1', fullName: 'Coach Mensah', email: 'coach@example.com', userType: 'coach',
+          avatarUrl: '/images/coach-avatar.webp', teamName: 'Accra High Spartans',
+          roster: [{ id: 'ath1', name: 'Amaani Okoro' }], matchReports: [],
+          teams: [{ id: 1, name: 'U17 Spartans' }], notifications: [{ id: 1, message: 'New athlete joined your team' }],
         };
-      }
-      // Added your test user here!
-      else if (emailOrUsername === 'immanueleshun9@gmail.com' && password === '1234567890') {
+      } else if (emailOrUsername === 'immanueleshun9@gmail.com' && password === '1234567890') {
         simulatedUser = {
-          id: 'coach_ie',
-          fullName: 'Immanuel Eshun',
-          email: 'immanueleshun9@gmail.com',
-          userType: 'coach', // Crucial: userType is set here
-          avatarUrl: '/images/coach-avatar.webp',
-          teamName: 'Accra Youth United',
-          roster: [],
-          matchReports: [],
-          teams: [{id:2, name: 'U15 Accra Youth'}],
-          notifications: [],
+          id: 'coach_ie', fullName: 'Immanuel Eshun', email: 'immanueleshun9@gmail.com', userType: 'coach',
+          avatarUrl: '/images/coach-avatar.webp', teamName: 'Accra Youth United',
+          roster: [], matchReports: [], teams: [{ id: 2, name: 'U15 Accra Youth' }], notifications: [],
         };
-      }
-      else if (emailOrUsername === 'scout@example.com' && password === 'password123') {
+      } else if (emailOrUsername === 'scout@example.com' && password === 'password123') {
         simulatedUser = {
-          id: 'scout1',
-          fullName: 'Global Scout Network',
-          email: 'scout@example.com',
-          userType: 'scout', // Crucial: userType is set here
-          avatarUrl: '/images/scout-avatar.webp',
-          regionsOfInterest: ['Greater Accra', 'Ashanti'],
+          id: 'scout1', fullName: 'Global Scout Network', email: 'scout@example.com', userType: 'scout',
+          avatarUrl: '/images/scout-avatar.webp', regionsOfInterest: ['Greater Accra', 'Ashanti'],
           trackedAthletes: [{ id: 'ath1', name: 'Amaani Okoro', sport: 'Football', potential: 'High' }],
           newHighlights: [{ id: 1, title: 'Striker Showcase' }],
         };
       } else if (emailOrUsername === 'fan@example.com' && password === 'password123') {
         simulatedUser = {
-          id: 'fan1',
-          fullName: 'Mr. & Mrs. Asante',
-          email: 'fan@example.com',
-          userType: 'fan', // Crucial: userType is set here
-          avatarUrl: '/images/fan-avatar.webp',
-          followedAthletes: ['Amaani Okoro', 'Kofi Adom'],
-          upcomingMatches: [
-            { id: 1, team: 'My Daughter\'s Team', opponent: 'Rival Academy', date: 'July 5, 2025', time: '2:00 PM', location: 'Local Pitch' },
-          ],
+          id: 'fan1', fullName: 'Mr. & Mrs. Asante', email: 'fan@example.com', userType: 'fan',
+          avatarUrl: '/images/fan-avatar.webp', followedAthletes: ['Amaani Okoro', 'Kofi Adom'],
+          upcomingMatches: [{ id: 1, team: 'My Daughter\'s Team', opponent: 'Rival Academy', date: 'July 5, 2025', time: '2:00 PM', location: 'Local Pitch' }],
           latestHighlights: [{ id: 1, title: 'Amazing Goal by Amaani Okoro' }],
         };
       } else {
-        throw new Error('Invalid credentials'); // This will now be hit if none of the above match
+        throw new Error('Invalid credentials');
       }
-      // --- END: Simulate actual API call and response ---
 
       localStorage.setItem('gamepulse_auth_token', token);
-      localStorage.setItem('gamepulse_current_user', JSON.stringify(simulatedUser)); // Store user data
+      localStorage.setItem('gamepulse_current_user', JSON.stringify(simulatedUser));
 
       setIsLoggedIn(true);
       setCurrentUser(simulatedUser);
-      setUserType(simulatedUser.userType); // Set userType state upon successful login
+      setUserType(simulatedUser.userType);
       setUserAvatarUrl(simulatedUser.avatarUrl || simulatedUser.profilePictureUrl || '/images/sample-athlete-avatar.webp');
 
       console.log("User logged in successfully!");
-      redirectToUserDashboard(simulatedUser.userType); // Redirect after successful login
-      return simulatedUser; // Return the user object for the LoginPage to use
+      redirectToUserDashboard(simulatedUser.userType);
+      return simulatedUser;
     } catch (error) {
       console.error("Login failed in AuthContext:", error);
       setIsLoggedIn(false);
       setCurrentUser(null);
-      setUserType(null); // Reset userType on login failure
+      setUserType(null);
       setUserAvatarUrl('/images/default-avatar.webp');
-      throw error; // Re-throw the error so LoginPage can catch and display it
-    } finally {
-      // Any cleanup, if necessary
+      throw error;
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('gamepulse_auth_token'); // Clear token
-    localStorage.removeItem('gamepulse_current_user'); // Clear user data
+    localStorage.removeItem('gamepulse_auth_token');
+    localStorage.removeItem('gamepulse_current_user');
     setIsLoggedIn(false);
-    setCurrentUser(null); // Clear current user
-    setUserType(null); // Clear userType on logout
-    setUserAvatarUrl('/images/default-avatar.webp'); // Reset avatar
+    setCurrentUser(null);
+    setUserType(null);
+    setUserAvatarUrl('/images/default-avatar.webp');
     console.log("User logged out!");
-    navigate('/login'); // Redirect to login page after logout
+    navigate('/login');
+  };
+
+  // --- NEW: Password Reset Functions ---
+
+  const sendPasswordResetEmail = async (email) => {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call delay
+
+      // In a real app, you'd send an API request here.
+      // The backend would check if the email exists and send a reset link.
+      console.log(`Simulating sending password reset email to: ${email}`);
+
+      // Mock success/failure for demonstration
+      if (email.includes('@example.com') || email === 'immanueleshun9@gmail.com') {
+        // For demonstration, we'll return a mock token.
+        // In a real app, the email would actually be sent, and no token returned to frontend.
+        // The user would receive a link like http://your-app.com/reset-password?token=MOCK_RESET_TOKEN_FOR_EMAIL
+        console.log(`Password reset link sent to ${email}. Check console for mock token.`);
+        return { success: true, message: 'If an account with that email exists, a password reset link has been sent.', mockToken: 'MOCK_RESET_TOKEN_FOR_EMAIL_123' };
+      } else {
+        throw new Error('Email not found. Please try again.');
+      }
+    } catch (error) {
+      console.error("Error sending password reset email:", error);
+      throw error; // Re-throw for component to handle
+    }
+  };
+
+  const resetUserPassword = async (token, newPassword) => {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call delay
+
+      // In a real app, you'd send an API request here with the token and new password.
+      // The backend would validate the token and update the user's password.
+      console.log(`Simulating password reset for token: ${token} with new password: ${newPassword}`);
+
+      // Mock success/failure for demonstration
+      if (token === 'MOCK_RESET_TOKEN_FOR_EMAIL_123' && newPassword.length >= 8) { // Basic validation
+        console.log("Password reset successful!");
+        return { success: true, message: 'Your password has been reset successfully. You can now log in.' };
+      } else {
+        throw new Error('Invalid or expired token, or password does not meet requirements.');
+      }
+    } catch (error) {
+      console.error("Error resetting password:", error);
+      throw error; // Re-throw for component to handle
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, currentUser, userAvatarUrl, userType, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, currentUser, userAvatarUrl, userType, login, logout, sendPasswordResetEmail, resetUserPassword }}>
       {children}
     </AuthContext.Provider>
   );
