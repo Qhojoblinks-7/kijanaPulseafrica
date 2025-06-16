@@ -1,8 +1,9 @@
 // src/pages/LoginPage.jsx
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { Link, useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash, FaGoogle, FaFacebook, FaApple, FaPhoneAlt, FaExclamationCircle } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext'; // Import useAuth hook
+import Backdrop from './../assets/backdrop.png'
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -15,8 +16,8 @@ const LoginPage = () => {
   const [networkError, setNetworkError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth(); // Destructure the login function from AuthContext
-  const navigate = useNavigate(); // Initialize useNavigate
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     window.scrollTo(0, 0); // Scroll to top on page load
@@ -55,13 +56,10 @@ const LoginPage = () => {
 
     if (validateForm()) {
       try {
-        // Call the login function from AuthContext
-        // It should return the user object upon successful login
         const loggedInUser = await login(formData.emailOrUsername, formData.password, formData.rememberMe);
 
         if (loggedInUser) {
           console.log('Login successful for user:', loggedInUser);
-          // Redirect based on userType
           switch (loggedInUser.userType) {
             case 'athlete':
               navigate('/athlete-dashboard');
@@ -72,22 +70,18 @@ const LoginPage = () => {
             case 'scout':
               navigate('/scout-dashboard');
               break;
-            case 'fan': // Assuming 'fan' covers general fans and parents
+            case 'fan':
             case 'parent':
               navigate('/fan-dashboard');
               break;
             default:
-              // Fallback for unexpected user types or general dashboard
               navigate('/dashboard');
               break;
           }
         } else {
-          // This else block might be redundant if login throws an error for invalid creds
-          // but good for explicit clarity if login resolves with null/false on failure
           setNetworkError('Incorrect email/username or password. Please try again.');
         }
       } catch (err) {
-        // The `login` function in AuthContext should throw an error on authentication failure
         setNetworkError(err.message || 'Login failed. Please check your credentials.');
         console.error('Login error:', err);
       } finally {
@@ -99,38 +93,104 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans">
-      {/* Background visual - subtle and low-bandwidth friendly */}
-      <div className="absolute inset-0 z-0 opacity-10">
-        <img
-          src="/images/login-bg-african-stadium.webp" // Place a subtle background image here
-          alt="African stadium crowd"
-          className="w-full h-full object-cover"
-          loading="lazy"
-        />
-      </div>
-
-      <div className="relative z-10 w-full max-w-md bg-white rounded-xl shadow-lg p-6 sm:p-8 md:p-10 border border-gray-200">
-        {/* I. Page Header & Branding */}
-        <div className="text-center mb-8">
-          <img
-            src="/images/gamepulse-logo.webp" // Your logo path
-            alt="GamePulse Africa Logo"
-            className="mx-auto h-16 md:h-20 w-auto animate-fadeIn" // Example subtle animation
-            loading="lazy"
-          />
-          <h1 className="mt-4 text-3xl md:text-4xl font-extrabold text-gray-900 font-heading">
-            Welcome Back!
-          </h1>
-          <h2 className="mt-2 text-md md:text-lg text-gamepulse-blue font-semibold">
-            Connect to Your Sporting Future.
+    <div className="min-h-screen bg-gray-100 flex flex-col lg:flex-row items-stretch justify-center font-sans">
+      {/* Left Column (Backdrop / Mobile Hero) */}
+      <div
+        className="relative w-full lg:w-1/2 flex flex-col items-center justify-center text-white py-12 px-4 sm:px-6 lg:px-8 bg-cover bg-center bg-no-repeat transition-all duration-500 ease-in-out"
+        style={{
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url(${Backdrop})`, // Enhanced background image for clarity
+        }}
+      >
+        <div className="text-center z-10 p-4  bg-opacity-20 rounded-lg lg:bg-transparent lg:p-0">
+          <h2 className="text-3xl md:text-5xl font-extrabold font-heading leading-tight drop-shadow-lg">
+            Where Africa's Sporting Stars Rise.
           </h2>
-        </div>
+          <p className="mt-4 text-lg md:text-xl leading-relaxed text-yellow drop-shadow-md max-w-sm mx-auto">
+            Connect to compete, discover, and unlock your true potential.
+          </p>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* II. Login Form */}
-          <div>
-            <h3 className="sr-only">Sign In to GamePulse Africa</h3>
+          {/* Social Login Options (Moved to Backdrop) */}
+          <div className="mt-8 text-center text-white">
+            <span className="relative inline-block px-3 mb-4 text-lg font-semibold block">
+              Log in with
+            </span>
+          </div>
+          <div className="space-y-3 max-w-xs mx-auto"> {/* Added max-width for better button alignment */}
+            <button
+              type="button"
+              className="w-full flex items-center justify-center px-4 py-2 border border-white/50 rounded-md shadow-sm text-white bg-transparent hover:bg-white/10 transition-colors"
+              aria-label="Continue with Google"
+            >
+              <FaGoogle className="mr-3 text-lg" /> Continue with Google
+            </button>
+            <button
+              type="button"
+              className="w-full flex items-center justify-center px-4 py-2 border border-white/50 rounded-md shadow-sm text-white bg-transparent hover:bg-blue transition-colors"
+              aria-label="Continue with Facebook"
+            >
+              <FaFacebook className="mr-3 text-lg" /> Continue with Facebook
+            </button>
+            <button
+              type="button"
+              className="w-full flex items-center justify-center px-4 py-2 border border-white/50 rounded-md shadow-sm text-white bg-transparent hover:bg-white/10 transition-colors"
+              aria-label="Continue with Apple"
+            >
+              <FaApple className="mr-3 text-lg" /> Continue with Apple
+            </button>
+            {/* VITAL for Africa: Phone Number OTP */}
+            <button
+              type="button"
+              className="w-full flex items-center justify-center px-4 py-2 border border-gamepulse-orange rounded-md shadow-sm text-white bg-gamepulse-orange hover:bg-orange-700 transition-colors"
+              aria-label="Continue with Phone Number"
+            >
+              <FaPhoneAlt className="mr-3 text-lg" /> Continue with Phone Number
+            </button>
+          </div>
+
+          {/* IV. Credibility & Value Reinforcement (Remains on Backdrop) */}
+          <div className="mt-10 text-center text-white text-lg font-semibold italic max-w-xs mx-auto">
+            "Connecting African high school talent to unprecedented opportunities."
+          </div>
+
+          {/* VI. Footer (Remains on Backdrop) */}
+          <div className="mt-10 text-center text-sm text-whit space-x-4">
+            <Link to="/privacy-policy" className="hover:underline hover:text-white">Privacy Policy</Link>
+            <Link to="/terms-of-service" className="hover:underline hover:text-white">Terms of Service</Link>
+            <Link to="/help" className="hover:underline hover:text-white">Help & Support</Link>
+          </div>
+
+        </div> {/* End of backdrop content container */}
+      </div> {/* End of left column */}
+
+      {/* Right Column (Login Form) */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8">
+        <div className="relative z-10 w-full max-w-md bg-white rounded-xl shadow-lg p-6 sm:p-8 md:p-10 border border-gray-200">
+          {/* Page Header & Branding (for Right Column - visible on all screens) */}
+          <div className="text-center mb-8">
+            {/* Logo hidden on large screens since it's on the left backdrop */}
+            <img
+              src="/images/gamepulse-logo.webp" // Your primary logo path for light backgrounds
+              alt="GamePulse Africa Logo"
+              className="mx-auto h-16 md:h-20 w-auto animate-fadeIn lg:hidden"
+              loading="lazy"
+            />
+            <h1 className="mt-4 text-3xl md:text-4xl font-extrabold text-gray-900 font-heading">
+              Welcome Back!
+            </h1>
+            <h2 className="mt-2 text-md md:text-lg text-gamepulse-blue font-semibold">
+              Your Sporting Journey Continues.
+            </h2>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Separator for email/password section */}
+            <div className="text-center text-gray-500 my-6">
+              <span className="relative inline-block px-3 before:absolute before:left-0 before:top-1/2 before:w-full before:h-px before:bg-gray-300 after:absolute after:left-0 after:top-1/2 after:w-full after:h-px after:bg-gray-300">
+                <span className="relative z-10 bg-white px-2">Or log in with your account</span>
+              </span>
+            </div>
+
+            {/* Login Form Inputs */}
             <div>
               <label htmlFor="emailOrUsername" className="block text-sm font-medium text-gray-700 mb-1">Email or Username</label>
               <input
@@ -144,7 +204,7 @@ const LoginPage = () => {
                 aria-invalid={errors.emailOrUsername ? "true" : "false"}
                 aria-describedby={errors.emailOrUsername ? "emailOrUsername-error" : undefined}
               />
-              {errors.emailOrUsername && <p id="emailOrUsername-error" className="mt-1 text-sm text-red-600">{errors.emailOrUsername}</p>}
+              {errors.emailOrUsername && <p id="emailOrUsername-error" className="mt-1 text-sm text-red-600 flex items-center"><FaExclamationCircle className="mr-1" />{errors.emailOrUsername}</p>}
             </div>
 
             <div className="mt-4">
@@ -170,7 +230,7 @@ const LoginPage = () => {
                   {passwordVisible ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
-              {errors.password && <p id="password-error" className="mt-1 text-sm text-red-600">{errors.password}</p>}
+              {errors.password && <p id="password-error" className="mt-1 text-sm text-red-600 flex items-center"><FaExclamationCircle className="mr-1" />{errors.password}</p>}
             </div>
 
             <div className="flex items-center justify-between mt-4">
@@ -193,83 +253,39 @@ const LoginPage = () => {
                 </Link>
               </div>
             </div>
-          </div>
 
-          {/* Login Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-gamepulse-orange text-white py-3 rounded-md font-semibold text-lg hover:bg-orange-700 transition-colors duration-300 shadow-lg flex items-center justify-center"
-          >
-            {loading ? (
-              <svg className="animate-spin h-5 w-5 text-white mr-3" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-            ) : null}
-            {loading ? 'Logging In...' : 'Log In'}
-          </button>
-
-          {/* VII. Error Handling */}
-          {networkError && (
-            <p className="mt-4 text-sm text-red-600 text-center flex items-center justify-center">
-              <FaExclamationCircle className="mr-2" /> {networkError}
-            </p>
-          )}
-
-          {/* III. Social Login Options */}
-          <div className="mt-8 text-center text-gray-500">
-            <span className="relative inline-block px-3 before:absolute before:left-0 before:top-1/2 before:w-full before:h-px before:bg-gray-300 after:absolute after:left-0 after:top-1/2 after:w-full after:h-px after:bg-gray-300">
-              <span className="relative z-10 bg-white px-2">Or log in with</span>
-            </span>
-          </div>
-          <div className="mt-4 space-y-3">
+            {/* Login Button */}
             <button
-              type="button"
-              className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+              type="submit"
+              disabled={loading}
+              className="w-full bg-gamepulse-orange text-white py-3 rounded-md font-semibold text-lg hover:bg-orange-700 transition-colors duration-300 shadow-lg flex items-center justify-center mt-6"
+              aria-label={loading ? 'Logging In...' : 'Log In'}
             >
-              <FaGoogle className="mr-3 text-lg" /> Continue with Google
+              {loading ? (
+                <svg className="animate-spin h-5 w-5 text-white mr-3" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              ) : null}
+              {loading ? 'Logging In...' : 'Log In'}
             </button>
-            <button
-              type="button"
-              className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 transition-colors"
-            >
-              <FaFacebook className="mr-3 text-lg" /> Continue with Facebook
-            </button>
-            <button
-              type="button"
-              className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 transition-colors"
-            >
-              <FaApple className="mr-3 text-lg" /> Continue with Apple
-            </button>
-            {/* VITAL for Africa: Phone Number OTP */}
-            <button
-              type="button"
-              className="w-full flex items-center justify-center px-4 py-2 border border-gamepulse-blue rounded-md shadow-sm text-white bg-gamepulse-blue hover:bg-blue-700 transition-colors"
-            >
-              <FaPhoneAlt className="mr-3 text-lg" /> Continue with Phone Number
-            </button>
-          </div>
-        </form>
 
-        {/* IV. Credibility & Value Reinforcement */}
-        <div className="mt-10 text-center text-gamepulse-dark text-lg font-semibold italic max-w-xs mx-auto">
-          "Connecting African high school talent to unprecedented opportunities."
-        </div>
+            {/* VII. Error Handling */}
+            {networkError && (
+              <p className="mt-4 text-sm text-red-600 text-center flex items-center justify-center">
+                <FaExclamationCircle className="mr-2" /> {networkError}
+              </p>
+            )}
 
-        {/* V. New User Call to Action */}
-        <div className="mt-8 text-center">
-          <p className="text-gray-600">Don't have an account?</p>
-          <Link to="/signup" className="font-semibold text-gamepulse-blue hover:text-blue-700 transition-colors">
-            Sign Up
-          </Link>
-        </div>
+            {/* V. New User Call to Action (Moved back to form) */}
+            <div className="mt-8 text-center">
+              <p className="text-gray-600">Don't have an account?</p>
+              <Link to="/signup" className="font-semibold text-gamepulse-blue hover:text-blue-700 transition-colors">
+                Sign Up
+              </Link>
+            </div>
+          </form>
 
-        {/* VI. Footer */}
-        <div className="mt-10 text-center text-sm text-gray-500 space-x-4">
-          <Link to="/privacy-policy" className="hover:underline">Privacy Policy</Link>
-          <Link to="/terms-of-service" className="hover:underline">Terms of Service</Link>
-          <Link to="/help" className="hover:underline">Help & Support</Link>
         </div>
       </div>
     </div>

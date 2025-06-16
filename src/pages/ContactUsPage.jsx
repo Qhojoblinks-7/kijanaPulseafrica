@@ -6,6 +6,8 @@ import {
   FaMapMarkerAlt, FaQuestionCircle, FaNewspaper, FaHandshake, FaBriefcase, FaGraduationCap
 } from 'react-icons/fa'; // Importing relevant icons
 import { useNavigate } from 'react-router-dom'; // For programmatic navigation (e.g., to Contact Us page)
+import logo from '../assets/trans_bg.png';
+
 
 const ContactUsPage = () => {
   const navigate = useNavigate(); // Initialize useNavigate hook
@@ -115,12 +117,10 @@ const ContactUsPage = () => {
       {/* Page Header & Branding */}
       <section className="bg-gamepulse-dark text-white py-16 md:py-24 text-center relative overflow-hidden">
         {/* Subtle background graphic for visual interest */}
-        <div className="absolute inset-0 z-0 opacity-10"
-             style={{ backgroundImage: 'url("/images/african_sports_bg.webp")', backgroundSize: 'cover', backgroundPosition: 'center' }}>
-        </div>
+        
         <div className="container mx-auto px-4 md:px-8 max-w-4xl relative z-10">
-          {/* Ensure logo path is correct relative to public folder */}
-          <img src="/gamepulse-logo-white.svg" alt="GamePulse Africa Logo" className="h-16 md:h-20 mb-6 mx-auto drop-shadow-lg" />
+            {/* Ensure logo path is correct relative to public folder */}
+          <img src={logo} alt="GamePulse Africa Logo" className="h-30 md:h-70 mb-6 mx-auto drop-shadow-lg" />
           <h1 className="text-4xl md:text-5xl font-extrabold leading-tight mb-4 font-heading drop-shadow-lg">
             Get in Touch with GamePulse Africa
           </h1>

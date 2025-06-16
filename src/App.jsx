@@ -31,16 +31,28 @@ import AboutUsPage from './pages/AboutUsPage';
 function App() {
   const location = useLocation();
 
-  // Determine if the current path is a highlights-related page that should NOT have the global Header
-  // This now includes '/upload-highlight'
-  const isHighlightsOrUploadPage = location.pathname.startsWith('/highlights') || location.pathname === '/upload-highlight';
+  // Determine if the current path should NOT have the global Header
+  // This now includes '/upload-highlight', '/login', and '/signup'
+  const noHeaderPaths = [
+    '/upload-highlight',
+    '/login',
+    '/signup'
+  ];
+
+  const shouldHideHeader = noHeaderPaths.some(path => location.pathname.startsWith(path));
+
+  // Also specifically check for '/highlights' route
+  const isHighlightsPage = location.pathname.startsWith('/highlights');
+
+  // Combine conditions: hide header if it's a noHeaderPath or a highlights page
+  const hideGlobalHeader = shouldHideHeader || isHighlightsPage;
 
   return (
     <AuthProvider>
       {/* Conditionally render the global Header */}
-      {!isHighlightsOrUploadPage && <Header />}
+      {!hideGlobalHeader && <Header />}
 
-      <div className={`min-h-screen flex flex-col ${!isHighlightsOrUploadPage ? 'pt-16 md:pt-6' : ''}`}>
+      <div className={`min-h-screen flex flex-col ${!hideGlobalHeader ? 'pt-16 md:pt-6' : ''}`}>
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<HomePage />} />
