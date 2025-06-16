@@ -331,7 +331,7 @@ const SignUpPage = () => {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-gamepulse-orange text-white py-3 rounded-md font-semibold text-lg hover:bg-orange-700 transition-colors duration-300 shadow-lg"
+                className="w-full bg-gamepulse-blue text-white py-3 rounded-md font-semibold text-lg hover:bg-blue-500 transition-colors duration-300 shadow-lg"
                 disabled={formik.isSubmitting} // Disable button while submitting
               >
                 {formik.isSubmitting ? 'Signing Up...' : 'Sign Up'}

@@ -240,7 +240,7 @@ const LoginPage = () => {
             <button
               type="submit"
               disabled={loading || !formik.isValid || formik.isSubmitting} // Disable if loading, form is invalid, or already submitting
-              className="w-full bg-gamepulse-orange text-white py-3 rounded-md font-semibold text-lg hover:bg-orange-700 transition-colors duration-300 shadow-lg flex items-center justify-center mt-6"
+              className="w-full bg-gamepulse-blue-dark text-white py-3 rounded-md font-semibold text-lg hover:bg-blue-500 transition-colors duration-300 shadow-lg flex items-center justify-center mt-6"
               aria-label={loading ? 'Logging In...' : 'Log In'}
             >
               {loading || formik.isSubmitting ? ( // Use formik.isSubmitting for better control

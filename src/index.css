@@ -84,6 +84,7 @@
   /* Background colors */
   .bg-gamepulse-dark { background-color: var(--color-gamepulse-dark); }
   .bg-gamepulse-blue-dark { background-color: var(--color-gamepulse-blue-dark); }
+  .bg-gamepulse-blue-light { background-color: var(--color-gamepulse-blue-light); }
   .bg-gamepulse-blue { background-color: var(--color-gamepulse-blue); }
   .bg-gamepulse-yellow { background-color: var(--color-gamepulse-yellow); }
   .bg-neutral-black { background-color: var(--color-neutral-black); }
