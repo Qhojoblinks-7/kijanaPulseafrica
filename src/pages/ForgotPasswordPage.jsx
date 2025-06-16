@@ -72,7 +72,7 @@ const ForgotPasswordPage = () => {
           <div className="mt-10 text-center text-sm text-white space-x-4">
             <Link to="/privacy-policy" className="hover:underline hover:text-white">Privacy Policy</Link>
             <Link to="/terms-of-service" className="hover:underline hover:text-white">Terms of Service</Link>
-            <Link to="/help" className="hover:underline hover:text-white">Help & Support</Link>
+            <Link to="/help-center" className="hover:underline hover:text-white">Help & Support</Link>
           </div>
         </div>
       </div>

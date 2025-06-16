@@ -597,7 +597,7 @@ const LiveMatchesDashboard = () => {
                   Discover Talent
                 </Link>
               </div>
-              <Link to="/help" className="text-gamepulse-blue hover:text-gamepulse-blue-dark underline mt-6 block text-sm">
+              <Link to="/help-center" className="text-gamepulse-blue hover:text-gamepulse-blue-dark underline mt-6 block text-sm">
                 Need help? Visit our Help Center.
               </Link>
             </div>

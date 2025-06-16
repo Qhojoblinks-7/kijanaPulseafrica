@@ -61,7 +61,7 @@ const MobileMenuOverlay = ({ mobileNavLinks, isLoggedIn, userType, handleLogout,
                 <NavLink to="/reports" onClick={onCloseMenus}>Scouting Reports</NavLink>
               ) : null}
               <NavLink to="/settings" onClick={onCloseMenus}>Settings</NavLink>
-              <NavLink to="/help" onClick={onCloseMenus}>Help & Support</NavLink>
+              <NavLink to="/help-center" onClick={onCloseMenus}>Help & Support</NavLink>
               <button onClick={handleLogout} className="w-full text-left px-6 py-3 text-error-red hover:text-red-600 font-bold transition-colors duration-200">
                 Logout
               </button>

@@ -348,7 +348,7 @@ const SignUpPage = () => {
               <div className="mt-10 text-center text-sm text-gray-500 space-x-4">
                 <Link to="/privacy-policy" className="hover:underline">Privacy Policy</Link>
                 <Link to="/terms-of-service" className="hover:underline">Terms of Service</Link>
-                <Link to="/help" className="hover:underline">Help & Support</Link>
+                <Link to="/help-center" className="hover:underline">Help & Support</Link>
               </div>
             </form>
           )}

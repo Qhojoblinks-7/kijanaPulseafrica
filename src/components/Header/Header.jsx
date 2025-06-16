@@ -98,7 +98,6 @@ const Header = () => {
     const dropdownOnlyPaths = [
       "/my-profile",
       "/settings",
-      "/help",
       "/help-and-support",
       "/messages",
       "/reports"

@@ -70,7 +70,7 @@ const DesktopUserActions = forwardRef(({ isLoggedIn, userAvatarUrl, userType, is
                   <Link to="/reports" className="block px-4 py-2 text-neutral-dark-gray hover:bg-neutral-light-gray" onClick={onCloseMenus}>Scouting Reports</Link>
                 ) : null}
                 <Link to="/settings" className="block px-4 py-2 text-neutral-dark-gray hover:bg-neutral-light-gray" onClick={onCloseMenus}>Settings</Link>
-                <Link to="/help" className="block px-4 py-2 text-neutral-dark-gray hover:bg-neutral-light-gray" onClick={onCloseMenus}>Help & Support</Link>
+                <Link to="/help-center" className="block px-4 py-2 text-neutral-dark-gray hover:bg-neutral-light-gray" onClick={onCloseMenus}>Help & Support</Link>
                 <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-error-red hover:bg-neutral-light-gray">Logout</button>
 
                 {/* NEW: Explicit Close Button for the dropdown */}
