@@ -67,8 +67,8 @@ const ProfileHeader = ({ athlete }) => {
             {/* Right Side of Div1: Current school Logo | Team Logo | position | Jersey Number */}
             <div className="flex flex-col items-end text-right text-xs md:text-sm">
               <div className="flex items-center space-x-1 md:space-x-2 mb-1 md:mb-2">
-                {athlete.schoolLogo && <img src={athlete.schoolLogo} alt="School Logo" className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-white p-0.5 md:p-1" />}
-                {athlete.teamLogo && <img src={athlete.teamLogo} alt="Team Logo" className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-white p-0.5 md:p-1" />}
+                {athlete.schoolLogo && <img src={athlete.schoolLogo} alt="School Logo" className="w-15 h-15 md:w-25 md:h-25 rounded-full bg-transparent p-0.5 md:p-1" />}
+                {athlete.teamLogo && <img src={athlete.teamLogo} alt="Team Logo" className="w-15 h-15 md:w-25 md:h-25 rounded-full bg-transparent -ml-10 p-0.5 md:p-1" />}
               </div>
               <p className="font-semibold text-base md:text-xl text-gamepulse-yellow">{athlete.position}</p>
               <p className="text-gray-300 text-base md:text-xl">{athlete.jerseyNumber}</p>
