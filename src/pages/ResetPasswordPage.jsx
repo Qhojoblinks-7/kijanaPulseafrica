@@ -103,7 +103,7 @@ const ResetPasswordPage = () => {
       {/* Right Column (Reset Password Form) */}
       <div className="w-full lg:w-1/2 flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8">
         <div className="relative z-10 w-full max-w-md bg-white rounded-xl shadow-lg p-6 sm:p-8 md:p-10 border border-gray-200">
-          
+          <div className="text-center mb-8">
             <h1 className="mt-4 text-3xl md:text-4xl font-extrabold text-gray-900 font-heading">
               Set New Password
             </h1>
