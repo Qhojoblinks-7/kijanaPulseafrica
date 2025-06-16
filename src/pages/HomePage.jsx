@@ -41,7 +41,7 @@ const handleDownloadClick = () => {
 };
 
   return (
-    <div className="min-h-screen mt-5 bg-gradient-to-br from-gamepulse-blue to-gray-200 font-sans text-gray-900 overflow-hidden">
+    <div className="min-h-screen  bg-gradient-to-br from-gamepulse-blue to-gray-200 font-sans text-gray-900 overflow-hidden">
 
       {/* Hero Section */}
       <section
