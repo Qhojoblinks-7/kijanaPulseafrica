@@ -1,37 +1,58 @@
 // src/pages/MyProfilePage.jsx
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; // Import useState
 import ProfileHeader from '../components/AthleteProfile/ProfileHeader';
 import MyPerformanceMetrics from '../components/MyProfile/MyPerformanceMetrics';
 import MyHighlightsGallery from '../components/MyProfile/MyHighlightsGallery';
 import MyAboutMe from '../components/MyProfile/MyAboutMe';
 import MyConnectionsAndContact from '../components/MyProfile/MyConnectionsAndContact';
 import MyProfileFooterNav from '../components/MyProfile/MyProfileFooterNav';
-import { myAthleteProfileData } from '../data/myProfileData';
+import { allAthleteProfilesData } from '../data/allAthleteProfilesData'; // Import all athlete data
 
 const MyProfilePage = () => {
-  // In a real application, you would fetch the athlete's own data
-  // For this example, we'll use dummy data directly.
-  const athlete = myAthleteProfileData;
-
-  // Debugging line: Log the athlete object being used
-  console.log("MyProfilePage: athlete data before passing to ProfileHeader:", athlete);
-
+  const [athlete, setAthlete] = useState(null); // Use state to manage athlete data
 
   useEffect(() => {
-    window.scrollTo(0, 0); // Scroll to top on page load
-    // Ensure athlete.fullName exists before trying to use it
-    if (athlete && athlete.fullName) {
-        document.title = `My Profile | ${athlete.fullName} | GamePulse Africa`; // Set page title
+    // In a real application, you'd get the current user's ID from an auth context or API
+    // For this example, we'll hardcode an ID that exists in allAthleteProfilesData
+    const myAthleteId = 'ama_owusu'; // <-- CHANGE THIS ID to 'kwame_mensah', 'akua_ansah', etc., to test other profiles
+
+    const foundAthlete = allAthleteProfilesData.find(a => a.id === myAthleteId);
+
+    if (foundAthlete) {
+      // Transform the found athlete data to ensure 'sportType' is lowercase
+      const transformedAthlete = {
+        ...foundAthlete,
+        sportType: foundAthlete.sportType ? foundAthlete.sportType.toLowerCase() : undefined,
+      };
+      setAthlete(transformedAthlete);
     } else {
-        document.title = `My Profile | GamePulse Africa`; // Fallback title
+      console.warn(`MyProfilePage: Athlete with ID '${myAthleteId}' not found in data.`);
+      setAthlete(null); // Or set an error state
     }
-  }, [athlete]); // Depend on the entire athlete object, not just fullName, in case it changes or is initially null
+
+    window.scrollTo(0, 0); // Scroll to top on page load
+  }, []); // Empty dependency array means this effect runs once on mount
+
+  // Update document title when athlete data is available
+  useEffect(() => {
+    if (athlete && athlete.fullName) {
+      document.title = `My Profile | ${athlete.fullName} | GamePulse Africa`;
+    } else {
+      document.title = `My Profile | GamePulse Africa`;
+    }
+  }, [athlete]); // Depend on athlete state
 
   if (!athlete) {
-    // Handle loading or error state - though with direct import, this might not be hit if data is always present
-    console.log("MyProfilePage: Athlete data is null or undefined.");
-    return <div className="min-h-screen flex items-center justify-center text-xl text-gray-600">Loading your profile...</div>;
+    // Handle loading or error state
+    return (
+      <div className="min-h-screen flex items-center justify-center text-xl text-gray-600 bg-gray-900 text-white">
+        Loading your profile...
+      </div>
+    );
   }
+
+  // Debugging line: Log the athlete object being used BEFORE passing to ProfileHeader
+  console.log("MyProfilePage: athlete data before passing to ProfileHeader:", athlete);
 
   return (
     <div className="min-h-screen bg-gray-100 font-sans text-gray-900">

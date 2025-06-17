@@ -1,168 +1,140 @@
 // src/components/MyProfile/MyConnectionsAndContact.jsx
-import React, { useState } from 'react';
-import { FaHandshake, FaEnvelope, FaAt, FaShareAlt, FaPen, FaPlusCircle, FaTrashAlt } from 'react-icons/fa';
+import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faEnvelope, faPhone, faCommentDots, faShareAlt
+} from '@fortawesome/free-solid-svg-icons';
+import {
+  faFacebook, faTwitter, faInstagram, faLinkedinIn, faTiktok, faWhatsapp, faYoutube
+} from '@fortawesome/free-brands-svg-icons';
 
 const MyConnectionsAndContact = ({ athlete }) => {
-  const [inAppMessagingEnabled, setInAppMessagingEnabled] = useState(athlete.contactOptions.inAppMessagingEnabled);
-  const [publicEmailEnabled, setPublicEmailEnabled] = useState(athlete.contactOptions.publicEmailEnabled);
+  // Line 6 will be here. Safely access contactSettings and its properties.
+  // If athlete or athlete.contactSettings is undefined, default to an empty object.
+  const contactSettings = athlete?.contactSettings || {};
 
-  // Icons from athlete.icons, or default fallback
-  const HandshakeIcon = athlete.icons?.FaHandshake || FaHandshake;
-  const EnvelopeIcon = athlete.icons?.FaEnvelope || FaEnvelope;
-  const AtIcon = athlete.icons?.FaAt || FaAt;
-  const ShareAltIcon = athlete.icons?.FaShareAlt || FaShareAlt;
-  const PenIcon = athlete.icons?.FaPen || FaPen;
-  const PlusCircleIcon = athlete.icons?.FaPlusCircle || FaPlusCircle;
-  const TrashIcon = athlete.icons?.FaTrashAlt || FaTrashAlt;
+  // Safely access individual flags using nullish coalescing (??) which defaults to false
+  // if the property is null or undefined.
+  const inAppMessagingEnabled = contactSettings.inAppMessagingEnabled ?? false;
+  const emailEnabled = contactSettings.emailEnabled ?? false;
+  const phoneEnabled = contactSettings.phoneEnabled ?? false;
+  // Safely get socialMediaVisibility, defaulting to an empty object if undefined
+  const socialMediaVisibility = contactSettings.socialMediaVisibility || {};
 
+  const icons = athlete?.icons || {}; // Safely get the icons object
 
-  // Dynamically get social media icons
-  const getSocialIcon = (platform) => {
-    switch (platform.toLowerCase()) {
-      case 'tiktok': return athlete.icons?.FaTiktok || FaTiktok;
-      case 'instagram': return athlete.icons?.FaInstagram || FaInstagram;
-      case 'twitter': return athlete.icons?.FaTwitter || FaTwitter;
-      default: return null;
+  // Helper to render social link if enabled and available
+  const renderSocialLink = (platform, icon, url) => {
+    // Check if the platform is explicitly enabled in socialMediaVisibility AND the URL exists
+    if (socialMediaVisibility[platform] && url) {
+      // Special handling for WhatsApp URL if it's a phone number
+      const finalUrl = (platform === 'whatsapp' && !url.startsWith('http')) ? `https://wa.me/${url}` : url;
+      return (
+        <a
+          key={platform} // Added key for list rendering
+          href={finalUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors duration-200"
+          aria-label={`${platform} profile`}
+        >
+          <FontAwesomeIcon icon={icon} size="2x" />
+        </a>
+      );
     }
+    return null;
   };
 
-  const handleShareProfile = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: `${athlete.fullName}'s GamePulse Africa Profile`,
-        text: `Check out ${athlete.fullName}'s impressive sports profile on GamePulse Africa!`,
-        url: window.location.href, // Current URL of the profile
-      }).then(() => {
-        console.log('Profile shared successfully');
-      }).catch((error) => {
-        console.error('Error sharing profile:', error);
-      });
-    } else {
-      // Fallback for browsers that don't support Web Share API
-      navigator.clipboard.writeText(window.location.href)
-        .then(() => alert('Profile link copied to clipboard!'))
-        .catch((error) => console.error('Failed to copy link: ', error));
-    }
-  };
+  const hasAnySocialMediaLink = Object.keys(socialMediaVisibility).some(platform => socialMediaVisibility[platform] && icons[platform]);
+  const hasAnyDirectContact = inAppMessagingEnabled || emailEnabled || phoneEnabled;
+
 
   return (
-    <section className="container mx-auto px-4 md:px-8 py-8 md:py-12 bg-white rounded-lg shadow-md mt-6">
-      <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 font-heading flex items-center">
-        <HandshakeIcon className="text-gamepulse-blue mr-3" /> Connect with Me
-      </h2>
+    <section className="bg-white p-6 md:p-8 rounded-lg shadow-md mb-6 dark:bg-gray-800 dark:text-white">
+      <h3 className="text-2xl font-bold mb-4 border-b pb-2 border-gray-200 dark:border-gray-700">
+        Connect & Contact
+      </h3>
 
-      {/* Contact Options */}
-      <div className="space-y-4 mb-8">
-        {/* In-App Messaging Toggle */}
-        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg shadow-sm">
-          <div className="flex items-center">
-            <EnvelopeIcon className="mr-3 text-gamepulse-teal text-xl" />
-            <p className="font-semibold text-gray-800">Allow secure in-app messages</p>
+      <div className="space-y-4">
+        {/* Direct Contact Options */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 border-b pb-4 border-gray-200 dark:border-gray-700">
+          <p className="text-lg font-semibold text-gray-700 dark:text-gray-300 min-w-[120px]">Direct Contact:</p>
+          <div className="flex flex-wrap gap-4">
+            {inAppMessagingEnabled && (
+              <button
+                className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200"
+                aria-label="Send in-app message"
+              >
+                <FontAwesomeIcon icon={faCommentDots} /> In-App Message
+              </button>
+            )}
+            {emailEnabled && icons.email && (
+              <a
+                href={`mailto:${icons.email}`}
+                className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200"
+                aria-label="Send email"
+              >
+                <FontAwesomeIcon icon={faEnvelope} /> Email
+              </a>
+            )}
+            {phoneEnabled && icons.phone && (
+              <a
+                href={`tel:${icons.phone}`}
+                className="flex items-center gap-2 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors duration-200"
+                aria-label="Call athlete"
+              >
+                <FontAwesomeIcon icon={faPhone} /> Call
+              </a>
+            )}
+            {!hasAnyDirectContact && (
+              <p className="text-gray-600 dark:text-gray-400">No direct contact options enabled.</p>
+            )}
           </div>
-          <label htmlFor="inAppMessagingToggle" className="flex items-center cursor-pointer">
-            <div className="relative">
-              <input
-                type="checkbox"
-                id="inAppMessagingToggle"
-                className="sr-only"
-                checked={inAppMessagingEnabled}
-                onChange={() => setInAppMessagingEnabled(!inAppMessagingEnabled)}
-              />
-              <div className={`block ${inAppMessagingEnabled ? 'bg-gamepulse-blue' : 'bg-gray-300'} w-14 h-8 rounded-full`}></div>
-              <div className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition ${inAppMessagingEnabled ? 'translate-x-full' : ''}`}></div>
-            </div>
-          </label>
         </div>
 
-        {/* Public Contact Email */}
-        <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-800 shadow-sm relative group">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <AtIcon className="mr-3 text-gamepulse-teal text-xl" />
-              <div>
-                <p className="font-semibold text-lg">Public Contact Email</p>
-                <p className="text-sm md:text-base">{athlete.contactOptions.publicEmail || 'Not set'}</p>
-              </div>
-            </div>
-            <label htmlFor="publicEmailToggle" className="flex items-center cursor-pointer">
-              <div className="relative">
-                <input
-                  type="checkbox"
-                  id="publicEmailToggle"
-                  className="sr-only"
-                  checked={publicEmailEnabled}
-                  onChange={() => setPublicEmailEnabled(!publicEmailEnabled)}
-                />
-                <div className={`block ${publicEmailEnabled ? 'bg-gamepulse-blue' : 'bg-gray-300'} w-14 h-8 rounded-full`}></div>
-                <div className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition ${publicEmailEnabled ? 'translate-x-full' : ''}`}></div>
-              </div>
-            </label>
+        {/* Social Media Links */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 border-b pb-4 border-gray-200 dark:border-gray-700">
+          <p className="text-lg font-semibold text-gray-700 dark:text-gray-300 min-w-[120px]">Social Media:</p>
+          <div className="flex flex-wrap gap-4">
+            {renderSocialLink('facebook', faFacebook, icons.facebook)}
+            {renderSocialLink('twitter', faTwitter, icons.twitter)}
+            {renderSocialLink('instagram', faInstagram, icons.instagram)}
+            {renderSocialLink('linkedin', faLinkedinIn, icons.linkedin)}
+            {renderSocialLink('tiktok', faTiktok, icons.tiktok)}
+            {renderSocialLink('whatsapp', faWhatsapp, icons.whatsapp)} {/* WhatsApp URL handled in renderSocialLink */}
+            {renderSocialLink('youtube', faYoutube, icons.youtube)}
+            {!hasAnySocialMediaLink && (
+              <p className="text-gray-600 dark:text-gray-400">No social media links enabled or available.</p>
+            )}
           </div>
-          <button className="absolute top-2 right-2 md:right-auto md:left-2/3 lg:left-3/4 text-gray-400 hover:text-gamepulse-blue transition-colors text-sm opacity-0 group-hover:opacity-100 md:opacity-100 md:static md:ml-2">
-            <PenIcon />
-            <span className="sr-only">Edit Public Email</span>
+        </div>
+
+        {/* Share Profile */}
+        <div className="flex items-center gap-4">
+          <p className="text-lg font-semibold text-gray-700 dark:text-gray-300 min-w-[120px]">Share Profile:</p>
+          <button
+            onClick={() => {
+              if (navigator.clipboard && window.location.href) {
+                navigator.clipboard.writeText(window.location.href)
+                  .then(() => alert('Profile link copied to clipboard!'))
+                  .catch(err => console.error('Failed to copy: ', err));
+              } else {
+                // Fallback for older browsers
+                const el = document.createElement('textarea');
+                el.value = window.location.href;
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand('copy');
+                document.body.removeChild(el);
+                alert('Profile link copied to clipboard!');
+              }
+            }}
+            className="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors duration-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+            aria-label="Copy profile link"
+          >
+            <FontAwesomeIcon icon={faShareAlt} /> Copy Link
           </button>
         </div>
-      </div>
-
-
-      {/* Coach/Agent Contact */}
-      {athlete.coachAgentContact && (
-        <>
-          <h3 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4 font-heading">Official Representative</h3>
-          <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-800 shadow-sm mb-8 relative group">
-            <p className="font-bold text-lg mb-1">{athlete.coachAgentContact.name}</p>
-            <p className="text-sm md:text-base">Phone: <a href={`tel:${athlete.coachAgentContact.phone}`} className="text-gamepulse-blue hover:underline">{athlete.coachAgentContact.phone}</a></p>
-            <p className="text-sm md:text-base">Email: <a href={`mailto:${athlete.coachAgentContact.email}`} className="text-gamepulse-blue hover:underline">{athlete.coachAgentContact.email}</a></p>
-            <button className="absolute top-2 right-2 text-gray-400 hover:text-gamepulse-blue transition-colors text-sm opacity-0 group-hover:opacity-100">
-              <PenIcon />
-              <span className="sr-only">Edit Representative</span>
-            </button>
-          </div>
-        </>
-      )}
-
-      {/* Social Media Links */}
-      {athlete.socialMediaLinks && athlete.socialMediaLinks.length > 0 && (
-        <>
-          <h3 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4 font-heading">My Social Media</h3>
-          <div className="flex flex-wrap justify-center md:justify-start gap-6 mb-8">
-            {athlete.socialMediaLinks.map((link, index) => {
-              const SocialIcon = getSocialIcon(link.platform);
-              return SocialIcon ? (
-                <div key={index} className="relative group">
-                  <a
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`${link.platform} Profile`}
-                    className="text-gray-700 hover:text-gamepulse-dark transform hover:scale-110 transition-transform duration-200"
-                  >
-                    <SocialIcon className="text-4xl" />
-                  </a>
-                  <button className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-1 text-xs opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110">
-                    <TrashIcon />
-                    <span className="sr-only">Remove Social Link</span>
-                  </button>
-                </div>
-              ) : null;
-            })}
-            <button className="text-gamepulse-blue hover:text-gamepulse-dark transform hover:scale-110 transition-transform duration-200 text-4xl">
-              <PlusCircleIcon />
-              <span className="sr-only">Add Social Link</span>
-            </button>
-          </div>
-        </>
-      )}
-
-      {/* Share Profile Button */}
-      <div className="flex justify-center md:justify-start">
-        <button
-          onClick={handleShareProfile}
-          className="px-6 py-3 bg-gray-200 text-gray-800 font-semibold rounded-full shadow-sm hover:bg-gray-300 transition-colors duration-300 flex items-center justify-center text-base md:text-lg"
-        >
-          <ShareAltIcon className="mr-3 text-gamepulse-blue" /> Share My Profile
-        </button>
       </div>
     </section>
   );

@@ -1,115 +1,81 @@
 // src/components/MyProfile/MyPerformanceMetrics.jsx
-import React, { useState } from 'react';
-import { FaChartLine, FaTrophy, FaPlusCircle, FaPen, FaTrashAlt } from 'react-icons/fa';
+import React from 'react';
+
+// Assuming you have stat configurations or just want to display generic data
+// For a full implementation, you might import stat configurations like this:
+// import { BASKETBALL_STATS_CONFIG, FOOTBALL_STATS_CONFIG, etc. } from '../../utils/statConfigs'; // Example path
 
 const MyPerformanceMetrics = ({ athlete }) => {
-  const [selectedSport, setSelectedSport] = useState(athlete.primarySport.toLowerCase());
+  // Ensure athlete object exists before trying to access its properties.
+  // Use optional chaining for safe access to sportType.
+  // The sportType is already lowercase from MyProfilePage.
+  const sportType = athlete?.sportType; // This line should be safe now. (Line 6 in your context)
 
-  // Icons from athlete.icons, or default fallback
-  const ChartLineIcon = athlete.icons?.FaChartLine || FaChartLine;
-  const TrophyIcon = athlete.icons?.FaTrophy || FaTrophy;
-  const PlusCircleIcon = athlete.icons?.FaPlusCircle || FaPlusCircle;
-  const PenIcon = athlete.icons?.FaPen || FaPen;
-  const TrashIcon = athlete.icons?.FaTrashAlt || FaTrashAlt;
+  // Helper function to make sport names more readable (e.g., 'field_hockey' -> 'Field Hockey')
+  const getDisplaySportName = (sport) => {
+    if (!sport) return 'N/A';
+    return sport.replace(/_/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  };
 
-  const currentStats = athlete.stats[selectedSport] || [];
-  const progressData = athlete.progressData || [];
+  const displaySport = getDisplaySportName(sportType);
+
+  // Determine which stats to display based on sportType
+  // You would typically have a more sophisticated mapping here,
+  // potentially using a configuration object like in ProfileHeader.
+  let currentPostseasonStats = {};
+  let currentCareerStats = {};
+
+  if (athlete) {
+    currentPostseasonStats = athlete.postseasonStats || {};
+    currentCareerStats = athlete.careerStats || {};
+
+    // Example of sport-specific stat selection (similar to ProfileHeader)
+    // if (sportType === 'basketball') {
+    //   // Use basketball-specific stats if available, or a generic set
+    // } else if (sportType === 'football') {
+    //   // Use football-specific stats
+    // }
+    // ... add more conditions for other sports if needed
+  }
+
 
   return (
-    <section className="container mx-auto px-4 md:px-8 py-8 md:py-12 bg-white rounded-lg shadow-md mt-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 font-heading flex items-center">
-          <ChartLineIcon className="text-gamepulse-blue mr-3" /> My Game: Stats & Progress
-        </h2>
-        <button className="px-4 py-2 bg-gamepulse-orange text-white rounded-full text-sm font-semibold flex items-center hover:bg-orange-700 transition-colors">
-          <PlusCircleIcon className="mr-2" /> Add New Game/Stats
-        </button>
-      </div>
+    <section className="bg-white p-6 md:p-8 rounded-lg shadow-md mb-6 dark:bg-gray-800 dark:text-white">
+      <h3 className="text-2xl font-bold mb-4 border-b pb-2 border-gray-200 dark:border-gray-700">
+        Performance Metrics for {displaySport}
+      </h3>
 
-      {/* Sport Selector */}
-      {athlete.sports && athlete.sports.length > 1 && (
-        <div className="flex justify-center mb-6 space-x-3">
-          {athlete.sports.map(sport => (
-            <button
-              key={sport.id}
-              onClick={() => setSelectedSport(sport.id)}
-              className={`px-5 py-2 rounded-full font-semibold text-sm md:text-base transition-colors duration-200
-                ${selectedSport === sport.id
-                  ? 'bg-gamepulse-blue text-white shadow-md'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-            >
-              {sport.name}
-            </button>
+      {athlete && Object.keys(currentPostseasonStats).length > 0 ? (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {Object.entries(currentPostseasonStats).map(([key, value]) => (
+            <div key={key} className="p-3 bg-gray-50 rounded-md dark:bg-gray-700">
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+              </p>
+              <p className="text-lg font-semibold text-gray-800 dark:text-white">{value}</p>
+            </div>
           ))}
         </div>
+      ) : (
+        <p className="text-gray-600 dark:text-gray-400">No postseason metrics available for {displaySport} yet.</p>
       )}
 
-      {/* Core Stats by Sport */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
-        {currentStats.map((stat, index) => {
-          const StatIcon = stat.icon;
-          return (
-            <div key={index} className="bg-gray-100 p-4 rounded-lg text-center shadow-sm flex flex-col items-center justify-center relative group">
-              {StatIcon && <StatIcon className="text-gamepulse-orange text-3xl mb-2" />}
-              <p className="text-xl md:text-2xl font-bold text-gamepulse-dark">{stat.value}</p>
-              <p className="text-gray-600 text-sm md:text-base">{stat.label}</p>
-              <button className="absolute top-2 right-2 text-gray-400 hover:text-gamepulse-blue transition-colors opacity-0 group-hover:opacity-100 text-sm">
-                <PenIcon />
-                <span className="sr-only">Edit Stat</span>
-              </button>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Progress Over Time (Placeholder) */}
-      <h3 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4 font-heading">Progress Over Time</h3>
-      <div className="w-full h-48 md:h-64 bg-gray-100 rounded-lg shadow-inner flex items-center justify-center text-gray-500 text-center p-4 text-sm md:text-base">
-        <p>
-          [Chart Placeholder: A lightweight line graph showing progress over seasons/months. <br />
-          Add interactive elements like time range selectors (e.g., "Last 6 Months", "This Season").]
-        </p>
-        {/* Simple visual representation for demo */}
-        {progressData.length > 0 && (
-          <div className="flex justify-between items-end w-full p-2">
-            {progressData.map((dataPoint, index) => (
-              <div key={index} className="flex flex-col items-center mx-1">
-                <span className="text-[10px] text-gray-500 mb-1">{dataPoint.name}</span>
-                <div className="bg-gamepulse-blue rounded-t-sm" style={{ height: `${dataPoint.goals * 4 + 10}px`, width: '10px' }}></div>
-                <span className="text-[10px] font-bold text-gamepulse-dark mt-1">{dataPoint.goals}</span>
+      {/* Career Stats Section */}
+      {athlete && Object.keys(currentCareerStats).length > 0 && (
+        <div className="mt-6">
+          <h4 className="text-xl font-bold mb-3 border-b pb-1 border-gray-200 dark:border-gray-700">Career Statistics</h4>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {Object.entries(currentCareerStats).map(([key, value]) => (
+              <div key={key} className="p-3 bg-gray-50 rounded-md dark:bg-gray-700">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                </p>
+                <p className="text-lg font-semibold text-gray-800 dark:text-white">{value}</p>
               </div>
             ))}
           </div>
-        )}
-      </div>
-
-      {/* Key Achievements/Awards */}
-      <h3 className="text-xl md:text-2xl font-semibold text-gray-800 mt-8 mb-4 font-heading">Key Achievements</h3>
-      <div className="space-y-2">
-        {athlete.achievements.map((achievement, index) => {
-          const AchievementIcon = achievement.icon || TrophyIcon;
-          return (
-            <div key={index} className="flex items-start text-gray-700 text-base md:text-lg bg-gray-50 p-3 rounded-md border border-gray-100 shadow-sm relative group">
-              <AchievementIcon className="text-gamepulse-orange mr-3 text-xl md:text-2xl mt-1 flex-shrink-0" />
-              <span>{achievement.text}</span>
-              <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button className="text-gray-400 hover:text-gamepulse-blue text-sm">
-                  <PenIcon />
-                  <span className="sr-only">Edit Achievement</span>
-                </button>
-                <button className="text-gray-400 hover:text-red-500 text-sm">
-                  <TrashIcon />
-                  <span className="sr-only">Delete Achievement</span>
-                </button>
-              </div>
-            </div>
-          );
-        })}
-        <button className="mt-4 px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-semibold flex items-center hover:bg-gray-200 transition-colors">
-          <PlusCircleIcon className="mr-2" /> Add Achievement
-        </button>
-      </div>
+        </div>
+      )}
     </section>
   );
 };

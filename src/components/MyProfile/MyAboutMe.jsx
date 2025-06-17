@@ -1,88 +1,87 @@
 // src/components/MyProfile/MyAboutMe.jsx
 import React from 'react';
-import { FaUserGraduate, FaStar, FaGraduationCap, FaPen, FaPlusCircle, FaTrashAlt } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
 
 const MyAboutMe = ({ athlete }) => {
-  // Icons from athlete.icons, or default fallback
-  const UserGraduateIcon = athlete.icons?.FaUserGraduate || FaUserGraduate;
-  const StarIcon = athlete.icons?.FaStar || FaStar;
-  const GraduationCapIcon = athlete.icons?.FaGraduationCap || FaGraduationCap;
-  const PenIcon = athlete.icons?.FaPen || FaPen;
-  const PlusCircleIcon = athlete.icons?.FaPlusCircle || FaPlusCircle;
-  const TrashIcon = athlete.icons?.FaTrashAlt || FaTrashAlt;
-
+  // Safely access properties, defaulting to empty arrays if undefined.
+  // This is where line 37 was likely trying to call map().
+  const bio = athlete?.bio || [];
+  const interests = athlete?.interests || [];
+  const achievements = athlete?.achievements || [];
+  const education = athlete?.education || [];
 
   return (
-    <section className="container mx-auto px-4 md:px-8 py-8 md:py-12 bg-white rounded-lg shadow-md mt-6">
-      <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 font-heading flex items-center">
-        <UserGraduateIcon className="text-gamepulse-blue mr-3" /> My Story & Qualities
-      </h2>
+    <section className="bg-white p-6 md:p-8 rounded-lg shadow-md mb-6 dark:bg-gray-800 dark:text-white">
+      <h3 className="text-2xl font-bold mb-4 border-b pb-2 border-gray-200 dark:border-gray-700">
+        About Me
+      </h3>
 
-      {/* Personal Statement */}
-      <div className="relative group mb-8">
-        <h3 className="text-xl md:text-2xl font-semibold text-gray-800 mb-3 font-heading">Personal Statement</h3>
-        <p className="text-gray-700 leading-relaxed text-base md:text-lg">
-          {athlete.personalStatement}
-        </p>
-        <button className="absolute top-0 right-0 -mr-6 -mt-2 text-gray-400 hover:text-gamepulse-blue transition-colors text-sm opacity-0 group-hover:opacity-100 md:opacity-100 md:static md:ml-2">
-          <PenIcon />
-          <span className="sr-only">Edit Personal Statement</span>
-        </button>
-      </div>
+      {/* Bio Section */}
+      {bio.length > 0 ? (
+        <div className="mb-6">
+          {bio.map((paragraph, index) => (
+            <p key={index} className="text-gray-700 leading-relaxed mb-3 dark:text-gray-300">
+              {paragraph}
+            </p>
+          ))}
+        </div>
+      ) : (
+        // Render nothing or a placeholder if bio is empty, but only if other sections are also empty
+        null
+      )}
 
-      {/* Key Skills/Attributes */}
-      <h3 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4 font-heading">Key Skills & Attributes</h3>
-      <div className="flex flex-wrap gap-3 mb-8">
-        {athlete.skills.map((skill, index) => (
-          <span
-            key={index}
-            className="bg-gamepulse-blue/10 text-gamepulse-blue px-4 py-2 rounded-full text-sm md:text-base font-semibold flex items-center shadow-sm relative group"
-          >
-            <StarIcon className="mr-2 text-gamepulse-orange" /> {skill}
-            <button className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-1 text-xs opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110">
-              <TrashIcon />
-              <span className="sr-only">Remove Skill</span>
-            </button>
-          </span>
-        ))}
-        <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-semibold flex items-center hover:bg-gray-200 transition-colors">
-          <PlusCircleIcon className="mr-2" /> Add Skill
-        </button>
-      </div>
-
-      {/* Digital Classroom Progress */}
-      {athlete.digitalClassroomProgress && athlete.digitalClassroomProgress.length > 0 && (
-        <>
-          <h3 className="text-xl md:text-2xl font-semibold text-gray-800 mt-8 mb-4 font-heading">Digital Classroom Progress</h3>
-          <div className="space-y-3">
-            {athlete.digitalClassroomProgress.map((module, index) => (
-              <div
-                key={index}
-                className={`p-4 rounded-lg border-l-4 shadow-sm flex items-center relative group
-                  ${module.completed
-                    ? 'bg-gamepulse-teal/10 border-gamepulse-teal text-gray-800'
-                    : 'bg-gray-100 border-gray-300 text-gray-600'
-                  }`}
-              >
-                <GraduationCapIcon className="text-2xl mr-4 flex-shrink-0" />
-                <div>
-                  <p className="font-semibold text-base md:text-lg">{module.name}</p>
-                  <p className="text-sm md:text-base">Status: {module.completed ? 'Completed' : 'In Progress'}</p>
-                </div>
-                <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button className="text-gray-400 hover:text-gamepulse-blue text-sm">
-                    <PenIcon />
-                    <span className="sr-only">Edit Module Status</span>
-                  </button>
-                </div>
-              </div>
+      {/* Interests Section */}
+      {interests.length > 0 ? (
+        <div className="mb-6">
+          <h4 className="text-xl font-bold mb-3 border-b pb-1 border-gray-200 dark:border-gray-700">Interests</h4>
+          <div className="flex flex-wrap gap-2">
+            {interests.map((interest, index) => (
+              <span key={index} className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full dark:bg-blue-900 dark:text-blue-200">
+                {interest}
+              </span>
             ))}
-            <Link to="/digital-classroom" className="mt-4 block px-4 py-2 bg-gray-100 text-gamepulse-blue rounded-full text-sm font-semibold flex items-center justify-center hover:bg-gray-200 transition-colors">
-              <PlusCircleIcon className="mr-2" /> Explore Digital Classroom
-            </Link>
           </div>
-        </>
+        </div>
+      ) : (
+        null
+      )}
+
+      {/* Achievements Section */}
+      {achievements.length > 0 ? (
+        <div className="mb-6">
+          <h4 className="text-xl font-bold mb-3 border-b pb-1 border-gray-200 dark:border-gray-700">Achievements</h4>
+          <ul className="list-disc list-inside text-gray-700 dark:text-gray-300">
+            {achievements.map((achievement, index) => (
+              <li key={index} className="mb-1">
+                <span className="font-semibold">{achievement.year}:</span> {achievement.description}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        null
+      )}
+
+      {/* Education Section */}
+      {education.length > 0 ? (
+        <div>
+          <h4 className="text-xl font-bold mb-3 border-b pb-1 border-gray-200 dark:border-gray-700">Education</h4>
+          <ul className="list-disc list-inside text-gray-700 dark:text-gray-300">
+            {education.map((edu, index) => (
+              <li key={index} className="mb-1">
+                <span className="font-semibold">{edu.year}:</span> {edu.institution} - {edu.degree}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        null
+      )}
+
+      {/* Fallback if ALL 'about me' sections are empty */}
+      {bio.length === 0 && interests.length === 0 && achievements.length === 0 && education.length === 0 && (
+        <p className="text-gray-600 dark:text-gray-400">
+          No detailed 'About Me' information available yet.
+        </p>
       )}
     </section>
   );
