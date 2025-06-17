@@ -1,9 +1,10 @@
 // src/components/MyProfile/MyProfileFooterNav.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaUsers, FaCalendarAlt, FaVideo, FaGraduationCap, FaCog } from 'react-icons/fa';
+import { FaUsers, FaCalendarAlt, FaVideo, FaGraduationCap, FaCog, FaCalendar } from 'react-icons/fa';
 
-const MyProfileFooterNav = ({ athleteIcons }) => {
+// Accept athleteId as a prop
+const MyProfileFooterNav = ({ athleteIcons, athleteId }) => {
   // Use icons from athleteIcons or default to react-icons
   const UsersIcon = athleteIcons?.FaUsers || FaUsers;
   const CalendarIcon = athleteIcons?.FaCalendarAlt || FaCalendarAlt;
@@ -19,10 +20,13 @@ const MyProfileFooterNav = ({ athleteIcons }) => {
           <UsersIcon className="text-3xl mb-1" />
           My Teams
         </Link>
-        <Link to="/my-calendar" className="text-gamepulse-blue hover:text-gamepulse-dark font-semibold text-sm md:text-base flex flex-col items-center p-2 rounded-lg hover:bg-gray-100 transition-colors">
-          <CalendarIcon className="text-3xl mb-1" />
-          My Calendar
-        </Link>
+        {/* Update the 'to' prop for My Calendar Link */}
+        {athleteId && ( // Only render if athleteId is available
+          <Link to={`/my-calendar/${athleteId}`} className="text-gamepulse-blue hover:text-gamepulse-dark font-semibold text-sm md:text-base flex flex-col items-center p-2 rounded-lg hover:bg-gray-100 transition-colors">
+            <FaCalendar className="text-3xl mb-1" />
+            My Calendar
+          </Link>
+        )}
         <Link to="/my-highlights" className="text-gamepulse-blue hover:text-gamepulse-dark font-semibold text-sm md:text-base flex flex-col items-center p-2 rounded-lg hover:bg-gray-100 transition-colors">
           <VideoIcon className="text-3xl mb-1" />
           My Highlights

@@ -12,41 +12,16 @@ export const AuthProvider = ({ children }) => {
 
   const navigate = useNavigate();
 
-  // Simulate checking for a logged-in user on app load (e.g., from localStorage)
-  useEffect(() => {
-    const storedUser = localStorage.getItem('gamepulse_current_user');
-    const token = localStorage.getItem('gamepulse_auth_token');
-
-    if (token && storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        setIsLoggedIn(true);
-        setCurrentUser(parsedUser);
-        setUserType(parsedUser.userType);
-        setUserAvatarUrl(parsedUser.avatarUrl || parsedUser.profilePictureUrl || '/images/sample-athlete-avatar.webp');
-
-        redirectToUserDashboard(parsedUser.userType);
-
-      } catch (error) {
-        console.error("Failed to parse stored user data:", error);
-        localStorage.removeItem('gamepulse_current_user');
-        localStorage.removeItem('gamepulse_auth_token');
-        setIsLoggedIn(false);
-        setCurrentUser(null);
-        setUserType(null);
-        setUserAvatarUrl('/images/default-avatar.webp');
-      }
-    }
-  }, []);
-
   // Helper function to redirect based on user type
-  const redirectToUserDashboard = (type) => {
+  // Added userId parameter to allow for specific profile/calendar paths
+  const redirectToUserDashboard = (type, userId = null) => {
     const currentPath = window.location.pathname;
     let targetPath;
 
     switch (type) {
       case 'athlete':
-        targetPath = '/athlete-dashboard';
+        // If it's an athlete, redirect to their specific profile page by default
+        targetPath = userId ? `/my-profile/${userId}` : '/my-profile';
         break;
       case 'coach':
         targetPath = '/coach-dashboard';
@@ -63,15 +38,51 @@ export const AuthProvider = ({ children }) => {
         break;
     }
 
-    // Do not redirect if on login, signup, forgot-password, or reset-password pages
-    if (currentPath !== targetPath &&
-        !currentPath.includes('/login') &&
-        !currentPath.includes('/signup') &&
-        !currentPath.includes('/forgot-password') &&
-        !currentPath.includes('/reset-password')) {
+    // Define paths that should NOT trigger a redirect if the user is already on them,
+    // or if they are specific user-centric pages (like their own profile/calendar).
+    const isExcludedPath =
+      currentPath.includes('/login') ||
+      currentPath.includes('/signup') ||
+      currentPath.includes('/forgot-password') ||
+      currentPath.includes('/reset-password') ||
+      (type === 'athlete' && userId && (
+        currentPath === `/my-profile/${userId}` ||   // If already on THIS athlete's profile
+        currentPath.startsWith(`/my-calendar/${userId}`) // If already on THIS athlete's calendar
+      ));
+
+    // Only redirect if current path is not an excluded path AND it's not the target path
+    if (!isExcludedPath && currentPath !== targetPath) {
       navigate(targetPath);
     }
   };
+
+  // Simulate checking for a logged-in user on app load (e.g., from localStorage)
+  useEffect(() => {
+    const storedUser = localStorage.getItem('gamepulse_current_user');
+    const token = localStorage.getItem('gamepulse_auth_token');
+
+    if (token && storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setIsLoggedIn(true);
+        setCurrentUser(parsedUser);
+        setUserType(parsedUser.userType);
+        setUserAvatarUrl(parsedUser.avatarUrl || parsedUser.profilePictureUrl || '/images/sample-athlete-avatar.webp');
+
+        // Pass the user ID when calling redirectToUserDashboard from useEffect
+        redirectToUserDashboard(parsedUser.userType, parsedUser.id);
+
+      } catch (error) {
+        console.error("Failed to parse stored user data:", error);
+        localStorage.removeItem('gamepulse_current_user');
+        localStorage.removeItem('gamepulse_auth_token');
+        setIsLoggedIn(false);
+        setCurrentUser(null);
+        setUserType(null);
+        setUserAvatarUrl('/images/default-avatar.webp');
+      }
+    }
+  }, []);
 
   const login = async (emailOrUsername, password, rememberMe) => {
     try {
@@ -82,7 +93,7 @@ export const AuthProvider = ({ children }) => {
 
       if (emailOrUsername === 'athlete@example.com' && password === 'password123') {
         simulatedUser = {
-          id: 'ath1', fullName: 'Amaani Okoro', email: 'athlete@example.com', userType: 'athlete',
+          id: 'ama_owusu', fullName: 'Ama Owusu', email: 'athlete@example.com', userType: 'athlete', // Use 'ama_owusu' ID
           avatarUrl: '/images/sample-athlete-avatar.webp', sport: 'Football', school: 'Accra High Spartans',
           stats: { goals: 15, assists: 10 }, highlights: [{ id: 1, title: 'Epic Goal vs Kumasi' }],
           upcomingEvents: [{ id: 1, title: 'Match Day', date: '2025-06-25' }], bio: 'Young and talented striker with a powerful shot.',
@@ -91,7 +102,7 @@ export const AuthProvider = ({ children }) => {
         simulatedUser = {
           id: 'coach1', fullName: 'Coach Mensah', email: 'coach@example.com', userType: 'coach',
           avatarUrl: '/images/coach-avatar.webp', teamName: 'Accra High Spartans',
-          roster: [{ id: 'ath1', name: 'Amaani Okoro' }], matchReports: [],
+          roster: [{ id: 'ath2', name: 'Amaani Okoro' }], matchReports: [],
           teams: [{ id: 1, name: 'U17 Spartans' }], notifications: [{ id: 1, message: 'New athlete joined your team' }],
         };
       } else if (emailOrUsername === 'immanueleshun9@gmail.com' && password === '1234567890') {
@@ -104,7 +115,7 @@ export const AuthProvider = ({ children }) => {
         simulatedUser = {
           id: 'scout1', fullName: 'Global Scout Network', email: 'scout@example.com', userType: 'scout',
           avatarUrl: '/images/scout-avatar.webp', regionsOfInterest: ['Greater Accra', 'Ashanti'],
-          trackedAthletes: [{ id: 'ath1', name: 'Amaani Okoro' }], newHighlights: [{ id: 1, title: 'Striker Showcase' }],
+          trackedAthletes: [{ id: 'ath3', name: 'Amaani Okoro' }], newHighlights: [{ id: 1, title: 'Striker Showcase' }],
         };
       } else if (emailOrUsername === 'fan@example.com' && password === 'password123') {
         simulatedUser = {
@@ -126,7 +137,8 @@ export const AuthProvider = ({ children }) => {
       setUserAvatarUrl(simulatedUser.avatarUrl || simulatedUser.profilePictureUrl || '/images/sample-athlete-avatar.webp');
 
       console.log("User logged in successfully!");
-      redirectToUserDashboard(simulatedUser.userType);
+      // Pass the user ID when calling redirectToUserDashboard after login
+      redirectToUserDashboard(simulatedUser.userType, simulatedUser.id);
       return simulatedUser;
     } catch (error) {
       console.error("Login failed in AuthContext:", error);

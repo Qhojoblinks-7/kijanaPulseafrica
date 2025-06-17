@@ -1,6 +1,6 @@
 // src/App.jsx
 
-import React from 'react';
+import React, { useEffect } from 'react'; // Import useEffect
 import { Routes, Route, useLocation, Link } from 'react-router-dom';
 import Header from './components/Header/Header';
 import HomePage from './pages/HomePage';
@@ -30,10 +30,19 @@ import HelpAndSupportPage from './pages/HelpAndSupportPage';
 // NEW IMPORT: DarkModeProvider
 import { DarkModeProvider } from './context/DarkModeContext';
 import SettingsPage from './pages/SettingsPage';
+import MyCalendarPage from './pages/MyCalendarPage';
+import UpcomingEvents from './components/AthleteProfile/UpcomingEvents';
 
 
 function App() {
   const location = useLocation();
+
+  // Add console.log to see the current path
+  useEffect(() => {
+    console.log('App.jsx - Current path:', location.pathname);
+    console.log('App.jsx - Location object:', location);
+  }, [location]);
+
 
   const noHeaderPaths = [
     '/upload-highlight',
@@ -63,15 +72,16 @@ function App() {
               <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
               <Route path="/terms-of-service" element={<TermsOfServicePage />} />
 
-              <Route path="/athlete-profile" element={<AthleteProfilePage />} />
-              <Route path="/my-profile" element={<MyProfilePage />} />
+              <Route path="/athlete/:id" element={<AthleteProfilePage />} />
+
+              <Route path="/my-profile/:id" element={<MyProfilePage />} />
               <Route path="/signup" element={<SignUpPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
 
               <Route path="/dashboard" element={<UserDashboardPage />} />
-              <Route path="/athlete-dashboard" element={<UserDashboardPage />} />
+              <Route path="/profile" element={<AthleteProfilePage />} />
               <Route path="/coach-dashboard" element={<UserDashboardPage />} />
               <Route path="/scout-dashboard" element={<UserDashboardPage />} />
               <Route path="/fan-dashboard" element={<UserDashboardPage />} />
@@ -97,12 +107,10 @@ function App() {
               <Route path="/my-teams/add-athlete" element={<div>Add Athlete to Team Page (Implement Me)</div>} />
               <Route path="/my-teams/analytics" element={<div>Team Analytics Page (Implement Me)</div>} />
               <Route path="/match-reporting/new" element={<div>New Match Report Page (Implement Me)</div>} />
-              <Route path="/my-calendar" element={<div>My Calendar (Implement Me)</div>} />
-              <Route path="/my-calendar/add-event" element={<div>Add Calendar Event Page (Implement Me)</div>} />
+              <Route path="/my-calendar/:id" element={<MyCalendarPage />} />
+              <Route path="/my-calendar/add-event" element={<UpcomingEvents />} />
               <Route path="/match-details/:matchId" element={<MatchDetailsPage />} />
-
               <Route path="/analytics/regions" element={<div>Regional Analytics Page (Implement Me)</div>} />
-              <Route path="/athlete-profile/:id" element={<AthleteProfilePage />} />
 
               <Route path="*" element={
                 <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 text-gray-700 p-4">

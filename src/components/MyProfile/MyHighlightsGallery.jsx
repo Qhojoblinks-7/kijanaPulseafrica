@@ -4,7 +4,7 @@ import React from 'react';
 const MyHighlightsGallery = ({ athlete }) => {
   // Line 6 will be here. Safely access the highlights array.
   // If athlete or athlete.highlights is undefined, default to an empty array.
-  const highlights = athlete?.highlights || []; // This line should fix the error.
+  const highlights = athlete?.media || []; // This line should fix the error.
 
   // If there are no highlights, display a message
   if (highlights.length === 0) {

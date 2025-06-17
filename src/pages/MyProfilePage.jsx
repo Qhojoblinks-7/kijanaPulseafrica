@@ -1,15 +1,16 @@
 // src/pages/MyProfilePage.jsx
-import React, { useState, useEffect } from 'react'; // Import useState
+import React, { useState, useEffect } from 'react';
 import ProfileHeader from '../components/AthleteProfile/ProfileHeader';
-import MyPerformanceMetrics from '../components/MyProfile/MyPerformanceMetrics';
 import MyHighlightsGallery from '../components/MyProfile/MyHighlightsGallery';
 import MyAboutMe from '../components/MyProfile/MyAboutMe';
 import MyConnectionsAndContact from '../components/MyProfile/MyConnectionsAndContact';
 import MyProfileFooterNav from '../components/MyProfile/MyProfileFooterNav';
+import CareerHistory from '../components/AthleteProfile/CareerHistory'; // Import the CareerHistory component
 import { allAthleteProfilesData } from '../data/allAthleteProfilesData'; // Import all athlete data
+import KeyAttributes from '../components/AthleteProfile/KeyAttributes';
 
 const MyProfilePage = () => {
-  const [athlete, setAthlete] = useState(null); // Use state to manage athlete data
+  const [athlete, setAthlete] = useState(null);
 
   useEffect(() => {
     // In a real application, you'd get the current user's ID from an auth context or API
@@ -31,7 +32,7 @@ const MyProfilePage = () => {
     }
 
     window.scrollTo(0, 0); // Scroll to top on page load
-  }, []); // Empty dependency array means this effect runs once on mount
+  }, []);
 
   // Update document title when athlete data is available
   useEffect(() => {
@@ -40,7 +41,7 @@ const MyProfilePage = () => {
     } else {
       document.title = `My Profile | GamePulse Africa`;
     }
-  }, [athlete]); // Depend on athlete state
+  }, [athlete]);
 
   if (!athlete) {
     // Handle loading or error state
@@ -61,11 +62,17 @@ const MyProfilePage = () => {
 
       {/* Main content sections, nested within a consistent container for spacing */}
       <div className="relative z-0">
-        <MyPerformanceMetrics athlete={athlete} />
-        <MyHighlightsGallery athlete={athlete} />
+        <MyHighlightsGallery athlete={athlete} /> {/* Ensure MyHighlightsGallery handles 'media' prop */}
         <MyAboutMe athlete={athlete} />
+        <KeyAttributes attributes={athlete.keyAttributes} />
+
+        {/* Add the CareerHistory component here */}
+        <CareerHistory history={athlete.careerHistory} />
         <MyConnectionsAndContact athlete={athlete} />
-        <MyProfileFooterNav athleteIcons={athlete.icons} />
+
+        {/* --- CRITICAL CHANGE HERE --- */}
+        {/* Pass the athlete.id as the athleteId prop */}
+        <MyProfileFooterNav athleteIcons={athlete.icons} athleteId={athlete.id} />
       </div>
 
       {/* A global footer component would typically be here */}

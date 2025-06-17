@@ -51,7 +51,7 @@ const LoginPage = () => {
           // Redirect based on userType from loggedInUser
           switch (loggedInUser.userType) {
             case 'athlete':
-              navigate('/athlete-dashboard');
+              navigate('/my-profile');
               break;
             case 'coach':
               navigate('/coach-dashboard');

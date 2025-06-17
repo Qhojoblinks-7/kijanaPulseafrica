@@ -9,7 +9,7 @@ import Backdrop from './../assets/backdrop.png'; // Correct path to your backdro
 
 // Assume a base path for dashboards or specific onboarding flows
 const DASHBOARD_ROUTES = {
-  athlete: '/athlete-dashboard', // Example: Athlete-specific dashboard
+  athlete: 'my-profile', // Example: Athlete-specific dashboard
   coach: '/coach-dashboard',     // Example: Coach-specific dashboard
   scout: '/scout-dashboard',     // Example: Scout-specific dashboard
   fan: '/fan-dashboard',         // Example: Fan-specific dashboard

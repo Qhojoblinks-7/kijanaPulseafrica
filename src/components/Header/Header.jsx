@@ -89,7 +89,7 @@ const Header = () => {
   // Helper function to get the user's specific dashboard path
   const getUserDashboardPath = (type) => {
     switch (type) {
-      case 'athlete': return '/athlete-dashboard';
+      case 'athlete': return '/my-calender';
       case 'coach': return '/coach-dashboard';
       case 'scout': return '/scout-dashboard';
       case 'fan':
