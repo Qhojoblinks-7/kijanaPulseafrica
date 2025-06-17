@@ -1,6 +1,146 @@
-// src/components/AthleteProfile/ProfileHeader.jsx
-// Removed backdropImageUrl import as it's not used in the provided code's logic.
-import React from 'react'; // Import React for React.Fragment
+import React from 'react';
+
+// Import athlete-specific images from your assets
+// Ensure these paths are correct based on your project structure.
+// NOTE: These are used in the MOCK_ATHLETES data structure in allAthleteProfilesData.js
+//       and are passed to renderStatRow as the background image.
+//       They are NOT directly used here unless athlete.athleteFullImage is one of them.
+//       The component expects athlete.athleteFullImage to be a direct path/import.
+
+// --- Stat Configuration Definitions ---
+// These define the order and labels for stats for each sport type
+const BASKETBALL_STATS_CONFIG = [
+  { key: 'mp', label: 'MP' },
+  { key: 'fg', label: 'FG%' },
+  { key: '3p', label: '3P%' },
+  { key: 'ft', label: 'FT%' },
+  { key: 'ppg', label: 'PPG' },
+  { key: 'rpg', label: 'RPG' },
+  { key: 'apg', label: 'APG' },
+  { key: 'bpg', label: 'BPG' },
+];
+
+const FOOTBALL_STATS_CONFIG = [
+  { key: 'appearances', label: 'App' },
+  { key: 'goals', label: 'Goals' },
+  { key: 'assists', label: 'Ast' },
+  { key: 'passAccuracy', label: 'Pass%' },
+  { key: 'tackles', label: 'Tkl' },
+  { key: 'yellowCards', label: 'YC' },
+  { key: 'redCards', label: 'RC' },
+  { key: 'cleanSheets', label: 'CS' },
+];
+
+const ATHLETICS_STATS_CONFIG = [
+  { key: 'events', label: 'Events' },
+  { key: 'pb100m', label: 'PB 100m' },
+  { key: 'pb200m', label: 'PB 200m' },
+  { key: 'medals', label: 'Medals' },
+  { key: 'rank', label: 'Rank' },
+  { key: 'avgSpeed', label: 'Avg Spd' },
+  { key: 'starts', label: 'Starts' },
+  { key: 'form', label: 'Form' },
+];
+
+const VOLLEYBALL_STATS_CONFIG = [
+  { key: 'sets', label: 'Sets' },
+  { key: 'assists', label: 'Assists' },
+  { key: 'blocks', label: 'Blocks' },
+  { key: 'aces', label: 'Aces' },
+  { key: 'digs', label: 'Digs' },
+  { key: 'serviceEff', label: 'Serv Eff' },
+  { key: 'attackingPct', label: 'Atk %' },
+  { key: 'games', label: 'Games' },
+];
+
+const SWIMMING_STATS_CONFIG = [
+  { key: 'events', label: 'Events' },
+  { key: 'pb50m', label: 'PB 50m' },
+  { key: 'pb100m', label: 'PB 100m' },
+  { key: 'medals', label: 'Medals' },
+  { key: 'rank', label: 'Rank' },
+  { key: 'strokes', label: 'Strokes' },
+  { key: 'starts', label: 'Starts' },
+  { key: 'turns', label: 'Turns' },
+];
+
+const HANDBALL_STATS_CONFIG = [
+  { key: 'games', label: 'Games' },
+  { key: 'goals', label: 'Goals' },
+  { key: 'assists', label: 'Assists' },
+  { key: 'steals', label: 'Steals' },
+  { key: 'blocks', label: 'Blocks' },
+  { key: 'shots', label: 'Shots' },
+  { key: 'penalties', label: 'Pens' },
+  { key: 'discipline', label: 'Disc' },
+];
+
+const TENNIS_STATS_CONFIG = [
+  { key: 'matches', label: 'Matches' },
+  { key: 'wins', label: 'Wins' },
+  { key: 'losses', label: 'Losses' },
+  { key: 'tournaments', label: 'Tours' },
+  { key: 'aces', label: 'Aces' },
+  { key: 'forehand', label: 'F.Hand' },
+  { key: 'backhand', label: 'B.Hand' },
+  { key: 'serveWin', label: 'Serv Win%' },
+];
+
+const TABLE_TENNIS_STATS_CONFIG = [
+  { key: 'matches', label: 'Matches' },
+  { key: 'wins', label: 'Wins' },
+  { key: 'losses', label: 'Losses' },
+  { key: 'tournaments', label: 'Tours' },
+  { key: 'serves', label: 'Serves' },
+  { key: 'smashes', label: 'Smashes' },
+  { key: 'spins', label: 'Spins' },
+  { key: 'defVolley', label: 'Def Volley' },
+];
+
+const RUGBY_STATS_CONFIG = [
+  { key: 'matches', label: 'Matches' },
+  { key: 'tries', label: 'Tries' },
+  { key: 'tackles', label: 'Tackles' },
+  { key: 'carries', label: 'Carries' },
+  { key: 'metersRun', label: 'Meters Run' },
+  { key: 'turnovers', label: 'Turnovers' },
+  { key: 'lineouts', label: 'Lineouts' },
+  { key: 'scrum', label: 'Scrum' },
+];
+
+const BADMINTON_STATS_CONFIG = [
+  { key: 'matches', label: 'Matches' },
+  { key: 'wins', label: 'Wins' },
+  { key: 'losses', label: 'Losses' },
+  { key: 'tournaments', label: 'Tours' },
+  { key: 'smashes', label: 'Smashes' },
+  { key: 'drops', label: 'Drops' },
+  { key: 'netPlay', label: 'Net Play' },
+  { key: 'defense', label: 'Defense' },
+];
+
+const FIELD_HOCKEY_STATS_CONFIG = [
+  { key: 'games', label: 'Games' },
+  { key: 'goals', label: 'Goals' },
+  { key: 'assists', label: 'Assists' },
+  { key: 'tackles', label: 'Tackles' },
+  { key: 'passes', label: 'Passes' },
+  { key: 'interceptions', label: 'Interc' },
+  { key: 'penaltyCorners', label: 'PC' },
+  { key: 'fieldCoverage', label: 'Coverage' },
+];
+
+const TAEKWONDO_STATS_CONFIG = [
+  { key: 'matches', label: 'Matches' },
+  { key: 'wins', label: 'Wins' },
+  { key: 'losses', label: 'Losses' },
+  { key: 'medals', label: 'Medals' },
+  { key: 'belts', label: 'Belts' },
+  { key: 'kicks', label: 'Kicks' },
+  { key: 'punches', label: 'Punches' },
+  { key: 'defense', label: 'Defense' },
+];
+
 
 const ProfileHeader = ({ athlete }) => {
   if (!athlete) {
@@ -11,81 +151,7 @@ const ProfileHeader = ({ athlete }) => {
     );
   }
 
-  // --- Stat Configurations for Different Sports ---
-  // Each object defines a stat label (what's displayed) and its corresponding key in the athlete's stats object.
-  const BASKETBALL_STATS_CONFIG = [
-    { label: 'MPG', key: 'mp' }, { label: 'FG%', key: 'fg' }, { label: '3P%', key: '3p' },
-    { label: 'FT%', key: 'ft' }, { label: 'PPG', key: 'ppg' }, { label: 'RPG', key: 'rpg' },
-    { label: 'APG', key: 'apg' }, { label: 'BPG', key: 'bpg' },
-  ];
-
-  const FOOTBALL_STATS_CONFIG = [
-    { label: 'Apps', key: 'appearances' }, { label: 'Goals', key: 'goals' }, { label: 'Assists', key: 'assists' },
-    { label: 'Pass%', key: 'passAccuracy' }, { label: 'Tackles', key: 'tackles' }, { label: 'YC', key: 'yellowCards' },
-    { label: 'RC', key: 'redCards' }, { label: 'CS', key: 'cleanSheets' },
-  ];
-
-  const ATHLETICS_STATS_CONFIG = [
-    { label: 'Events', key: 'events' }, { label: 'PB (100m)', key: 'pb100m' }, { label: 'PB (200m)', key: 'pb200m' },
-    { label: 'Medals', key: 'medals' }, { label: 'Rank', key: 'rank' }, { label: 'Avg Speed', key: 'avgSpeed' },
-    { label: 'Starts', key: 'starts' }, { label: 'Form', key: 'form' },
-  ];
-
-  const VOLLEYBALL_STATS_CONFIG = [
-    { label: 'Games', key: 'games' }, { label: 'Sets', key: 'sets' }, { label: 'Assists', key: 'assists' },
-    { label: 'Blocks', key: 'blocks' }, { label: 'Aces', key: 'aces' }, { label: 'Digs', key: 'digs' },
-    { label: 'Service Eff', key: 'serviceEff' }, { label: 'Att%', key: 'attackingPct' },
-  ];
-
-  const SWIMMING_STATS_CONFIG = [
-    { label: 'Events', key: 'events' }, { label: 'PB (50m)', key: 'pb50m' }, { label: 'PB (100m)', key: 'pb100m' },
-    { label: 'Medals', key: 'medals' }, { label: 'Rank', key: 'rank' }, { label: 'Strokes', key: 'strokes' },
-    { label: 'Starts', key: 'starts' }, { label: 'Turns', key: 'turns' },
-  ];
-
-  const HANDBALL_STATS_CONFIG = [
-    { label: 'Games', key: 'games' }, { label: 'Goals', key: 'goals' }, { label: 'Assists', key: 'assists' },
-    { label: 'Steals', key: 'steals' }, { label: 'Blocks', key: 'blocks' }, { label: 'Shots', key: 'shots' },
-    { label: 'Penalties', key: 'penalties' }, { label: 'Discipline', key: 'discipline' },
-  ];
-
-  const TENNIS_STATS_CONFIG = [
-    { label: 'Matches', key: 'matches' }, { label: 'Wins', key: 'wins' }, { label: 'Losses', key: 'losses' },
-    { label: 'Tournaments', key: 'tournaments' }, { label: 'Aces', key: 'aces' }, { label: 'Forehand', key: 'forehand' },
-    { label: 'Backhand', key: 'backhand' }, { label: 'Serve Win%', key: 'serveWin' },
-  ];
-
-  const TABLE_TENNIS_STATS_CONFIG = [
-    { label: 'Matches', key: 'matches' }, { label: 'Wins', key: 'wins' }, { label: 'Losses', key: 'losses' },
-    { label: 'Tournaments', key: 'tournaments' }, { label: 'Serves', key: 'serves' }, { label: 'Smashes', key: 'smashes' },
-    { label: 'Spins', key: 'spins' }, { label: 'Def. Volley', key: 'defVolley' },
-  ];
-
-  const RUGBY_STATS_CONFIG = [
-    { label: 'Matches', key: 'matches' }, { label: 'Tries', key: 'tries' }, { label: 'Tackles', key: 'tackles' },
-    { label: 'Carries', key: 'carries' }, { label: 'Meters Run', key: 'metersRun' }, { label: 'Turnovers', key: 'turnovers' },
-    { label: 'Lineouts', key: 'lineouts' }, { label: 'Scrum', key: 'scrum' },
-  ];
-
-  const BADMINTON_STATS_CONFIG = [
-    { label: 'Matches', key: 'matches' }, { label: 'Wins', key: 'wins' }, { label: 'Losses', key: 'losses' },
-    { label: 'Tournaments', key: 'tournaments' }, { label: 'Smashes', key: 'smashes' }, { label: 'Drops', key: 'drops' },
-    { label: 'Net Play', key: 'netPlay' }, { label: 'Defense', key: 'defense' },
-  ];
-
-  const FIELD_HOCKEY_STATS_CONFIG = [
-    { label: 'Games', key: 'games' }, { label: 'Goals', key: 'goals' }, { label: 'Assists', key: 'assists' },
-    { label: 'Tackles', key: 'tackles' }, { label: 'Passes', key: 'passes' }, { label: 'Interceptions', key: 'interceptions' },
-    { label: 'PC', key: 'penaltyCorners' }, { label: 'Coverage', key: 'fieldCoverage' },
-  ];
-
-  const TAEKWONDO_STATS_CONFIG = [
-    { label: 'Matches', key: 'matches' }, { label: 'Wins', key: 'wins' }, { label: 'Losses', key: 'losses' },
-    { label: 'Medals', key: 'medals' }, { label: 'Belts', key: 'belts' }, { label: 'Kicks', key: 'kicks' },
-    { label: 'Punches', key: 'punches' }, { label: 'Defense', key: 'defense' },
-  ];
-
-  // --- Helper function to get the correct stat configuration based on athlete's sportType ---
+  // Function to get the correct stat configuration based on sportType
   const getStatConfig = (sportType) => {
     switch (sportType) {
       case 'basketball': return BASKETBALL_STATS_CONFIG;
@@ -100,52 +166,52 @@ const ProfileHeader = ({ athlete }) => {
       case 'badminton': return BADMINTON_STATS_CONFIG;
       case 'field_hockey': return FIELD_HOCKEY_STATS_CONFIG;
       case 'taekwondo': return TAEKWONDO_STATS_CONFIG;
-      // Default case if sportType is not recognized or missing
       default:
         console.warn(`No specific stat configuration for sportType: ${sportType}. Displaying generic stats.`);
-        return []; // Return empty array or a generic config if you have one
+        // Fallback to a generic config or empty array if no match
+        return [
+          { key: 'games', label: 'Games' },
+          { key: 'wins', label: 'Wins' },
+          { key: 'losses', label: 'Losses' },
+          { key: 'score', label: 'Score' },
+        ];
     }
   };
 
   const currentStatConfig = getStatConfig(athlete.sportType);
 
-  // Helper function to render a single stat row (already existing)
-  // This function now just takes the exact subset of statConfig it needs to render a single row
-  const renderStatRow = (stats, imageUrl, statConfigToRender) => {
-    if (!stats || !statConfigToRender || statConfigToRender.length === 0) {
-      return null; // Don't render anything if no stats or config provided for this specific row
+  // Helper function to render stat row with BLURRED background image
+  const renderStatRow = (stats, imageUrl, statConfig) => {
+    if (!stats || !statConfig || statConfig.length === 0) {
+      return null; // Return null if no stats or config to prevent rendering empty rows
     }
 
-    // Determine the grid columns dynamically based on the number of stats in THIS specific row
-    const gridColsClass = `grid-cols-${statConfigToRender.length}`;
-
     return (
-      <div className={`grid ${gridColsClass} gap-0.5 text-center font-bold text-sm md:text-lg relative overflow-hidden`}>
+      <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-x-0.5 gap-y-1 text-center font-bold text-sm md:text-lg relative overflow-hidden">
         {/* Blurred background image element */}
         {imageUrl && (
           <img
             src={imageUrl}
             alt="Athlete background"
-            className="absolute inset-0 w-full h-full object-cover filter blur-md z-[-1]" // Image with blur and lower z-index
+            className="absolute inset-0 w-full h-full object-cover filter blur-md z-[-1]"
           />
         )}
 
         {/* Dark overlay for readability, positioned above the blurred image but below text */}
-        {imageUrl && <div className="absolute inset-0 bg-black opacity-70 z-0"></div>} {/* Adjust opacity as needed */}
+        {imageUrl && <div className="absolute inset-0 bg-black opacity-70 z-0"></div>}
 
-        {/* Headers: Map through the statConfigToRender to display labels */}
-        {statConfigToRender.map((item, index) => (
-          <span key={`header-${item.key}-${index}`} className="text-xs md:text-sm text-gray-400 font-bold relative z-10">
-            {item.label}
-          </span>
-        ))}
-
-        {/* Values: Map through statConfigToRender to display values from the stats object */}
-        {statConfigToRender.map((item, index) => (
-          <span key={`value-${item.key}-${index}`} className="text-white text-xs md:text-xl relative z-10">
-            {/* Display the value, or '-' if the stat is missing or undefined */}
-            {stats[item.key] !== undefined && stats[item.key] !== null ? stats[item.key] : '-'}
-          </span>
+        {/* Combined Headers and Values: Each stat (header + value) is now a single grid item/column */}
+        {statConfig.map((item, index) => (
+          <div key={`stat-col-${item.key}-${index}`} className="flex flex-col items-center justify-center relative z-10 p-1">
+            {/* Header */}
+            <span className="text-xs md:text-sm text-gray-400 font-bold mb-1">
+              {item.label}
+            </span>
+            {/* Value */}
+            <span className="text-white text-xs md:text-xl">
+              {stats[item.key] !== undefined ? stats[item.key] : '-'}
+            </span>
+          </div>
         ))}
       </div>
     );
@@ -188,13 +254,13 @@ const ProfileHeader = ({ athlete }) => {
 
           <div className="space-y-1 text-xs md:text-base text-gray-300">
             <p>Born: <span className="font-semibold text-white">{athlete.bornDate}</span></p>
-            <p>From: <span className="font-semibold text-white">{athlete.fromLocation}</span></p>
-            <p>Sports Debut: <span className="font-semibold text-white">{athlete.sportsDebut}</span></p>
-            <p>Previous location: <span className="font-semibold text-white">{athlete.previousLocation}</span></p>
+            <p>From: <span className="font-bold text-white">{athlete.fromLocation}</span></p>
+            <p>Sports Debut: <span className="font-bold text-white">{athlete.sportsDebut}</span></p>
+            <p>Previous location: <span className="font-bold text-white">{athlete.previousLocation}</span></p>
           </div>
         </div>
 
-        {/* Div 2: Right content (Full Athlete Image) - Z-index reverted to z-20 for correct overlap with Div3 */}
+        {/* Div 2: Right content (Full Athlete Image) */}
         <div className="flex-1 relative z-20 min-w-0 overflow-hidden rounded-r-lg shadow-xl min-h-[200px] md:min-h-[300px] lg:min-h-0">
           {athlete.athleteFullImage && (
             <img
@@ -224,7 +290,7 @@ const ProfileHeader = ({ athlete }) => {
                     <React.Fragment key={`postseason-mobile-row-${i}`}>
                       {renderStatRow(athlete.postseasonStats, athlete.athleteFullImage, chunk)}
                       {/* Add some vertical margin between stat rows on mobile */}
-                      {i + chunkSize < currentStatConfig.length && <div className="mt-2 md:mt-0"></div>}
+                      {i + chunkSize < currentStatConfig.length && <div className="mt-4"></div>}
                     </React.Fragment>
                   );
                 }
@@ -242,7 +308,7 @@ const ProfileHeader = ({ athlete }) => {
         )}
 
         {/* Career Stats */}
-        <h2 className="font-bold text-sm md:text-xl lg:text-2xl text-white mt-2 mb-1">Career Stats</h2>
+        <h2 className="font-bold text-sm md:text-xl lg:text-2xl text-white mt-4 mb-1">Career Stats</h2>
         <hr className="border-t border-gamepulse-orange mb-1" />
         {athlete.careerStats && currentStatConfig.length > 0 ? (
           <>
@@ -257,7 +323,7 @@ const ProfileHeader = ({ athlete }) => {
                     <React.Fragment key={`career-mobile-row-${i}`}>
                       {renderStatRow(athlete.careerStats, athlete.athleteFullImage, chunk)}
                       {/* Add some vertical margin between stat rows on mobile */}
-                      {i + chunkSize < currentStatConfig.length && <div className="mt-2 md:mt-0"></div>}
+                      {i + chunkSize < currentStatConfig.length && <div className="mt-4"></div>}
                     </React.Fragment>
                   );
                 }
