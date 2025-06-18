@@ -1,92 +1,138 @@
-// src/context/AuthContext.js (Conceptual update)
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { allAthleteProfilesData } from '../data/allAthleteProfilesData'; // Import your data
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const AuthContext = createContext(null);
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userType, setUserType] = useState(null); // 'athlete', 'scout', 'admin', etc.
-
-  // Simulate a login process
-  const login = (userId, type) => {
-    // In a real app, you'd verify credentials and fetch user data from a backend
-    const foundUser = allAthleteProfilesData.find(athlete => athlete.id === userId);
-
-    if (foundUser && type === 'athlete') {
-      setCurrentUser({
-        id: foundUser.id,
-        fullName: foundUser.fullName,
-        profilePictureUrl: foundUser.athleteFullImage, // Map to the new field
-        avatarUrl: foundUser.athleteFullImage, // Map to the new field
-        position: foundUser.position,
-        team: foundUser.careerHistory?.[0]?.team || 'N/A', // Get current team from career history
-        location: foundUser.fromLocation,
-        xpRank: 'Elite', // Example static rank, or derive from data
-        bio: foundUser.bio?.[0] || foundUser.bio, // Use first line of bio or whole bio
-        motto: foundUser.bio?.[1] || '', // Use second line as motto if available
-        stats: foundUser.postseasonStats, // Use postseason stats for 'My Game'
-        achievements: foundUser.achievements,
-        highlights: foundUser.media.filter(m => m.type === 'video').map(v => ({
-          id: v.url, // Use URL as ID for simplicity
-          title: v.title,
-          thumbnailUrl: v.thumbnail,
-          views: Math.floor(Math.random() * 10000) // Simulate views
-        })),
-        story: foundUser.bio?.[0], // Re-use bio for story
-        skills: foundUser.keyAttributes.map(attr => attr.name), // Map key attributes to skills
-        digitalClassroomProgress: [ // Example static progress, or derive from data
-          { name: 'Mental Toughness', progress: 75 },
-          { name: 'Nutrition for Athletes', progress: 50 },
-        ],
-        network: { // Example static network, or derive from data
-          followers: 1200,
-          connections: 350,
-          following: 80,
-        },
-        contactPreferences: {
-          inAppMessaging: foundUser.contactSettings?.inAppMessagingEnabled || false,
-          showEmailToScouts: foundUser.contactSettings?.emailEnabled || false,
-        },
-        socialMedia: {
-          instagram: foundUser.icons?.instagram?.split('/').pop(), // Extract username from URL
-          tiktok: foundUser.icons?.tiktok?.split('/').pop(),
-          // Add other social media if needed and parse their usernames
-        },
-        upcomingEvents: foundUser.upcomingEvents,
-        // ... any other fields MyProfilePage expects
-      });
-      setIsLoggedIn(true);
-      setUserType(type);
-      console.log(`Logged in as ${foundUser.fullName} (${type})`);
-    } else {
-      console.error('Login failed: User not found or invalid user type.');
-      setCurrentUser(null);
-      setIsLoggedIn(false);
-      setUserType(null);
+  const navigate = useNavigate();
+  // Initialize state from localStorage, or null if not found
+  const [user, setUser] = useState(() => {
+    try {
+      const storedUser = localStorage.getItem('user');
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch (error) {
+      console.error("Failed to parse user from localStorage:", error);
+      return null;
     }
-  };
+  });
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return localStorage.getItem('isLoggedIn') === 'true';
+  });
+  const [userType, setUserType] = useState(() => {
+    return localStorage.getItem('userType') || null;
+  });
+  const [userAvatarUrl, setUserAvatarUrl] = useState(() => {
+    return localStorage.getItem('userAvatarUrl') || null;
+  });
+  const [loading, setLoading] = useState(true); // Added loading state for initial load
 
-  const logout = () => {
-    setCurrentUser(null);
+  // Effect to handle initial loading and hydration from localStorage
+  useEffect(() => {
+    // This effect runs once on mount
+    // The initial state is already set by the useState(() => ...) calls
+    setLoading(false); // Mark loading as complete after initial hydration
+  }, []);
+
+
+  // --- Login Function ---
+  // This function would be called after successful authentication (e.g., from LoginPage, SignUpPage)
+  const login = useCallback((userData) => {
+    // Basic validation for userData
+    if (!userData || !userData.id || !userData.userType || !userData.fullName) {
+      console.error("Login: Invalid user data provided.", userData);
+      return;
+    }
+
+    // Determine the user's profile slug
+    const userSlug = userData.slug || userData.fullName.toLowerCase().replace(/\s/g, '_');
+
+    // Store data in localStorage
+    try {
+      localStorage.setItem('user', JSON.stringify({ ...userData, slug: userSlug })); // Store full user object including slug
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userType', userData.userType);
+      // Set a default or provided avatar URL
+      localStorage.setItem('userAvatarUrl', userData.avatarUrl || '/path/to/default-avatar.png'); // Provide a default
+    } catch (error) {
+      console.error("Failed to save user data to localStorage:", error);
+      // Potentially alert the user or fallback to session storage
+    }
+
+    // Update React state
+    setUser({ ...userData, slug: userSlug });
+    setIsLoggedIn(true);
+    setUserType(userData.userType);
+    setUserAvatarUrl(userData.avatarUrl || '/path/to/default-avatar.png');
+
+    console.log(`Logged in as ${userData.fullName} (${userData.userType})`);
+
+    // Redirect based on user type
+    let redirectTo = '/dashboard'; // Default
+    switch (userData.userType) {
+      case 'athlete':
+        redirectTo = `/my-profile/${userSlug}`; // Redirect to specific profile with slug
+        break;
+      case 'coach':
+        redirectTo = '/coach-dashboard';
+        break;
+      case 'scout':
+        redirectTo = '/scout-dashboard';
+        break;
+      case 'fan':
+      case 'parent':
+        redirectTo = '/fan-dashboard';
+        break;
+      default:
+        redirectTo = '/dashboard';
+    }
+    navigate(redirectTo);
+  }, [navigate]);
+
+  // --- Logout Function ---
+  const logout = useCallback(() => {
+    // Clear data from localStorage
+    try {
+      localStorage.removeItem('user');
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('userType');
+      localStorage.removeItem('userAvatarUrl');
+    } catch (error) {
+      console.error("Failed to clear user data from localStorage:", error);
+    }
+
+    // Clear React state
+    setUser(null);
     setIsLoggedIn(false);
     setUserType(null);
-    console.log('Logged out.');
+    setUserAvatarUrl(null);
+
+    console.log("Logged out.");
+    navigate('/login'); // Redirect to login page after logout
+  }, [navigate]);
+
+
+  const value = {
+    user,
+    isLoggedIn,
+    userType,
+    userAvatarUrl,
+    login,
+    logout,
+    loading // Provide loading state
   };
 
-  // Example: Auto-login 'ama_owusu' for demonstration
-  useEffect(() => {
-    if (!currentUser && !isLoggedIn) {
-      login('ama_owusu', 'athlete'); // Auto-login Ama Owusu as an athlete
-    }
-  }, [currentUser, isLoggedIn]); // Run once on component mount
-
   return (
-    <AuthContext.Provider value={{ currentUser, isLoggedIn, userType, login, logout }}>
-      {children}
+    <AuthContext.Provider value={value}>
+      {/* Render children only when authentication state has been loaded */}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
