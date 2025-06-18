@@ -1,18 +1,18 @@
 // src/pages/SignUpPage.jsx
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useFormik } from 'formik'; // Import useFormik hook
-import * as Yup from 'yup'; // Import Yup for validation schema
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import { FaEye, FaEyeSlash, FaGoogle, FaFacebook, FaApple, FaPhoneAlt, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
-import { FaFootballBall, FaUserTie, FaSearch, FaUsers } from 'react-icons/fa'; // Specific icons for user types
-import Backdrop from './../assets/backdrop.png'; // Correct path to your backdrop image
+import { FaFootballBall, FaUserTie, FaSearch, FaUsers } from 'react-icons/fa';
+import Backdrop from './../assets/backdrop.png';
 
-// Assume a base path for dashboards or specific onboarding flows
+// Define ABSOLUTE paths for dashboards
 const DASHBOARD_ROUTES = {
-  athlete: 'my-profile', // Example: Athlete-specific dashboard
-  coach: '/coach-dashboard',     // Example: Coach-specific dashboard
-  scout: '/scout-dashboard',     // Example: Scout-specific dashboard
-  fan: '/fan-dashboard',         // Example: Fan-specific dashboard
+  athlete: '/my-profile',       // Corrected to absolute path
+  coach: '/coach-dashboard',
+  scout: '/scout-dashboard',
+  fan: '/fan-dashboard',
 };
 
 const SignUpPage = () => {
@@ -30,7 +30,7 @@ const SignUpPage = () => {
   // Define Yup validation schema
   const SignUpSchema = Yup.object().shape({
     fullName: Yup.string()
-      .trim() // Trim whitespace
+      .trim()
       .required('Full Name is required.')
       .min(2, 'Full Name must be at least 2 characters.')
       .max(100, 'Full Name cannot exceed 100 characters.'),
@@ -89,7 +89,7 @@ const SignUpPage = () => {
           console.log('Sign up data:', values);
           setSubmitSuccess(true);
 
-          // Determine the redirection path based on userType
+          // Determine the redirection path based on userType (now using absolute paths)
           const redirectTo = DASHBOARD_ROUTES[values.userType] || '/dashboard'; // Default to /dashboard if type not found
 
           // Redirect after a short delay for the success message to be seen
@@ -192,6 +192,7 @@ const SignUpPage = () => {
               <h3 className="text-2xl font-bold mb-2">Registration Successful!</h3>
               <p className="text-lg">Welcome to GamePulse Africa, {formik.values.fullName}.</p>
               <p className="mt-2">Redirecting you to your dashboard...</p>
+              {/* Ensure this Link also uses the absolute path */}
               <Link to={DASHBOARD_ROUTES[formik.values.userType] || '/dashboard'} className="mt-6 inline-block bg-gamepulse-blue text-white px-6 py-3 rounded-full font-semibold shadow-md hover:bg-blue-700 transition-colors">
                 Go to Dashboard Now
               </Link>
@@ -208,7 +209,7 @@ const SignUpPage = () => {
                     name="fullName"
                     value={formik.values.fullName}
                     onChange={formik.handleChange}
-                    onBlur={formik.handleBlur} // Add onBlur for validation on field exit
+                    onBlur={formik.handleBlur}
                     placeholder="Enter your full name"
                     className={`block w-full px-4 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:ring-gamepulse-blue focus:border-gamepulse-blue sm:text-sm ${formik.touched.fullName && formik.errors.fullName ? 'border-red-500' : 'border-gray-300'}`}
                     aria-invalid={formik.touched.fullName && formik.errors.fullName ? "true" : "false"}
@@ -332,7 +333,7 @@ const SignUpPage = () => {
               <button
                 type="submit"
                 className="w-full bg-gamepulse-blue text-white py-3 rounded-md font-semibold text-lg hover:bg-blue-500 transition-colors duration-300 shadow-lg"
-                disabled={formik.isSubmitting} // Disable button while submitting
+                disabled={formik.isSubmitting}
               >
                 {formik.isSubmitting ? 'Signing Up...' : 'Sign Up'}
               </button>

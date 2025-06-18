@@ -1,8 +1,10 @@
 // src/components/Header/DesktopUserActions.jsx
+
 import React, { forwardRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaSearch, FaBell, FaDownload, FaSun, FaMoon, FaUserCircle, FaCog, FaQuestionCircle, FaEnvelope, FaSignOutAlt } from 'react-icons/fa'; // Added FaSun, FaMoon, and other icons
+import { FaChevronDown, FaCog, FaQuestionCircle, FaSignOutAlt, FaUserCircle, FaBell, FaEnvelope, FaMoon, FaSun } from 'react-icons/fa';
 
+// Receive new props for notifications
 const DesktopUserActions = forwardRef(({
   isLoggedIn,
   userAvatarUrl,
@@ -11,114 +13,177 @@ const DesktopUserActions = forwardRef(({
   toggleDropdown,
   handleLogout,
   onCloseMenus,
-  isDarkMode,    // NEW: Passed from Header
-  toggleDarkMode // NEW: Passed from Header
+  isDarkMode,
+  toggleDarkMode,
+  unreadNotificationsCount, // NEW
+  recentNotifications,      // NEW
+  hasNewMessages,           // NEW
+  user                      // NEW: User object for profile link
 }, ref) => {
   const navigate = useNavigate();
 
+  // Helper to get profile link based on userType and user data
+  const getUserProfileLink = () => {
+    // Assuming 'user' object from AuthContext has a 'slug' or 'id'
+    // If not, you might navigate to a generic '/my-profile' which then redirects based on auth
+    if (user && (user.slug || user.id)) {
+      return `/my-profile/${user.slug || user.id}`;
+    }
+    // Fallback if no specific ID/slug is available
+    return '/my-profile';
+  };
+
+  const handleNotificationClick = () => {
+    navigate('/notifications');
+    onCloseMenus();
+  };
+
+  const handleMessagesClick = () => {
+    navigate('/messages');
+    onCloseMenus();
+  };
+
   return (
-    <div className="hidden md:flex items-center space-x-4 user-actions-container" ref={ref}>
-      {/* Dark Mode Toggle - Integrated here for desktop */}
-      <button
-        onClick={toggleDarkMode}
-        className="p-2 rounded-full text-gamepulse-yellow hover:text-gamepulse-orange
-                   dark:text-gamepulse-yellow dark:hover:text-gamepulse-orange transition-colors duration-300"
-        aria-label={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-      >
-        {isDarkMode ? <FaSun className="text-xl" /> : <FaMoon className="text-xl" />}
-      </button>
-
-      {!isLoggedIn ? (
+    <div className="hidden md:flex items-center space-x-4" ref={ref}>
+      {isLoggedIn ? (
         <>
-          {/* Login Button */}
-          <Link to="/login" onClick={onCloseMenus}>
-            <button className="px-5 py-2 rounded-full border border-gamepulse-yellow text-gamepulse-yellow hover:bg-gamepulse-yellow hover:text-gamepulse-dark transition-all duration-300 font-semibold text-base
-                               dark:border-gamepulse-yellow dark:text-gamepulse-yellow dark:hover:bg-gamepulse-yellow dark:hover:text-dark-background-primary">
-              Login
-            </button>
-          </Link>
-          {/* Sign Up Button */}
-          <Link to="/signup" onClick={onCloseMenus}>
-            <button className="px-6 py-2 rounded-full bg-gamepulse-yellow text-gamepulse-dark font-bold text-base shadow-md hover:bg-gamepulse-yellow/80 transition-colors duration-300
-                               dark:bg-gamepulse-orange dark:text-white dark:hover:bg-orange-700 dark:shadow-none"> {/* Adjusted for dark mode */}
-              Sign Up
-            </button>
-          </Link>
-          {/* Download App Button */}
+          {/* Notification Icon */}
           <button
-            className="px-6 py-2 rounded-full bg-gamepulse-blue text-neutral-white font-bold text-base shadow-md flex items-center hover:bg-[#034078] transition-colors duration-300
-                       dark:bg-gamepulse-teal dark:text-white dark:hover:bg-[#006B6B] dark:shadow-none"> {/* Adjusted for dark mode */}
-            <FaDownload className="mr-2" /> Download App
-          </button>
-        </>
-      ) : (
-        <>
-          {/* Search Bar (Desktop) */}
-          <div className="relative">
-            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-medium-gray
-                                 dark:text-dark-text-secondary" /> {/* Dark mode text color */}
-            <input
-              type="text"
-              placeholder="Search..."
-              className="w-48 pl-10 pr-4 py-2 rounded-full bg-neutral-dark-gray text-neutral-white placeholder-neutral-medium-gray focus:outline-none focus:ring-2 focus:ring-gamepulse-blue text-base
-                         dark:bg-dark-background-tertiary dark:text-dark-text-primary dark:placeholder-dark-text-disabled dark:focus:ring-gamepulse-orange dark:border dark:border-gray-700" // Dark mode styles
-            />
-          </div>
-
-          {/* Notifications */}
-          <button
-            className="relative text-neutral-white text-2xl cursor-pointer hover:text-gamepulse-yellow transition-colors duration-200
-                       dark:text-dark-text-primary dark:hover:text-gamepulse-yellow" // Dark mode text color
-            onClick={() => { navigate('/notifications'); onCloseMenus(); }}
+            onClick={handleNotificationClick}
+            className={`relative p-2 rounded-full ${isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-white hover:bg-white/20'} transition-colors`}
+            aria-label="Notifications"
           >
-            <FaBell />
-            <span className="absolute -top-1 -right-1 bg-error-red text-neutral-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">3</span>
+            <FaBell className="text-xl" />
+            {unreadNotificationsCount > 0 && (
+              <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full transform translate-x-1/2 -translate-y-1/2">
+                {unreadNotificationsCount > 99 ? '99+' : unreadNotificationsCount}
+              </span>
+            )}
           </button>
 
-          {/* User Avatar & Dropdown */}
-          <div className="relative">
-            <button onClick={toggleDropdown} className="block focus:outline-none">
-              <img
-                src={userAvatarUrl || "/images/default-avatar.webp"}
-                alt="User Avatar"
-                className="w-10 h-10 rounded-full cursor-pointer border-2 border-gamepulse-yellow object-cover transition-transform duration-200 hover:scale-105
-                           dark:border-gamepulse-blue dark:hover:border-gamepulse-orange" // Dark mode border colors
-              />
-            </button>
-            {isDropdownOpen && (
-              <div className="absolute top-full right-0 mt-2 w-48 bg-neutral-white rounded-md shadow-lg py-1 z-50 origin-top-right animate-fade-in-down
-                              dark:bg-dark-background-secondary dark:shadow-xl-dark dark:border dark:border-gray-700 transition-colors duration-300"> {/* Dark mode styles */}
-                <Link to="/my-profile" className="block px-4 py-2 text-neutral-dark-gray hover:bg-neutral-light-gray
-                           dark:text-dark-text-primary dark:hover:bg-dark-background-tertiary" onClick={onCloseMenus}><FaUserCircle className="inline mr-2" /> My Profile</Link>
-                {userType === 'coach' || userType === 'scout' || userType === 'fan' || userType === 'parent' ? (
-                  <Link to="/messages" className="block px-4 py-2 text-neutral-dark-gray hover:bg-neutral-light-gray
-                             dark:text-dark-text-primary dark:hover:bg-dark-background-tertiary" onClick={onCloseMenus}><FaEnvelope className="inline mr-2" /> Messages</Link>
-                ) : null}
-                {userType === 'scout' ? (
-                  <Link to="/reports" className="block px-4 py-2 text-neutral-dark-gray hover:bg-neutral-light-gray
-                             dark:text-dark-text-primary dark:hover:bg-dark-background-tertiary" onClick={onCloseMenus}>Scouting Reports</Link>
-                ) : null}
-                <Link to="/settings" className="block px-4 py-2 text-neutral-dark-gray hover:bg-neutral-light-gray
-                           dark:text-dark-text-primary dark:hover:bg-dark-background-tertiary" onClick={onCloseMenus}><FaCog className="inline mr-2" /> Settings</Link>
-                <Link to="/help" className="block px-4 py-2 text-neutral-dark-gray hover:bg-neutral-light-gray
-                           dark:text-dark-text-primary dark:hover:bg-dark-background-tertiary" onClick={onCloseMenus}><FaQuestionCircle className="inline mr-2" /> Help & Support</Link> {/* Corrected path and added icon */}
-                <div className="border-t border-neutral-light-gray my-1 dark:border-gray-700"></div> {/* Dark mode border */}
-                <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-error-red hover:bg-neutral-light-gray
-                           dark:text-red-500 dark:hover:bg-red-900/30 dark:hover:text-red-400"><FaSignOutAlt className="inline mr-2" /> Logout</button>
+          {/* Messages Icon */}
+          <button
+            onClick={handleMessagesClick}
+            className={`relative p-2 rounded-full ${isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-white hover:bg-white/20'} transition-colors`}
+            aria-label="Messages"
+          >
+            <FaEnvelope className="text-xl" />
+            {hasNewMessages && ( // Assuming hasNewMessages is a boolean from your context/fetch
+              <span className="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-white bg-red-600 transform translate-x-1/2 -translate-y-1/2"></span>
+            )}
+          </button>
 
-                {/* NEW: Explicit Close Button for the dropdown */}
-                <div className="border-t border-neutral-light-gray my-1 dark:border-gray-700"></div> {/* Optional: a subtle separator */}
-                <button
-                  onClick={onCloseMenus} // This will call closeMenus from Header, closing the dropdown
-                  className="w-full text-left px-4 py-2 text-neutral-medium-gray hover:bg-neutral-light-gray hover:text-neutral-dark-gray transition-colors duration-200
-                             dark:text-dark-text-secondary dark:hover:bg-dark-background-tertiary dark:hover:text-dark-text-primary"
+          {/* Profile Dropdown */}
+          <div className="relative">
+            <button
+              onClick={toggleDropdown}
+              className="flex items-center space-x-2 focus:outline-none focus:ring-2 focus:ring-gamepulse-yellow rounded-full"
+              aria-expanded={isDropdownOpen}
+              aria-haspopup="true"
+            >
+              <img
+                src={userAvatarUrl || (isDarkMode ? '/path/to/dark-mode-default-avatar.png' : '/path/to/light-mode-default-avatar.png')} // Replace with actual default avatars
+                alt="User Avatar"
+                className="w-10 h-10 rounded-full border-2 border-white object-cover"
+              />
+              <FaChevronDown className={`${isDropdownOpen ? 'transform rotate-180' : ''} transition-transform duration-200 text-white text-sm`} />
+            </button>
+
+            {isDropdownOpen && (
+              <div className={`absolute right-0 mt-2 w-56 rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5
+                              ${isDarkMode ? 'bg-gray-800 text-gray-200' : 'bg-white text-gray-700'}`}>
+                {/* Profile Link */}
+                <Link
+                  to={getUserProfileLink()}
+                  onClick={onCloseMenus}
+                  className={`flex items-center px-4 py-2 text-sm ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
                 >
-                  Close
+                  <FaUserCircle className="mr-3 text-lg" /> My Profile
+                </Link>
+                {/* Notifications Link (if not already handled by icon, or for full list) */}
+                <Link
+                  to="/notifications"
+                  onClick={onCloseMenus}
+                  className={`flex items-center px-4 py-2 text-sm ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                >
+                  <FaBell className="mr-3 text-lg" /> Notifications ({unreadNotificationsCount})
+                </Link>
+                {/* Messages Link */}
+                <Link
+                  to="/messages"
+                  onClick={onCloseMenus}
+                  className={`flex items-center px-4 py-2 text-sm ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                >
+                  <FaEnvelope className="mr-3 text-lg" /> Messages {hasNewMessages && <span className="ml-1 text-red-500 font-bold">• New</span>}
+                </Link>
+                <div className={`${isDarkMode ? 'border-gray-700' : 'border-gray-200'} border-t my-1`}></div>
+                {/* Settings Link */}
+                <Link
+                  to="/settings"
+                  onClick={onCloseMenus}
+                  className={`flex items-center px-4 py-2 text-sm ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                >
+                  <FaCog className="mr-3 text-lg" /> Settings
+                </Link>
+                {/* Help Link */}
+                <Link
+                  to="/help" // Ensure this matches your App.jsx route
+                  onClick={onCloseMenus}
+                  className={`flex items-center px-4 py-2 text-sm ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                >
+                  <FaQuestionCircle className="mr-3 text-lg" /> Help & Support
+                </Link>
+                <div className={`${isDarkMode ? 'border-gray-700' : 'border-gray-200'} border-t my-1`}></div>
+
+                {/* Dark Mode Toggle */}
+                <button
+                  onClick={toggleDarkMode}
+                  className={`flex items-center px-4 py-2 text-sm w-full text-left ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                  aria-label="Toggle Dark Mode"
+                >
+                  {isDarkMode ? <FaSun className="mr-3 text-lg" /> : <FaMoon className="mr-3 text-lg" />}
+                  {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+                </button>
+
+                <div className={`${isDarkMode ? 'border-gray-700' : 'border-gray-200'} border-t my-1`}></div>
+                {/* Logout Button */}
+                <button
+                  onClick={handleLogout}
+                  className={`flex items-center w-full text-left px-4 py-2 text-sm ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                >
+                  <FaSignOutAlt className="mr-3 text-lg" /> Logout
                 </button>
               </div>
             )}
           </div>
         </>
+      ) : (
+        <div className="flex items-center space-x-3">
+          <Link
+            to="/login"
+            className={`px-4 py-2 rounded-full font-semibold text-sm transition-colors duration-300
+                        ${isDarkMode ? 'text-gamepulse-blue hover:bg-gamepulse-blue/20' : 'text-white hover:bg-white/20'}`}
+            onClick={onCloseMenus}
+          >
+            Login
+          </Link>
+          <Link
+            to="/signup"
+            className={`px-4 py-2 rounded-full font-semibold text-sm transition-colors duration-300
+                        ${isDarkMode ? 'bg-gamepulse-blue text-white hover:bg-blue-600' : 'bg-gamepulse-yellow text-[#0A1128] hover:bg-amber-400'}`}
+            onClick={onCloseMenus}
+          >
+            Sign Up
+          </Link>
+          {/* Dark Mode Toggle for logged out state */}
+          <button
+            onClick={toggleDarkMode}
+            className={`p-2 rounded-full ${isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-white hover:bg-white/20'} transition-colors`}
+            aria-label="Toggle Dark Mode"
+          >
+            {isDarkMode ? <FaSun className="text-xl" /> : <FaMoon className="text-xl" />}
+          </button>
+        </div>
       )}
     </div>
   );

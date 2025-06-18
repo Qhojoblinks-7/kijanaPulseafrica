@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaSearch, FaPlus, FaPhone, FaVideo, FaInfoCircle, FaPaperclip, FaSmile, FaMicrophone, FaPlay, FaChevronLeft } from 'react-icons/fa';
+import { FaSearch, FaPlus, FaComments,FaPhone, FaVideo, FaInfoCircle, FaPaperclip, FaSmile, FaMicrophone, FaPlay, FaChevronLeft } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 // Mock Data for Conversations
