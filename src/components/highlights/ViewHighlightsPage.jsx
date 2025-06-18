@@ -1,480 +1,471 @@
-// src/components/Highlights/ViewHighlightsPage.jsx
-import React, { useState, useEffect, useCallback } from 'react';
-import { useSearchParams, Link, useNavigate } from 'react-router-dom';
-import HighlightsNavbar from './HighlightsNavbar';
-import HighlightCategoryChips from './HighlightCategoryChips';
-import HighlightGrid from './HighlightGrid';
-import HighlightFilters from './HighlightFilters';
-import NoHighlightsFound from './NoHighlightsFound';
-import { FaThumbsUp, FaThumbsDown, FaShareAlt, FaSave, FaEllipsisH, FaAngleDown, FaAngleUp, FaDownload } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { FaSearch, FaBell, FaUserCircle, FaUpload, FaPlay, FaShareAlt, FaFlag, FaChevronDown, FaChevronUp, FaFootballBall, FaBasketballBall, FaRunning, FaUsers, FaFilter, FaTimes,FaStar , FaEye, FaHeart} from 'react-icons/fa'; // Added FaFilter and FaTimes
 
+import image1 from '../../assets/freepik__the-style-is-candid-image-photography-with-natural__69798.jpeg';
+import image2 from '../../assets/Gemini_Generated_Image_33sjng33sjng33sj.png'
+import image3 from '../../assets/Gemini_Generated_Image_j534tfj534tfj534.png'
+import image4 from '../../assets/playing-football-on-a-dusty-field.jpeg'
 
-// --- Mock Data (Centralized for simplicity) ---
-const mockAllHighlights = [
-  {
-    id: 't1', thumbnailUrl: 'https://via.placeholder.com/640x360/FF5733/FFFFFF?text=Dunk+Player', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    title: "Jane Doe's Game-Winning Dunk - Greenwood vs. Riverside", description: "Witness Jane Doe's incredible game-winning dunk in the thrilling match between Greenwood and Riverside! She soared through the air in the final seconds, sealing the victory with this spectacular play. A true highlight of high school basketball talent in Africa!",
-    gameContext: "Greenwood Academy vs. Riverside College", matchId: 'm123', matchScore: '88-87',
-    views: 1234567, duration: '0:25', dateUploaded: '2025-06-12T10:00:00Z', sport: 'Basketball',
-    athleteId: 'a1', athleteName: 'Jane Doe', athleteAvatarUrl: '/images/default-athlete-avatar.webp', likes: 2345, dislikes: 12, shares: 45, products: 2
-  },
-  {
-    id: 't2', thumbnailUrl: 'https://via.placeholder.com/640x360/33FF57/FFFFFF?text=Goal+Player', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    title: "Kwame Nkrumah's Stunning Solo Goal vs. Tema City", description: "Accra United's Kwame Nkrumah pulled off a mesmerizing solo effort, weaving through defenders to net a breathtaking goal in the 88th minute against Tema City. This highlight showcases the raw football talent emerging from Ghana's high school leagues!",
-    gameContext: "Accra United vs. Tema City", matchId: 'm124', matchScore: '2-1',
-    views: 980123, duration: '0:35', dateUploaded: '2025-06-11T14:30:00Z', sport: 'Football',
-    athleteId: 'a2', athleteName: 'Kwame Nkrumah', athleteAvatarUrl: '/images/default-athlete-avatar.webp', likes: 1800, dislikes: 8, shares: 30, products: 0
-  },
-  {
-    id: 't3', thumbnailUrl: 'https://via.placeholder.com/640x360/3357FF/FFFFFF?text=Save+Player', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    title: "Amara Okoro's Phenomenal Triple Save", description: "In a tense final minute, Amara Okoro made three impossible saves back-to-back, denying the opposition a certain goal and securing the draw for her team. This incredible display of goalkeeping prowess is a must-watch!",
-    gameContext: "Lagos Giants vs. Kano Kings", matchId: 'm125', matchScore: '0-0',
-    views: 750000, duration: '0:40', dateUploaded: '2025-06-10T11:00:00Z', sport: 'Football',
-    athleteId: 'a3', athleteName: 'Amara Okoro', athleteAvatarUrl: '/images/default-athlete-avatar.webp', likes: 1200, dislikes: 5, shares: 20, products: 1
-  },
-  {
-    id: 't4', thumbnailUrl: 'https://via.placeholder.com/640x360/FFC300/FFFFFF?text=Rugby+Player', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    title: "Epic Rugby Try by Themba Mkhize", description: "Themba Mkhize's incredible solo try from midfield, breaking through three tackles to score under the posts. A testament to strength and agility in high school rugby!",
-    gameContext: "Cape Town RFC vs. Durban Kings", matchId: 'm126', matchScore: '25-18',
-    views: 600000, duration: '0:30', dateUploaded: '2025-06-09T09:00:00Z', sport: 'Rugby',
-    athleteId: 'a4', athleteName: 'Themba Mkhize', athleteAvatarUrl: '/images/default-athlete-avatar.webp', likes: 900, dislikes: 3, shares: 15, products: 0
-  },
-  {
-    id: 't5', thumbnailUrl: 'https://via.placeholder.com/640x360/C70039/FFFFFF?text=Athletics+Player', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    title: "Nia Amani's Gold Medal Sprint Finish", description: "Nia Amani pushes past her competitors in the final meters to clinch gold in the 100m sprint at the National High School Athletics meet. Pure speed and determination!",
-    gameContext: "National High School Athletics", matchId: 'm127', matchScore: '',
-    views: 1100000, duration: '0:12', dateUploaded: '2025-06-08T15:00:00Z', sport: 'Athletics',
-    athleteId: 'a5', athleteName: 'Nia Amani', athleteAvatarUrl: '/images/default-athlete-avatar.webp', likes: 2000, dislikes: 10, shares: 40, products: 3
-  },
-  {
-    id: 'h1', thumbnailUrl: 'https://via.placeholder.com/640x360/FF0000/FFFFFF?text=Skill+Move', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    title: "Chike Obi's Football Skill Masterclass", description: "Watch Chike Obi's incredible display of dribbling and ball control against top defenders.",
-    gameContext: "St. Peter's vs. City Academy", matchId: 'm128', sport: 'Football',
-    duration: '0:45', dateUploaded: '2025-06-07T18:00:00Z', athleteId: 'a6', athleteName: 'Chike Obi', athleteAvatarUrl: '/images/default-athlete-avatar.webp', views: 70000, likes: 700, dislikes: 2, shares: 10, products: 0
-  },
-  {
-    id: 'h2', thumbnailUrl: 'https://via.placeholder.com/640x360/00FF00/FFFFFF?text=Volleyball+Spike', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    title: "Fatima Conteh's Match-Winning Volleyball Spike", description: "Fatima's powerful spike seals the victory in a nail-biting five-set thriller.",
-    gameContext: "Sunshine Girls vs. Elite Academy", matchId: 'm129', sport: 'Volleyball',
-    duration: '0:20', dateUploaded: '2025-06-06T12:00:00Z', athleteId: 'a7', athleteName: 'Fatima Conteh', athleteAvatarUrl: '/images/default-athlete-avatar.webp', views: 50000, likes: 500, dislikes: 1, shares: 5, products: 0
-  },
-  {
-    id: 'h3', thumbnailUrl: 'https://via.placeholder.com/640x360/0000FF/FFFFFF?text=Cricket+Wicket', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    title: "Rahul Singh's Match-Winning Cricket Wicket", description: "A stunning delivery from Rahul that bowled out the last batsman for a decisive win.",
-    gameContext: "Eagle XI vs. Lion XI", matchId: 'm130', sport: 'Cricket',
-    duration: '0:18', dateUploaded: '2025-06-05T10:00:00Z', athleteId: 'a8', athleteName: 'Rahul Singh', athleteAvatarUrl: '/images/default-athlete-avatar.webp', views: 65000, likes: 650, dislikes: 0, shares: 8, products: 0
-  },
-  {
-    id: 'h4', thumbnailUrl: 'https://via.placeholder.com/640x360/FF00FF/FFFFFF?text=Handball+Shot', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    title: "Aisha Jallow's Handball Power Shot", description: "Unstoppable power from Aisha as she nets a screamer from outside the D-area.",
-    gameContext: "Phoenix vs. Gladiators", matchId: 'm131', sport: 'Handball',
-    duration: '0:22', dateUploaded: '2025-06-04T14:00:00Z', athleteId: 'a9', athleteName: 'Aisha Jallow', athleteAvatarUrl: '/images/default-athlete-avatar.webp', views: 40000, likes: 400, dislikes: 0, shares: 5, products: 0
-  },
-  {
-    id: 'h5', thumbnailUrl: 'https://via.placeholder.com/640x360/FFFF00/FFFFFF?text=Tennis+Serve', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    title: "David Omondi's Tennis Ace Serve", description: "A blistering ace from David that left his opponent with no chance.",
-    gameContext: "Regional Tennis Tournament", matchId: 'm132', sport: 'Tennis',
-    duration: '0:15', dateUploaded: '2025-06-03T11:00:00Z', athleteId: 'a10', athleteName: 'David Omondi', athleteAvatarUrl: '/images/default-athlete-avatar.webp', views: 30000, likes: 300, dislikes: 0, shares: 2, products: 0
-  },
-  {
-    id: 'live1', thumbnailUrl: 'https://via.placeholder.com/640x360/9C27B0/FFFFFF?text=LIVE+Match+1', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    title: "LIVE: Football Clash - Eagles vs. Panthers", description: "Watch the live stream of the exciting football match between the Eagles and Panthers!",
-    gameContext: "Eagles vs. Panthers", matchId: 'm133', sport: 'Football',
-    duration: 'LIVE', dateUploaded: '2025-06-15T09:00:00Z', athleteId: 'a1', athleteName: 'GamePulse Live', athleteAvatarUrl: '/images/default-user-avatar.webp', views: 181, likes: 10, dislikes: 0, shares: 1, isLive: true, products: 0
-  },
-  {
-    id: 'live2', thumbnailUrl: 'https://via.placeholder.com/640x360/4CAF50/FFFFFF?text=LIVE+Basketball+2', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    title: "LIVE: Basketball - Dragons vs. Vipers", description: "Tune in for live basketball action as the Dragons take on the Vipers in this intense matchup.",
-    gameContext: "Dragons vs. Vipers", matchId: 'm134', sport: 'Basketball',
-    duration: 'LIVE', dateUploaded: '2025-06-15T10:00:00Z', athleteId: 'a2', athleteName: 'GamePulse Live', athleteAvatarUrl: '/images/default-user-avatar.webp', views: 51, likes: 5, dislikes: 0, shares: 0, isLive: true, products: 0
-  },
+// Mock Data
+const featuredHighlights = [
+  { id: 'fh1', duration: '2:34', thumbnailUrl: image1 },
+  { id: 'fh2', duration: '1:45', thumbnailUrl: image2 },
+  { id: 'fh3', duration: '3:12', thumbnailUrl: image3 },
+  { id: 'fh4', duration: '0:58', thumbnailUrl: image4 },
 ];
-// --- End Mock Data ---
 
-
-// Re-use formatting helpers
-const formatViewCount = (views) => {
-    if (views === undefined) return '';
-    if (views >= 1000000) return `${(views / 1000000).toFixed(1)}M`;
-    if (views >= 1000) return `${(views / 1000).toFixed(0)}K`;
-    return `${views}`;
+const mainHighlight = {
+  id: 'mh1',
+  title: 'Incredible Goalkeeper Save',
+  description: 'Amazing reflexes from Kwame Asante during the finals',
+  thumbnailUrl: 'https://via.placeholder.com/800x450/2d3748/fff?text=Main+Highlight+Video',
+  views: '234',
+  shares: '45',
+  likes: '1.2k',
+  matchDetails: {
+    teams: 'Accra High vs Cape Coast Academy',
+    date: 'March 15, 2024',
+    competition: 'Ghana Schools Championship',
+    finalScore: '2-1',
+  },
+  athlete: {
+    id: 'kwame-asante-123',
+    name: 'Kwame Asante',
+    role: 'Goalkeeper',
+    xp: '1,647',
+    profilePic: 'https://randomuser.me/api/portraits/men/75.jpg', // Re-using Kwame's pic
+  }
 };
 
-const timeSince = (date) => {
-    if (!date) return '';
-    const seconds = Math.floor((new Date() - new Date(date)) / 1000);
-    let interval = seconds / 31536000;
-    if (interval > 1) return Math.floor(interval) + " years ago";
-    interval = seconds / 2592000;
-    if (interval > 1) return Math.floor(interval) + " months ago";
-    interval = seconds / 86400;
-    if (interval > 1) return Math.floor(interval) + " days ago";
-    interval = seconds / 3600;
-    if (interval > 1) return Math.floor(interval) + " hours ago";
-    if (interval > 0.05) return Math.floor(interval * 60) + " minutes ago";
-    return Math.floor(seconds) + " seconds ago";
-};
-
+const allHighlights = [
+  { id: 'h1', sport: 'Football', title: 'Perfect Strike Goal', teams: 'Lagos Grammar vs Victoria Island High', age: '2 days ago', views: '8,456', duration: '1:34', thumbnailUrl: 'https://via.placeholder.com/200x112/34495e/ecf0f1?text=FootHighlight' },
+  { id: 'h2', sport: 'Basketball', title: 'Crossover Skills', teams: 'Nairobi High vs Mombasa Academy', age: '3 days ago', views: '6,678', duration: '1:33', thumbnailUrl: 'https://via.placeholder.com/200x112/2c3e50/ecf0f1?text=BasketHighlight' },
+  { id: 'h3', sport: 'Rugby', title: 'Power Scrum', teams: 'Cape Town vs Johannesburg', age: '1 week ago', views: '7,234', duration: '2:45', thumbnailUrl: 'https://via.placeholder.com/200x112/1abc9c/ecf0f1?text=RugbyHighlight' },
+  { id: 'h4', sport: 'Athletics', title: 'Record Breaking Sprint', teams: 'Ghana Youth Athletics', age: '5 days ago', views: '5,123', duration: '0:45', thumbnailUrl: 'https://via.placeholder.com/200x112/2ecc71/ecf0f1?text=AthleticsHighlight' },
+  { id: 'h5', sport: 'Football', title: 'Solo Dribbling Masterclass', teams: 'Kumasi vs Accra', age: '4 days ago', views: '9,123', duration: '1:50', thumbnailUrl: 'https://via.placeholder.com/200x112/e67e22/ecf0f1?text=FootHighlight2' },
+  { id: 'h6', sport: 'Basketball', title: 'Slam Dunk Contest', teams: 'Dakar vs Abidjan', age: '6 days ago', views: '7,890', duration: '1:10', thumbnailUrl: 'https://via.placeholder.com/200x112/f39c12/ecf0f1?text=BasketHighlight2' },
+];
 
 const ViewHighlightsPage = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
-
-  const [allHighlights, setAllHighlights] = useState(mockAllHighlights);
-  const [displayedHighlights, setDisplayedHighlights] = useState([]);
-  const [selectedHighlight, setSelectedHighlight] = useState(null);
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [showFiltersModal, setShowFiltersModal] = useState(false);
   const [filters, setFilters] = useState({
-    sortBy: 'most-recent', sport: [], team: '', athlete: '', highlightType: [], dateRange: 'All Time', xpRanking: 'Any',
+    sport: 'All Sports',
+    teamSchool: '',
+    highlightType: [],
+    dateRange: 'Last 7 days',
+    xpMin: '',
+    xpMax: '',
   });
-  const [showFullDescription, setShowFullDescription] = useState(false);
-  const [activeRelatedTab, setActiveRelatedTab] = useState("All");
 
-  useEffect(() => {
-    const id = searchParams.get('id');
-    let highlightToPlay = null;
+  // Accordion state: All closed by default for mobile
+  const [accordionOpen, setAccordionOpen] = useState({
+    sport: false,
+    teamSchool: false,
+    highlightType: false,
+    dateRange: false,
+    xpRanking: false,
+    quickLinks: false,
+  });
 
-    if (id) {
-        highlightToPlay = allHighlights.find(h => h.id === id);
-    }
+  // State to control visibility of the entire filter sidebar on mobile
+  const [isFilterSidebarOpen, setIsFilterSidebarOpen] = useState(false);
 
-    if (!highlightToPlay && allHighlights.length > 0) {
-        highlightToPlay = allHighlights[0];
-        if (!id) {
-            setSearchParams({ id: allHighlights[0].id }, { replace: true });
-        }
-    }
-    setSelectedHighlight(highlightToPlay);
-    setShowFullDescription(false);
-    // Scroll the main content area to top when video changes
-    const mainContentContainer = document.getElementById('main-content-container');
-    if (mainContentContainer) {
-      mainContentContainer.scrollTop = 0;
-    }
-  }, [searchParams, allHighlights, setSearchParams]);
-
-
-  useEffect(() => {
-    let filtered = [...allHighlights];
-
-    if (activeRelatedTab === "From the series") {
-        if (selectedHighlight) {
-            filtered = filtered.filter(h =>
-                h.athleteId === selectedHighlight.athleteId && h.id !== selectedHighlight.id
-            ).sort((a, b) => new Date(b.dateUploaded) - new Date(a.dateUploaded));
-        } else {
-            filtered = [];
-        }
-    } else if (activeRelatedTab === "From Learnit Training") {
-        filtered = filtered.filter(h => h.athleteName === "Jane Doe" || h.athleteName === "Kwame Nkrumah").filter(h => h.id !== selectedHighlight?.id);
-    } else {
-        filtered.sort((a, b) => b.views - a.views);
-    }
-
-    const filteredForGrid = filtered.filter(h => h.id !== selectedHighlight?.id);
-
-    setDisplayedHighlights(filteredForGrid);
-  }, [activeCategory, allHighlights, selectedHighlight, activeRelatedTab]);
-
-
-  const handleFilterChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFilters(prevFilters => {
-      if (type === 'checkbox') {
-        const currentValues = prevFilters[name] || [];
-        return { ...prevFilters, [name]: checked ? [...currentValues, value] : currentValues.filter(item => item !== value) };
-      } else {
-        return { ...prevFilters, [name]: value };
-      }
-    });
+  // Toggle function for accordion sections
+  const toggleAccordion = (section) => {
+    setAccordionOpen(prevState => ({
+      ...prevState,
+      [section]: !prevState[section]
+    }));
   };
 
-  const handleApplyFilters = useCallback(() => {
-    setShowFiltersModal(false);
-    let filtered = mockAllHighlights.filter(h => {
-      if (filters.sport.length > 0 && !filters.sport.includes(h.sport)) return false;
-      if (filters.team && !h.gameContext.toLowerCase().includes(filters.team.toLowerCase())) return false;
-      if (filters.athlete && !h.athleteName?.toLowerCase().includes(filters.athlete.toLowerCase())) return false;
-      return true;
-    });
+  const handleFilterChange = (type, value) => {
+    setFilters(prev => ({ ...prev, [type]: value }));
+  };
 
-    filtered.sort((a, b) => {
-      if (filters.sortBy === 'most-recent') {
-        return new Date(b.dateUploaded) - new Date(a.dateUploaded);
-      }
-      if (filters.sortBy === 'most-viewed') {
-        return b.views - a.views;
-      }
-      if (filters.sortBy === 'most-liked') {
-        return b.likes - a.likes;
-      }
-      return 0;
-    });
+  const handleHighlightTypeChange = (type) => {
+    setFilters(prev => ({
+      ...prev,
+      highlightType: prev.highlightType.includes(type)
+        ? prev.highlightType.filter(item => item !== type)
+        : [...prev.highlightType, type]
+    }));
+  };
 
-    setAllHighlights(filtered);
-    setActiveCategory("All");
-  }, [filters]);
+  const applyFilters = () => {
+    console.log("Applying filters:", filters);
+    // In a real app, this would trigger data fetching/filtering
+    setIsFilterSidebarOpen(false); // Close sidebar after applying filters on mobile
+  };
 
-
-  const handleResetFilters = useCallback(() => {
+  const resetFilters = () => {
     setFilters({
-      sortBy: 'most-recent', sport: [], team: '', athlete: '', highlightType: [], dateRange: 'All Time', xpRanking: 'Any',
+      sport: 'All Sports',
+      teamSchool: '',
+      highlightType: [],
+      dateRange: 'Last 7 days',
+      xpMin: '',
+      xpMax: '',
     });
-    setAllHighlights(mockAllHighlights);
-    setActiveCategory("All");
-    setShowFiltersModal(false);
-  }, []);
-
-  const onSearchIconClick = () => {
-    setShowFiltersModal(true);
+    // Optionally close sidebar after resetting filters
   };
 
-  const handleShare = () => {
-    if (selectedHighlight && navigator.share) {
-      navigator.share({
-        title: selectedHighlight.title,
-        url: window.location.href,
-      }).catch(console.error);
-    } else if (selectedHighlight) {
-      alert(`Share this link: ${window.location.href}`);
-    }
+  // Helper component for an accordion item
+  const AccordionItem = ({ title, children, sectionKey }) => {
+    const isOpen = accordionOpen[sectionKey];
+    return (
+      <div className="border-b border-neutral-black/50 last:border-b-0 lg:border-b-0">
+        <button
+          className="w-full flex justify-between items-center py-3 px-1.5 text-neutral-white font-semibold text-sm md:text-base lg:cursor-default lg:hover:bg-transparent lg:px-0 lg:py-0"
+          onClick={() => toggleAccordion(sectionKey)}
+        >
+          {title}
+          <span className="lg:hidden"> {/* Hide chevron on large screens */}
+            {isOpen ? <FaChevronUp className="text-gamepulse-yellow text-sm" /> : <FaChevronDown className="text-gamepulse-yellow text-sm" />}
+          </span>
+        </button>
+        {/* The content div. On small screens, max-h and opacity are toggled.
+            On large screens (lg:), it's always max-h-screen and opacity-100. */}
+        <div className={`overflow-hidden transition-all duration-300 ease-in-out
+          ${isOpen ? 'max-h-screen opacity-100 py-2' : 'max-h-0 opacity-0'}
+          lg:max-h-screen lg:opacity-100 lg:py-0`}>
+          {children}
+        </div>
+      </div>
+    );
   };
+
 
   return (
-    <div className="bg-gamepulse-dark text-white min-h-screen flex flex-col">
-      <HighlightsNavbar onSearchIconClick={onSearchIconClick} userAvatarUrl="/images/user-avatar.webp" />
-      <HighlightCategoryChips activeCategory={activeCategory} onCategorySelect={setActiveCategory} />
-
-      {selectedHighlight ? (
-        <div className="flex-grow flex flex-col md:flex-row relative mt-24 md:mt-16 lg:mt-30 pb-4">
-          {/* Left Column: Main Video Player, Description, Comments */}
-          <div id="main-content-container" className="md:w-3/5 lg:w-2/3 px-2 md:pr-0 overflow-y-auto custom-scrollbar md:h-[calc(100vh-80px)]">
-              {/* Main Video Player */}
-              <div className="w-full aspect-video bg-black rounded-lg overflow-hidden md:rounded-xl relative mb-3">
-                <video
-                  key={selectedHighlight.id}
-                  src={selectedHighlight.videoUrl}
-                  poster={selectedHighlight.thumbnailUrl}
-                  controls={true}
-                  className="w-full h-full object-contain"
-                  playsInline
-                  autoPlay
-                  preload="metadata"
-                >
-                  Your browser does not support the video tag.
-                </video>
-              </div>
-
-              {/* Video Title and Actions */}
-              <div className="py-2">
-                <h1 className="text-lg md:text-xl font-bold leading-tight mb-1">
-                  {selectedHighlight.title}
-                </h1>
-
-                {/* Channel/Uploader Info and Action Buttons */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-gray-700 py-2">
-                  <div className="flex items-center mb-3 md:mb-0">
-                    <Link to={`/athlete-profile/${selectedHighlight.athleteId}`} className="flex items-center">
-                      <img
-                        src={selectedHighlight.athleteAvatarUrl || "/images/default-athlete-avatar.webp"}
-                        alt={selectedHighlight.athleteName}
-                        className="w-8 h-8 rounded-full object-cover mr-2"
-                      />
-                      <div>
-                        <p className="text-white font-semibold text-sm flex items-center">
-                            {selectedHighlight.athleteName}
-                            {selectedHighlight.athleteName === "Jane Doe" && <span className="ml-1 text-gamepulse-blue text-xs">✓</span>}
-                        </p>
-                        <p className="text-gray-400 text-xs">
-                          {formatViewCount(Math.floor(Math.random() * 500000) + 1000)} subscribers
-                        </p>
-                      </div>
-                    </Link>
-                    <button className="ml-3 px-3 py-1 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-colors text-xs">
-                      Subscribe
-                    </button>
-                  </div>
-
-                  <div className="flex flex-wrap items-center space-x-2 text-xs font-semibold text-gray-300">
-                    <div className="flex items-center bg-gray-800 rounded-full px-3 py-1">
-                      <button className="flex items-center hover:text-white transition-colors mr-2">
-                        <FaThumbsUp className="text-base mr-1" />
-                        <span>{formatViewCount(selectedHighlight.likes)}</span>
-                      </button>
-                      <span className="border-l border-gray-600 h-4"></span>
-                      <button className="flex items-center hover:text-white transition-colors ml-2">
-                        <FaThumbsDown className="text-base" />
-                      </button>
-                    </div>
-                    <button onClick={handleShare} className="flex items-center bg-gray-800 rounded-full px-3 py-1 hover:bg-gray-700 transition-colors">
-                      <FaShareAlt className="text-base mr-1" />
-                      <span>Share</span>
-                    </button>
-                    <button className="flex items-center bg-gray-800 rounded-full px-3 py-1 hover:bg-gray-700 transition-colors hidden md:flex">
-                      <FaDownload className="text-base mr-1" />
-                      <span>Download</span>
-                    </button>
-                    <button className="flex items-center bg-gray-800 rounded-full px-3 py-1 hover:bg-gray-700 transition-colors hidden md:flex">
-                      <FaEllipsisH className="text-base" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Description Section */}
-                <div className="bg-gray-800 rounded-lg p-2 mt-3 text-xs">
-                  <div className="flex items-center text-gray-300 font-semibold mb-1">
-                    <span>{formatViewCount(selectedHighlight.views)} views</span>
-                    <span className="mx-1">•</span>
-                    <span>{timeSince(selectedHighlight.dateUploaded)}</span>
-                    {selectedHighlight.products > 0 && (
-                        <>
-                            <span className="mx-1">•</span>
-                            <span>{selectedHighlight.products} products</span>
-                        </>
-                    )}
-                  </div>
-                  <p className={`text-gray-300 overflow-hidden ${showFullDescription ? '' : 'line-clamp-2'}`}>
-                    {selectedHighlight.description}
-                    <br/><br/>
-                    {selectedHighlight.athleteName === "Jane Doe" && (
-                        <>
-                            Get exclusive training tips and behind-the-scenes content by becoming a GamePulse member! Learn more <Link to="/premium" className="text-gamepulse-blue hover:underline">here</Link>.
-                        </>
-                    )}
-                  </p>
-                  {selectedHighlight.description.length > 150 || selectedHighlight.products > 0 && (
-                      <button
-                          onClick={() => setShowFullDescription(!showFullDescription)}
-                          className="text-gamepulse-blue hover:underline mt-1 flex items-center text-xs"
-                      >
-                          {showFullDescription ? (
-                              <>Show less <FaAngleUp className="ml-1" /></>
-                          ) : (
-                              <>Show more <FaAngleDown className="ml-1" /></>
-                          )}
-                      </button>
-                  )}
-                  <Link to={`/match-details/${selectedHighlight.matchId}`} className="text-gamepulse-orange hover:underline text-xs font-medium block mt-1">
-                      Full Match Details: {selectedHighlight.gameContext}
-                  </Link>
-                </div>
-              </div>
-
-              {/* Comments Section */}
-              <div className="mt-5">
-                  <h2 className="text-white text-base font-semibold mb-2 flex items-center">
-                      <span>{Math.floor(Math.random() * 1000) + 100} Comments</span>
-                      <button className="ml-3 text-xs text-gray-400 hover:text-white flex items-center">
-                          <FaEllipsisH className="rotate-90 mr-1" /> Sort by
-                      </button>
-                  </h2>
-                  <div className="flex items-start mb-3">
-                      <img src="/images/user-avatar.webp" alt="Your Avatar" className="w-8 h-8 rounded-full object-cover mr-2" />
-                      <input
-                          type="text"
-                          placeholder="Add a comment..."
-                          className="flex-grow bg-transparent border-b border-gray-700 focus:border-white text-white py-1 px-0 focus:outline-none text-xs"
-                      />
-                  </div>
-                  <div className="space-y-3">
-                    <div className="flex items-start">
-                        <img src="/images/default-user-avatar.webp" alt="Commenter Avatar" className="w-6 h-6 rounded-full object-cover mr-2" />
-                        <div>
-                            <p className="text-xs text-gray-300 font-semibold">
-                                @HenryHalamadrid <span className="text-xs font-normal text-gray-400 ml-1">{timeSince('2025-06-13T10:00:00Z')}</span>
-                            </p>
-                            <p className="text-gray-300 text-xs mt-1">
-                                Incredible play! This is why I love GamePulse.
-                            </p>
-                            <div className="flex items-center text-xs text-gray-400 mt-1 space-x-3">
-                                <button className="flex items-center hover:text-white"><FaThumbsUp className="mr-1" /> 12</button>
-                                <button className="flex items-center hover:text-white"><FaThumbsDown className="mr-1" /> 0</button>
-                                <button className="hover:text-white">Reply</button>
-                            </div>
-                        </div>
-                    </div>
-                    {[...Array(5)].map((_, i) => (
-                      <div key={`mock-comment-${i}`} className="flex items-start">
-                          <img src="/images/default-athlete-avatar.webp" alt="Commenter Avatar" className="w-6 h-6 rounded-full object-cover mr-2" />
-                          <div>
-                              <p className="text-xs text-gray-300 font-semibold">
-                                  @AnotherFan{i} <span className="text-xs font-normal text-gray-400 ml-1">{timeSince(new Date(Date.now() - (i * 86400000)).toISOString())}</span>
-                              </p>
-                              <p className="text-gray-300 text-xs mt-1">
-                                  Amazing! Can't wait to see more from this athlete.
-                              </p>
-                              <div className="flex items-center text-xs text-gray-400 mt-1 space-x-3">
-                                  <button className="flex items-center hover:text-white"><FaThumbsUp className="mr-1" /> {10 - i}</button>
-                                  <button className="flex items-center hover:text-white"><FaThumbsDown className="mr-1" /> 0</button>
-                                  <button className="hover:text-white">Reply</button>
-                              </div>
-                          </div>
-                      </div>
-                    ))}
-                  </div>
-              </div>
-          </div>
-
-          {/* Right Column: Up Next / Related Videos */}
-          <div className="md:w-2/5 lg:w-1/3 xl:w-1/4 shrink-0 px-2 mt-6 md:mt-0 overflow-y-auto custom-scrollbar md:h-[calc(100vh-80px)] md:pl-4">
-              <div className="flex items-center space-x-1 mb-3">
-                  {["All", "From the series", "From Learnit Training"].map(tab => (
-                      <button
-                          key={tab}
-                          onClick={() => setActiveRelatedTab(tab)}
-                          className={`
-                              px-2 py-1 rounded-full text-xs font-semibold transition-colors
-                              ${activeRelatedTab === tab ? 'bg-white text-black' : 'bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white'}
-                          `}
-                      >
-                          {tab}
-                      </button>
-                  ))}
-              </div>
-
-            {displayedHighlights.length > 0 ? (
-              <HighlightGrid
-                highlights={displayedHighlights}
-                headline=""
-              />
-            ) : (
-              <NoHighlightsFound
-                message="No related highlights found."
-                onShowTrending={() => setActiveCategory("Trending")}
-                onGoLiveMatches={() => {}}
-                onDiscoverAthletes={() => {}}
-              />
-            )}
-          </div>
-        </div>
-      ) : (
-        <NoHighlightsFound
-          message="No highlights available. Check back soon!"
-          onShowTrending={() => setActiveCategory("Trending")}
-          onGoLiveMatches={() => {}}
-          onDiscoverAthletes={() => {}}
-        />
-      )}
-
-      {showFiltersModal && (
-        <div className="fixed inset-0 z-50 bg-gamepulse-dark bg-opacity-95 flex flex-col items-center justify-start pt-10 animate-fade-in">
-           <div className="w-full text-right px-3 py-1">
-              <button
-                  onClick={() => setShowFiltersModal(false)}
-                  className="text-white text-xl p-1 rounded-full hover:bg-white/10"
+    <div className="min-h-screen bg-gamepulse-dark text-neutral-white font-sans">
+      {/* Header - Mobile first padding, responsive text/icon sizes */}
+      <header className="bg-neutral-dark-gray py-2 px-4 md:py-3 md:px-6 flex items-center justify-between shadow-lg fixed top-0 left-0 w-full z-50">
+        <div className="flex items-center space-x-4 md:space-x-8">
+          <Link to="/" className="text-xl md:text-2xl font-heading font-extrabold text-gamepulse-blue-light hover:text-gamepulse-yellow transition-colors">
+            GamePulse Africa
+          </Link>
+          <nav className="hidden lg:flex space-x-4 md:space-x-6"> {/* Hidden on mobile, flex on large screens */}
+            {['Dashboard', 'Highlights', 'Athletes', 'Matches'].map((item) => (
+              <Link
+                key={item}
+                to={`/${item.toLowerCase().replace(/\s/g, '-')}`}
+                className={`text-neutral-medium-gray hover:text-neutral-white transition-colors text-xs md:text-sm font-semibold px-1 py-0.5 md:px-2 md:py-1 ${item === 'Highlights' ? 'text-gamepulse-yellow' : ''}`}
               >
-                  &times;
-              </button>
-          </div>
-          <HighlightFilters
-            filters={filters}
-            onFilterChange={handleFilterChange}
-            onApplyFilters={handleApplyFilters}
-            onResetFilters={handleResetFilters}
-          />
+                {item}
+              </Link>
+            ))}
+          </nav>
         </div>
-      )}
+        <div className="flex items-center space-x-3 md:space-x-4">
+          <div className="relative text-neutral-medium-gray hidden md:block"> {/* Hidden on mobile, block on medium screens */}
+            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-sm md:text-lg" />
+            <input
+              type="text"
+              placeholder="Search highlights, athletes, teams..."
+              className="bg-neutral-black/30 rounded-full pl-9 pr-3 py-1.5 text-xs md:text-sm text-neutral-white placeholder-neutral-medium-gray focus:outline-none focus:ring-1 focus:ring-gamepulse-blue w-40 md:w-64"
+            />
+          </div>
+          <button className="text-neutral-medium-gray hover:text-neutral-white transition-colors text-lg md:text-xl"><FaBell /></button>
+          <div className="flex items-center text-neutral-white text-sm font-semibold cursor-pointer">
+            <FaUserCircle className="text-xl md:text-2xl mr-1 md:mr-2 text-gamepulse-yellow" /> <span className="hidden sm:inline">George Chichua</span> {/* Hide name on smallest screens */}
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content Area - Adjusted pt for fixed header, mobile-first padding */}
+      <div className="pt-16 md:pt-20 container mx-auto px-2 py-4 md:px-4 md:py-6 grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6">
+
+        {/* Filter Sidebar - Mobile Overlay/Drawer */}
+        {isFilterSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-75 z-40 lg:hidden"
+            onClick={() => setIsFilterSidebarOpen(false)} // Close when clicking outside
+          ></div>
+        )}
+        <aside
+          className={`
+            fixed top-0 left-0 w-full h-full bg-neutral-dark-gray z-50
+            transform transition-transform duration-300 ease-in-out
+            ${isFilterSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+            p-4 md:p-6 overflow-y-auto lg:static lg:top-auto lg:left-auto lg:w-auto lg:h-fit
+            lg:translate-x-0 lg:col-span-1 lg:block rounded-xl lg:sticky lg:top-20
+          `}
+        >
+          {/* Close button for mobile filter drawer */}
+          <div className="flex justify-between items-center mb-4 lg:hidden">
+            <h2 className="text-lg font-bold text-neutral-white">Filters</h2>
+            <button
+              onClick={() => setIsFilterSidebarOpen(false)}
+              className="text-neutral-white text-xl p-2 rounded-full hover:bg-neutral-black/30"
+            >
+              <FaTimes />
+            </button>
+          </div>
+          <h2 className="text-lg md:text-xl font-bold text-neutral-white mb-3 md:mb-4 hidden lg:block">Filters</h2> {/* Show "Filters" title only on larger screens */}
+
+
+          {/* Individual Filter Sections as Accordion Items */}
+          <AccordionItem title="Sport" sectionKey="sport">
+            <div className="mb-4 lg:mb-0"> {/* Adjusted margin for accordion context */}
+              <label htmlFor="sport-filter" className="block text-neutral-medium-gray text-xs md:text-sm font-semibold mb-2 lg:hidden">Sport</label> {/* Label visible only on mobile */}
+              <select
+                id="sport-filter"
+                className="w-full bg-gamepulse-blue-dark border border-neutral-black rounded-lg px-3 py-1.5 text-xs md:text-sm text-neutral-white focus:outline-none focus:ring-1 focus:ring-gamepulse-blue"
+                value={filters.sport}
+                onChange={(e) => handleFilterChange('sport', e.target.value)}
+              >
+                <option>All Sports</option>
+                <option>Football</option>
+                <option>Basketball</option>
+                <option>Tennis</option>
+                <option>Volleyball</option>
+              </select>
+            </div>
+          </AccordionItem>
+
+          <AccordionItem title="Team/School" sectionKey="teamSchool">
+            <div className="mb-4 lg:mb-0">
+              <label htmlFor="team-school-filter" className="block text-neutral-medium-gray text-xs md:text-sm font-semibold mb-2 lg:hidden">Team/School</label>
+              <input
+                type="text"
+                id="team-school-filter"
+                placeholder="Search teams..."
+                className="w-full bg-gamepulse-blue-dark border border-neutral-black rounded-lg px-3 py-1.5 text-xs md:text-sm text-neutral-white placeholder-neutral-medium-gray focus:outline-none focus:ring-1 focus:ring-gamepulse-blue"
+                value={filters.teamSchool}
+                onChange={(e) => handleFilterChange('teamSchool', e.target.value)}
+              />
+            </div>
+          </AccordionItem>
+
+          <AccordionItem title="Highlight Type" sectionKey="highlightType">
+            <div className="mb-4 lg:mb-0">
+              <label className="block text-neutral-medium-gray text-xs md:text-sm font-semibold mb-2 lg:hidden">Highlight Type</label>
+              <div className="space-y-2">
+                {['Goals', 'Skills', 'Saves', 'Assists'].map(type => (
+                  <label key={type} className="flex items-center text-neutral-light-gray text-xs md:text-sm">
+                    <input
+                      type="checkbox"
+                      className="form-checkbox h-3.5 w-3.5 md:h-4 md:w-4 text-gamepulse-blue rounded-sm border-neutral-black bg-gamepulse-blue-dark focus:ring-gamepulse-blue"
+                      checked={filters.highlightType.includes(type)}
+                      onChange={() => handleHighlightTypeChange(type)}
+                    />
+                    <span className="ml-2">{type}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </AccordionItem>
+
+          <AccordionItem title="Date Range" sectionKey="dateRange">
+            <div className="mb-4 lg:mb-0">
+              <label htmlFor="date-range-filter" className="block text-neutral-medium-gray text-xs md:text-sm font-semibold mb-2 lg:hidden">Date Range</label>
+              <select
+                id="date-range-filter"
+                className="w-full bg-gamepulse-blue-dark border border-neutral-black rounded-lg px-3 py-1.5 text-xs md:text-sm text-neutral-white focus:outline-none focus:ring-1 focus:ring-gamepulse-blue"
+                value={filters.dateRange}
+                onChange={(e) => handleFilterChange('dateRange', e.target.value)}
+              >
+                <option>Last 7 days</option>
+                <option>Last 30 days</option>
+                <option>Last 3 months</option>
+                <option>This Year</option>
+                <option>All Time</option>
+              </select>
+            </div>
+          </AccordionItem>
+
+          <AccordionItem title="XP Ranking" sectionKey="xpRanking">
+            <div className="mb-4 lg:mb-0"> {/* Changed mb-6 to mb-4 to be consistent within accordion item */}
+              <label className="block text-neutral-medium-gray text-xs md:text-sm font-semibold mb-2 lg:hidden">XP Ranking</label>
+              <div className="flex space-x-2">
+                <input
+                  type="number"
+                  placeholder="Min"
+                  className="w-1/2 bg-gamepulse-blue-dark border border-neutral-black rounded-lg px-3 py-1.5 text-xs md:text-sm text-neutral-white placeholder-neutral-medium-gray focus:outline-none focus:ring-1 focus:ring-gamepulse-blue"
+                  value={filters.xpMin}
+                  onChange={(e) => handleFilterChange('xpMin', e.target.value)}
+                />
+                <input
+                  type="number"
+                  placeholder="Max"
+                  className="w-1/2 bg-gamepulse-blue-dark border border-neutral-black rounded-lg px-3 py-1.5 text-xs md:text-sm text-neutral-white placeholder-neutral-medium-gray focus:outline-none focus:ring-1 focus:ring-gamepulse-blue"
+                  value={filters.xpMax}
+                  onChange={(e) => handleFilterChange('xpMax', e.target.value)}
+                />
+              </div>
+            </div>
+          </AccordionItem>
+
+          {/* Apply/Reset Buttons (These will always be visible regardless of accordion state) */}
+          <div className="flex space-x-3 mt-4 mb-4 lg:mt-6 lg:mb-6"> {/* Adjusted margin-top */}
+            <button
+              className="flex-1 bg-gamepulse-blue hover:bg-gamepulse-blue-dark text-neutral-white px-3 py-1.5 rounded-full text-xs md:text-sm font-bold transition-colors"
+              onClick={applyFilters}
+            >
+              Apply
+            </button>
+            <button
+              className="flex-1 bg-neutral-black/30 hover:bg-neutral-black text-neutral-white px-3 py-1.5 rounded-full text-xs md:text-sm font-bold transition-colors"
+              onClick={resetFilters}
+            >
+              Reset
+            </button>
+          </div>
+
+          {/* Quick Links (Also as an accordion item) */}
+          <AccordionItem title="Quick Links" sectionKey="quickLinks">
+            <ul className="space-y-3 text-neutral-medium-gray text-xs md:text-sm pt-2 lg:pt-0"> {/* Adjusted padding-top */}
+              <li>
+                <Link to="/highlights/trending" className="hover:text-gamepulse-yellow flex items-center transition-colors">
+                  <FaStar className="mr-2 text-gamepulse-yellow text-sm md:text-base" /> Trending Highlights
+                </Link>
+              </li>
+              <li>
+                <Link to="/live-matches" className="hover:text-gamepulse-yellow flex items-center transition-colors">
+                  <FaPlay className="mr-2 text-gamepulse-blue-light text-sm md:text-base" /> Live Matches
+                </Link>
+              </li>
+              <li>
+                <Link to="/athletes/discover" className="hover:text-gamepulse-yellow flex items-center transition-colors">
+                  <FaUsers className="mr-2 text-success-green text-sm md:text-base" /> Discover Athletes
+                </Link>
+              </li>
+            </ul>
+          </AccordionItem>
+        </aside>
+
+        {/* Main Content Column */}
+        <main className="lg:col-span-3 space-y-4 md:space-y-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+            <h1 className="text-2xl md:text-3xl font-heading font-extrabold text-neutral-white mb-2 sm:mb-0">Game Highlights</h1>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+              <span className="text-neutral-medium-gray text-xs sm:text-sm hidden sm:block">Discover the best moments from African high school sports</span>
+              <select className="bg-neutral-dark-gray border border-neutral-black rounded-full px-3 py-1.5 text-xs sm:text-sm text-neutral-white focus:outline-none focus:ring-1 focus:ring-gamepulse-blue w-full sm:w-auto">
+                <option>Most Recent</option>
+                <option>Most Viewed</option>
+                <option>Highest Rated</option>
+              </select>
+              <Link
+                to="/upload-highlight"
+                className="bg-success-green hover:bg-success-green/80 text-gamepulse-dark px-4 py-1.5 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm transition-colors w-full sm:w-auto"
+              >
+                <FaUpload className="mr-2 text-sm sm:text-base" /> Upload Highlight
+              </Link>
+              {/* Filter button for mobile */}
+              <button
+                onClick={() => setIsFilterSidebarOpen(true)}
+                className="lg:hidden bg-gamepulse-blue hover:bg-gamepulse-blue-dark text-neutral-white px-4 py-1.5 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm transition-colors w-full sm:w-auto"
+              >
+                <FaFilter className="mr-2 text-sm" /> Filters
+              </button>
+            </div>
+          </div>
+
+          {/* Featured & Trending Highlights */}
+          <section className="mb-4 md:mb-6">
+            <h2 className="text-lg md:text-xl font-bold text-neutral-white mb-3 md:mb-4">Featured & Trending</h2>
+            <div className="flex overflow-x-auto space-x-3 md:space-x-4 pb-2 scrollbar-hide">
+              {featuredHighlights.map(highlight => (
+                <div key={highlight.id} className="flex-shrink-0 w-48 md:w-60 relative rounded-lg overflow-hidden cursor-pointer group hover:opacity-90 transition-opacity">
+                  <img src={highlight.thumbnailUrl} alt="Featured Highlight" className="w-full h-auto object-cover" />
+                  <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <FaPlay className="text-3xl md:text-4xl text-gamepulse-yellow" />
+                  </div>
+                  <div className="absolute bottom-2 left-2 bg-black/70 text-neutral-white text-xxs px-1.5 py-0.5 rounded md:text-xs">
+                    {highlight.duration}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Main Highlight Section */}
+          <section className="bg-neutral-dark-gray rounded-xl p-4 md:p-6 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+            {/* Main Video Player */}
+            <div className="md:col-span-2 relative rounded-lg overflow-hidden group cursor-pointer">
+              <img src={mainHighlight.thumbnailUrl} alt={mainHighlight.title} className="w-full h-auto object-cover" />
+              <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <FaPlay className="text-5xl md:text-6xl text-gamepulse-yellow" />
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4 bg-gradient-to-t from-black/80 to-transparent">
+                <h3 className="text-lg md:text-xl font-bold text-neutral-white">{mainHighlight.title}</h3>
+              </div>
+              <div className="absolute top-2 right-2 flex space-x-2">
+                <button className="bg-black/50 p-1.5 rounded-full text-neutral-white text-xs md:text-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70"><FaShareAlt /></button>
+                <button className="bg-black/50 p-1.5 rounded-full text-neutral-white text-xs md:text-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70"><FaFlag /></button>
+              </div>
+            </div>
+
+            {/* Details and Athlete Profile */}
+            <div className="md:col-span-1 space-y-3 md:space-y-4">
+              <p className="text-neutral-light-gray text-xs md:text-sm">{mainHighlight.description}</p>
+
+              {/* Engagement */}
+              <div className="flex items-center space-x-4 text-neutral-medium-gray text-xs md:text-sm">
+                <span className="flex items-center"><FaEye className="mr-1 text-sm" /> {mainHighlight.views}</span>
+                <span className="flex items-center"><FaHeart className="mr-1 text-sm" /> {mainHighlight.likes}</span>
+                <span className="flex items-center"><FaShareAlt className="mr-1 text-sm" /> {mainHighlight.shares}</span>
+              </div>
+
+              {/* Match Details */}
+              <div className="bg-gamepulse-blue-dark rounded-lg p-3 md:p-4">
+                <h4 className="text-neutral-white font-bold mb-2 text-sm md:text-base">Match Details</h4>
+                <p className="text-xs text-neutral-light-gray">Teams: {mainHighlight.matchDetails.teams}</p>
+                <p className="text-xs text-neutral-light-gray">Date: {mainHighlight.matchDetails.date}</p>
+                <p className="text-xs text-neutral-light-gray">Competition: {mainHighlight.matchDetails.competition}</p>
+                <p className="text-xs text-neutral-light-gray">Final Score: {mainHighlight.matchDetails.finalScore}</p>
+              </div>
+
+              {/* Athlete Profile Card */}
+              <Link to={`/athlete/${mainHighlight.athlete.id}`} className="block bg-gamepulse-blue-dark rounded-lg p-3 md:p-4 flex items-center space-x-3 md:space-x-4 hover:bg-gamepulse-blue-dark/80 transition-colors">
+                <img src={mainHighlight.athlete.profilePic} alt={mainHighlight.athlete.name} className="w-14 h-14 md:w-16 md:h-16 rounded-full object-cover border-2 border-gamepulse-yellow flex-shrink-0" />
+                <div>
+                  <h4 className="text-neutral-white font-bold text-sm md:text-base">{mainHighlight.athlete.name}</h4>
+                  <p className="text-xs text-neutral-medium-gray">{mainHighlight.athlete.role} • XP: {mainHighlight.athlete.xp}</p>
+                  <span className="text-gamepulse-yellow text-xs md:text-sm hover:underline">
+                    View Profile
+                  </span>
+                </div>
+              </Link>
+            </div>
+          </section>
+
+          {/* All Highlights Grid */}
+          <section>
+            <h2 className="text-lg md:text-xl font-bold text-neutral-white mb-3 md:mb-4">All Highlights</h2>
+            <p className="text-neutral-medium-gray text-xs md:text-sm mb-3 md:mb-4">Showing 1,247 results</p> {/* */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
+              {allHighlights.map(highlight => (
+                <div key={highlight.id} className="bg-neutral-dark-gray rounded-lg overflow-hidden cursor-pointer group hover:bg-neutral-blue-dark transition-colors">
+                  <div className="relative w-full h-36 overflow-hidden">
+                    <img src={highlight.thumbnailUrl} alt={highlight.title} className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <FaPlay className="text-3xl md:text-4xl text-gamepulse-yellow" />
+                    </div>
+                    <div className="absolute top-2 left-2 bg-neutral-black/70 text-neutral-white text-xxs px-2 py-1 rounded-full flex items-center">
+                      {highlight.sport === 'Football' && <FaFootballBall className="mr-1 text-xs" />}
+                      {highlight.sport === 'Basketball' && <FaBasketballBall className="mr-1 text-xs" />}
+                      {highlight.sport === 'Rugby' && <FaUsers className="mr-1 text-xs" />} {/* Using users for rugby as no specific icon */}
+                      {highlight.sport === 'Athletics' && <FaRunning className="mr-1 text-xs" />}
+                      {highlight.sport}
+                    </div>
+                    <div className="absolute bottom-2 right-2 bg-black/70 text-neutral-white text-xxs px-2 py-1 rounded">
+                      {highlight.duration}
+                    </div>
+                  </div>
+                  <div className="p-3">
+                    <h3 className="font-semibold text-neutral-white text-sm md:text-md mb-1">{highlight.title}</h3>
+                    <p className="text-xs text-neutral-medium-gray">{highlight.teams}</p>
+                    <div className="flex justify-between items-center mt-2 text-xs text-neutral-medium-gray">
+                      <span>{highlight.age}</span>
+                      <span className="flex items-center"><FaEye className="mr-1 text-sm" /> {highlight.views}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        </main>
+      </div>
     </div>
   );
 };

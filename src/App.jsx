@@ -32,6 +32,7 @@ import { DarkModeProvider } from './context/DarkModeContext';
 import SettingsPage from './pages/SettingsPage';
 import MyCalendarPage from './pages/MyCalendarPage';
 import UpcomingEvents from './components/AthleteProfile/UpcomingEvents';
+import DigitalClassroomPage from './pages/DigitalClassroomPage';
 
 
 function App() {
@@ -94,7 +95,7 @@ function App() {
               <Route path="/settings" element={<SettingsPage/>} />
               <Route path="/help" element={<HelpAndSupportPage />} />
               <Route path="/features" element={<div>Features Page (Implement Me)</div>} />
-              <Route path="/digital-classroom" element={<div>Digital Classroom (Implement Me)</div>} />
+              <Route path="/digital-classroom" element={<DigitalClassroomPage />}/>
               <Route path="/download-app" element={<div>Download App Page (Implement Me)</div>} />
               <Route path="/notifications" element={<div>Notifications Page (Implement Me)</div>} />
               <Route path="/search" element={<div>Mobile Search Page (Implement Me)</div>} />
