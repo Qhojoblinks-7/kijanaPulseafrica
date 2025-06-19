@@ -1,7 +1,6 @@
 // src/data/allAthleteProfilesData.js
 
 // Import athlete-specific images from your assets
-// Ensure these paths are correct based on your project structure.
 import athlete1FullImage from '../assets/profileOne.png'; // Generic athlete, good for basketball
 import athlete1SchoolLogo from '../assets/school1.png';
 import athlete1TeamLogo from '../assets/bb1.png';
@@ -16,8 +15,6 @@ import athlete4FullImage from '../assets/Gemini_Generated_Image_syu00fsyu00fsyu0
 import athlete3TeamLogo from '../assets/soccerT2.png';
 
 // New imports for career history logos (add these if you have them in your assets)
-// If you don't have these specific logos, you can leave the `logo` field as `null`
-// or replace them with generic school/team logos you already have.
 import ghanaBasketballLogo from '../assets/soccerT2.png'
 import ghanaFootballLogo from '../assets/soccerT2.png'
 import ghanaAthleticsLogo from '../assets/soccerT2.png'
@@ -31,9 +28,6 @@ import ghanaBadmintonLogo from '../assets/soccerT2.png'
 import ghanaHockeyLogo from '../assets/soccerT2.png'
 import ghanaTaekwondoLogo from '../assets/soccerT2.png'
 
-
-
-
 const placeholderNike = 'https://via.placeholder.com/150x80/0D214F/FFFFFF?text=NIKE';
 const placeholderAdidas = 'https://via.placeholder.com/150x80/0D214F/FFFFFF?text=ADIDAS';
 const placeholderRedBull = 'https://via.placeholder.com/150x80/0D214F/FFFFFF?text=RED+BULL';
@@ -43,7 +37,7 @@ const placeholderFanMilk = 'https://via.placeholder.com/150x80/0D214F/FFFFFF?tex
 
 
 export const allAthleteProfilesData = [
-  // --- BASKETBALL ATHLETE ---
+  // --- BASKETBALL ATHLETE: Ama Owusu ---
   {
     id: 'athlete123',
     email: 'ama@example.com', // Link to AuthContext mockUsers by email
@@ -51,7 +45,7 @@ export const allAthleteProfilesData = [
     lastName: 'Owusu',
     fullName: 'Ama Owusu',
     sportType: 'basketball',
-    slug: 'ama-owusu',
+    slug: 'ama-owusu', // This slug is crucial for lookup
     athleteFullImage: athlete1FullImage,
     schoolLogo: athlete1SchoolLogo,
     teamLogo: athlete1TeamLogo,
@@ -136,23 +130,80 @@ export const allAthleteProfilesData = [
       { name: 'Red Bull', logoUrl: placeholderRedBull },
       { name: 'FanMilk', logoUrl: placeholderFanMilk },
     ],
-    
-    // --- ADDED NEW FIELD: upcomingEvents ---
     upcomingEvents: [
       { date: '2025-07-20', time: '18:00', title: 'National League Playoffs - Game 1', location: 'Accra Sports Stadium Arena', description: 'Vs. Tema Ballers' },
       { date: '2025-07-23', time: '19:30', title: 'National League Playoffs - Game 2', location: 'Kumasi Sports Complex', description: 'Vs. Kumasi Knights' },
       { date: '2025-08-05', time: '10:00', title: 'U18 National Team Training Camp', location: 'Ghana National Sports College, Winneba', description: 'Preparatory camp for African Youth Games.' },
     ],
   },
-  
+  // --- FOOTBALL ATHLETE: Chisom Ugo (Placeholder - add full details as needed) ---
+  // {
+  //   id: 'pp1', // Matches the ID in LiveMatchesDashboard playerPerformance
+  //   email: 'chisom@example.com', // Example email if they are also a mock user
+  //   firstName: 'Chisom',
+  //   lastName: 'Ugo',
+  //   fullName: 'Chisom Ugo',
+  //   sportType: 'football',
+  //   slug: 'chisom-ugo', // This slug is crucial for lookup
+  //   athleteFullImage: athlete2FullImage, // Example image
+  //   schoolLogo: athlete2SchoolLogo,
+  //   teamLogo: athlete2TeamLogo,
+  //   position: 'Forward',
+  //   jerseyNumber: '9',
+  //   height: '6\'0"',
+  //   weight: '170 lbs',
+  //   bornDate: 'March 10, 2006',
+  //   fromLocation: 'Lagos, Nigeria',
+  //   sportsDebut: '2020',
+  //   previousLocation: 'Lagos Youth League',
+  //   careerStats: {
+  //     goals: 45, assists: 15, gamesPlayed: 60,
+  //     // Add more football specific stats
+  //   },
+  //   bio: [
+  //     "Chisom Ugo is a prolific forward from Lagos, Nigeria, known for his incredible goal-scoring ability and powerful shots.",
+  //     "He has been a standout player in various youth leagues and is highly sought after by top academies."
+  //   ],
+  //   achievements: [
+  //     { year: 2024, description: "Top Scorer, Lagos Youth League" },
+  //     { year: 2023, description: "Youth Player of the Season" }
+  //   ],
+  //   // Add more fields as needed, mirroring Ama Owusu's structure
+  //   upcomingEvents: [], // Example, can be populated
+  //   contactSettings: {
+  //       inAppMessagingEnabled: true,
+  //       emailEnabled: true,
+  //       socialMediaVisibility: {
+  //           instagram: true,
+  //           twitter: true,
+  //       }
+  //   },
+  //   icons: {
+  //       instagram: 'https://instagram.com/chisom_ugo_9',
+  //       twitter: 'https://twitter.com/chisom_ugo',
+  //   },
+  //   careerHistory: [
+  //       { year: '2022-Present', team: 'Lagos Dynamos Youth', logo: ghanaFootballLogo, description: 'Leading goal scorer for the team.' },
+  //   ],
+  //   keyAttributes: [
+  //       { name: 'Finishing', rating: 5, description: 'Exceptional ability to score from various positions.' },
+  //       { name: 'Pace', rating: 4.5, description: 'Blazing speed to beat defenders.' },
+  //   ],
+  //   sponsors: [
+  //       { name: 'Adidas', logoUrl: placeholderAdidas },
+  //   ],
+  // },
+
 
   // --- FOOTBALL (SOCCER) ATHLETE ---
   {
-    id: 'kwame_mensah',
-    firstName: 'Kwame',
-    lastName: 'Mensah',
-    fullName: 'Kwame Mensah',
+    id: 'pp1', // Matches the ID in LiveMatchesDashboard playerPerformance
+    email: 'chisom@example.com', // Example email if they are also a mock user
+    firstName: 'Chisom',
+    lastName: 'Ugo',
+    fullName: 'Chisom Ugo',
     sportType: 'football',
+    slug: 'chisom-ugo', // This slug is crucial for lookup
     athleteFullImage: athlete2FullImage,
     schoolLogo: athlete2SchoolLogo,
     teamLogo: athlete2TeamLogo,
@@ -961,6 +1012,25 @@ export const allAthleteProfilesData = [
 ];
 
 
-export const getAthleteProfile = (id) => {
-  return allAthleteProfilesData.find(athlete => athlete.id === id);
+/**
+ * Retrieves an athlete's full public profile data by their unique slug.
+ * @param {string} slug The unique URL-friendly identifier for the athlete.
+ * @returns {object|null} The athlete's profile object if found, otherwise null.
+ */
+export const getAthleteProfile = (slugToFind) => {
+  if (!slugToFind) {
+    console.error("getAthleteProfile: No slug provided for search.");
+    return null;
+  }
+
+  console.log(`getAthleteProfile: Attempting to find athlete with slug: '${slugToFind}'`);
+  // Use .find() to get the first athlete that matches the slug
+  const foundAthlete = allAthleteProfilesData.find(athlete => athlete.slug === slugToFind);
+
+  if (!foundAthlete) {
+    console.warn(`getAthleteProfile: No athlete found for slug: '${slugToFind}'.`);
+  } else {
+    console.log(`getAthleteProfile: Successfully found athlete: '${foundAthlete.fullName}'`);
+  }
+  return foundAthlete;
 };

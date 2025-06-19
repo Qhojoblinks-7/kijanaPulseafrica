@@ -14,7 +14,7 @@ const MobileToggle = ({
   const navigate = useNavigate();
 
   return (
-    <div className="md:hidden flex items-center space-x-4">
+    <div className="md:hidden flex items-center  space-x-4">
       {isLoggedIn && (
         <>
           {/* Mobile Search Icon */}

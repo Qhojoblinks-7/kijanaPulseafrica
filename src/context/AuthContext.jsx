@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { useNavigate } from 'react-router-dom';
 // Ensure these paths are correct relative to AuthContext.js
 import { allAthleteProfilesData } from '../data/allAthleteProfilesData'; 
-import { mockUsers } from '../data/mockAuthUsers'; // <--- NEW IMPORT
+import { mockUsers } from '../data/mockUsers'; // <--- NEW IMPORT
 
 const AuthContext = createContext();
 

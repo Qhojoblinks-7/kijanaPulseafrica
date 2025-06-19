@@ -1,81 +1,105 @@
-// src/pages/MyProfilePage.jsx
-import React, { useState, useEffect } from 'react';
+// src/pages/AthleteProfilePage.jsx
+
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { getAthleteProfile } from '../data/allAthleteProfilesData';
 import ProfileHeader from '../components/AthleteProfile/ProfileHeader';
-import MyHighlightsGallery from '../components/MyProfile/MyHighlightsGallery';
-import MyAboutMe from '../components/MyProfile/MyAboutMe';
-import MyConnectionsAndContact from '../components/MyProfile/MyConnectionsAndContact';
-import MyProfileFooterNav from '../components/MyProfile/MyProfileFooterNav';
-import CareerHistory from '../components/AthleteProfile/CareerHistory'; // Import the CareerHistory component
-import { allAthleteProfilesData } from '../data/allAthleteProfilesData'; // Import all athlete data
+import MyAboutMe from '../components/MyProfile/MyAboutMe'; // Renamed from AboutMe to MyAboutMe to match new component structure
+import MediaGallery from '../components/MyProfile/MyHighlightsGallery';
+import CareerHistory from '../components/AthleteProfile/CareerHistory';
+// import SocialMediaLinks from '../components/AthleteProfile/SocialMediaLinks';
 import KeyAttributes from '../components/AthleteProfile/KeyAttributes';
 
 const AthleteProfilePage = () => {
+  // useParams() extracts the 'slug' from the URL, e.g., 'chisom-ugo' from /athlete/chisom-ugo
+  const { slug } = useParams();
   const [athlete, setAthlete] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // In a real application, you'd get the current user's ID from an auth context or API
-    // For this example, we'll hardcode an ID that exists in allAthleteProfilesData
-    const myAthleteId = 'ama_owusu'; // <-- CHANGE THIS ID to 'kwame_mensah', 'akua_ansah', etc., to test other profiles
+    const fetchAthlete = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        // Simulate an API call delay for better UX
+        await new Promise(resolve => setTimeout(resolve, 500));
 
-    const foundAthlete = allAthleteProfilesData.find(a => a.id === myAthleteId);
+        // Use the getAthleteProfile function to find the athlete by slug
+        const data = getAthleteProfile(slug);
 
-    if (foundAthlete) {
-      // Transform the found athlete data to ensure 'sportType' is lowercase
-      const transformedAthlete = {
-        ...foundAthlete,
-        sportType: foundAthlete.sportType ? foundAthlete.sportType.toLowerCase() : undefined,
-      };
-      setAthlete(transformedAthlete);
-    } else {
-      console.warn(`MyProfilePage: Athlete with ID '${myAthleteId}' not found in data.`);
-      setAthlete(null); // Or set an error state
-    }
+        if (data) {
+          // Ensure sportType is lowercase for consistency in rendering/styling
+          const transformedData = {
+            ...data,
+            sportType: data.sportType ? data.sportType.toLowerCase() : undefined,
+          };
+          setAthlete(transformedData);
+        } else {
+          // Set error if no athlete found for the given slug
+          setError(`Athlete with slug '${slug}' not found.`);
+        }
+      } catch (err) {
+        // Catch any potential errors during fetching
+        setError('Failed to load athlete data.');
+        console.error("Error fetching athlete profile:", err);
+      } finally {
+        // Always set loading to false once fetching is complete
+        setLoading(false);
+      }
+    };
 
+    // Call the fetch function when the component mounts or the slug changes
+    fetchAthlete();
     window.scrollTo(0, 0); // Scroll to top on page load
-  }, []);
+  }, [slug]); // Dependency array: re-run this effect if the slug in the URL changes
 
-  // Update document title when athlete data is available
+  // Update document title based on athlete data
   useEffect(() => {
     if (athlete && athlete.fullName) {
-      document.title = `My Profile | ${athlete.fullName} | GamePulse Africa`;
+      document.title = `${athlete.fullName} | Athlete Profile | GamePulse Africa`;
     } else {
-      document.title = `My Profile | GamePulse Africa`;
+      document.title = `Athlete Profile | GamePulse Africa`;
     }
   }, [athlete]);
 
-  if (!athlete) {
-    // Handle loading or error state
+
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-xl text-gray-600 bg-gray-900 text-white">
-        Loading your profile...
+      <div className="text-center py-16 text-gray-400 bg-gray-900 min-h-screen">
+        Loading athlete profile...
       </div>
     );
   }
 
-  // Debugging line: Log the athlete object being used BEFORE passing to ProfileHeader
-  console.log("MyProfilePage: athlete data before passing to ProfileHeader:", athlete);
+  if (error) {
+    return (
+      <div className="text-center py-16 text-red-500 bg-gray-900 min-h-screen">
+        Error: {error}
+      </div>
+    );
+  }
+
+  // Fallback if athlete data is somehow null after loading (should be covered by error state)
+  if (!athlete) {
+    return (
+      <div className="text-center py-16 text-gray-500 bg-gray-900 min-h-screen">
+        No athlete data available.
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-100 font-sans text-gray-900">
-      {/* Profile Header Section */}
+    <div className="bg-gray-900 min-h-screen text-white pb-20">
       <ProfileHeader athlete={athlete} />
-
-      {/* Main content sections, nested within a consistent container for spacing */}
-      <div className="relative z-0">
-        <MyHighlightsGallery athlete={athlete} /> {/* Ensure MyHighlightsGallery handles 'media' prop */}
-        <MyAboutMe athlete={athlete} />
-        <KeyAttributes attributes={athlete.keyAttributes} />
-
-        {/* Add the CareerHistory component here */}
-        <CareerHistory history={athlete.careerHistory} />
-        <MyConnectionsAndContact athlete={athlete} />
-
-        {/* --- CRITICAL CHANGE HERE --- */}
-        {/* Pass the athlete.id as the athleteId prop */}
-        <MyProfileFooterNav athleteIcons={athlete.icons} athleteId={athlete.id} />
-      </div>
-
-      {/* A global footer component would typically be here */}
+      <MyAboutMe athlete={athlete} /> {/* Using MyAboutMe */}
+      <MediaGallery media={athlete.media} />
+      <CareerHistory history={athlete.careerHistory} />
+      <KeyAttributes attributes={athlete.keyAttributes} />
+      {/* <SocialMediaLinks
+        icons={athlete.icons}
+        socialMediaVisibility={athlete.contactSettings?.socialMediaVisibility}
+      /> */}
     </div>
   );
 };

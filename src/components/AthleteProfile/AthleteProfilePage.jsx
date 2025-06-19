@@ -2,16 +2,16 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getAthleteProfile } from '../data/allAthleteProfilesData';
+import { getAthleteProfile } from '../data/allAthleteProfilesData'; // This function needs to search by slug
 import ProfileHeader from '../components/AthleteProfile/ProfileHeader';
 import MyAboutMe from '../components/AthleteProfile/MyAboutMe';
 import MediaGallery from '../components/AthleteProfile/MediaGallery';
 import CareerHistory from '../components/AthleteProfile/CareerHistory';
-import SocialMediaLinks from '../components/AthleteProfile/SocialMediaLinks';
-import KeyAttributes from '../components/AthleteProfile/KeyAttributes'; // IMPORT THE NEW COMPONENT
+// import SocialMediaLinks from '../components/AthleteProfile/SocialMediaLinks';
+import KeyAttributes from '../components/AthleteProfile/KeyAttributes';
 
 const AthleteProfilePage = () => {
-  const { id } = useParams();
+  const { slug } = useParams(); // <--- CHANGE THIS LINE to use 'slug'
   const [athlete, setAthlete] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,16 +23,18 @@ const AthleteProfilePage = () => {
       try {
         // Simulate an API call delay
         await new Promise(resolve => setTimeout(resolve, 500));
-        const data = getAthleteProfile(id);
+        // Pass the slug to getAthleteProfile
+        const data = getAthleteProfile(slug); // <--- CHANGE THIS LINE to pass 'slug'
+
         if (data) {
-          // Ensure sportType is lowercase for consistent use in components if needed
           const transformedData = {
             ...data,
             sportType: data.sportType ? data.sportType.toLowerCase() : undefined,
           };
           setAthlete(transformedData);
         } else {
-          setError('Athlete not found.');
+          // The error message should now reflect 'slug'
+          setError(`Athlete with slug '${slug}' not found.`);
         }
       } catch (err) {
         setError('Failed to load athlete data.');
@@ -43,7 +45,7 @@ const AthleteProfilePage = () => {
     };
 
     fetchAthlete();
-  }, [id]);
+  }, [slug]); // <--- Re-run effect when 'slug' changes
 
   if (loading) {
     return (
@@ -75,13 +77,11 @@ const AthleteProfilePage = () => {
       <MyAboutMe athlete={athlete} />
       <MediaGallery media={athlete.media} />
       <CareerHistory history={athlete.careerHistory} />
-      {/* ADD THE NEW KEY ATTRIBUTES COMPONENT HERE */}
       <KeyAttributes attributes={athlete.keyAttributes} />
-      <SocialMediaLinks
+      {/* <SocialMediaLinks
         icons={athlete.icons}
         socialMediaVisibility={athlete.contactSettings?.socialMediaVisibility}
-      />
-      {/* You can add more components below here */}
+      /> */}
     </div>
   );
 };

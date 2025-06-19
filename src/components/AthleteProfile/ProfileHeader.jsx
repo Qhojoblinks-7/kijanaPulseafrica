@@ -138,7 +138,11 @@ const TAEKWONDO_STATS_CONFIG = [
 
 
 const ProfileHeader = ({ athlete }) => {
+  // Log 1: Check if athlete prop is undefined/null on initial render
+  console.log('ProfileHeader: Component Rendered. Athlete prop:', athlete);
+
   if (!athlete) {
+    console.log('ProfileHeader: Athlete prop is not defined, rendering loading state.');
     return (
       <div className="text-center py-8 text-gray-500 bg-gray-900 min-h-[50vh] flex items-center justify-center">
         Loading athlete profile header...
@@ -146,8 +150,13 @@ const ProfileHeader = ({ athlete }) => {
     );
   }
 
+  // Log 2: Athlete data is available
+  console.log('ProfileHeader: Athlete data received:', athlete);
+
   // Function to get the correct stat configuration based on sportType
   const getStatConfig = (sportType) => {
+    // Log 3: Check sportType being used for stat config
+    console.log('getStatConfig: Determining config for sportType:', sportType);
     switch (sportType) {
       case 'basketball': return BASKETBALL_STATS_CONFIG;
       case 'football': return FOOTBALL_STATS_CONFIG;
@@ -162,8 +171,7 @@ const ProfileHeader = ({ athlete }) => {
       case 'field_hockey': return FIELD_HOCKEY_STATS_CONFIG;
       case 'taekwondo': return TAEKWONDO_STATS_CONFIG;
       default:
-        console.warn(`No specific stat configuration for sportType: ${sportType}. Displaying generic stats.`);
-        // Fallback to a generic config or empty array if no match
+        console.warn(`getStatConfig: No specific stat configuration for sportType: ${sportType}. Displaying generic stats.`);
         return [
           { key: 'games', label: 'Games' },
           { key: 'wins', label: 'Wins' },
@@ -174,10 +182,17 @@ const ProfileHeader = ({ athlete }) => {
   };
 
   const currentStatConfig = getStatConfig(athlete.sportType);
+  // Log 4: Resulting stat configuration
+  console.log('ProfileHeader: Selected stat configuration:', currentStatConfig);
+
 
   // Helper function to render stat row with BLURRED background image
   const renderStatRow = (stats, imageUrl, statConfig) => {
+    // Log 5: Check inputs to renderStatRow
+    console.log('renderStatRow: Called with stats:', stats, 'imageUrl:', imageUrl, 'statConfig:', statConfig);
+
     if (!stats || !statConfig || statConfig.length === 0) {
+      console.log('renderStatRow: Missing stats, statConfig, or empty statConfig. Returning null.');
       return null;
     }
 
@@ -196,18 +211,24 @@ const ProfileHeader = ({ athlete }) => {
         {imageUrl && <div className="absolute inset-0 bg-black opacity-70 z-0"></div>}
 
         {/* Combined Headers and Values: Each stat (header + value) is now a single grid item/column */}
-        {statConfig.map((item, index) => (
-          <div key={`stat-col-${item.key}-${index}`} className="flex flex-col items-center justify-center relative z-10 p-1">
-            {/* Header */}
-            <span className="text-xs md:text-sm text-gray-400 font-bold mb-1">
-              {item.label}
-            </span>
-            {/* Value */}
-            <span className="text-white text-xs md:text-xl">
-              {stats[item.key] !== undefined ? stats[item.key] : '-'}
-            </span>
-          </div>
-        ))}
+        {statConfig.map((item, index) => {
+          // Log 6: Check individual stat item and its value
+          const statValue = stats[item.key];
+          console.log(`renderStatRow (map): Item: ${item.label} (key: ${item.key}), Value: ${statValue}`);
+
+          return (
+            <div key={`stat-col-${item.key}-${index}`} className="flex flex-col items-center justify-center relative z-10 p-1">
+              {/* Header */}
+              <span className="text-xs md:text-sm text-gray-400 font-bold mb-1">
+                {item.label}
+              </span>
+              {/* Value */}
+              <span className="text-white text-xs md:text-xl">
+                {statValue !== undefined ? statValue : '-'}
+              </span>
+            </div>
+          );
+        })}
       </div>
     );
   };

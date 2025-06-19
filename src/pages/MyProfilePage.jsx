@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'; // Fixed syntax error: removed '=>'
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { FaEdit, FaUpload, FaEye, FaPlus, FaTrophy, FaStar, FaPlay, FaShareAlt, FaBell, FaUserCircle, FaSearch, FaChevronDown, FaChartLine, FaBookOpen, FaUsers, FaLink } from 'react-icons/fa';
+import { FaEdit, FaUpload, FaEye, FaPlus, FaTrophy, FaStar, FaPlay, FaShareAlt, FaBell, FaUserCircle, FaSearch, FaChevronDown, FaChartLine, FaBookOpen, FaUsers, FaLink, FaCalendarAlt, FaBars, FaTimes } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 // Import your athlete profiles data
 import { allAthleteProfilesData } from '../data/allAthleteProfilesData'; // Adjust path if necessary
@@ -12,6 +12,7 @@ const MyProfilePage = () => {
 
     // State to hold the specific athlete's detailed profile data
     const [athleteProfile, setAthleteProfile] = useState(null); // Initialize as null to indicate no profile loaded yet
+    const [isMobileNavOpen, setIsMobileNavOpen] = useState(false); // State for mobile navigation toggle
 
     useEffect(() => {
         // Log current auth/route state for debugging purposes
@@ -147,6 +148,28 @@ const MyProfilePage = () => {
     return (
         <div className="min-h-screen bg-gamepulse-dark text-neutral-white font-sans">
             {/* Main Content Area */}
+            <header className="fixed top-0 left-0 w-full z-50 bg-neutral-dark-gray py-3 px-4 md:px-6 flex items-center justify-between shadow-lg">
+                <div className="flex items-center space-x-3">
+                    {/* Mobile Nav Toggle */}
+                    <button className="text-neutral-white text-2xl lg:hidden" onClick={() => setIsMobileNavOpen(!isMobileNavOpen)}>
+                        {isMobileNavOpen ? <FaTimes /> : <FaBars />}
+                    </button>
+                    <h1 className="text-xl md:text-2xl font-heading font-extrabold text-gamepulse-blue-light">My Profile</h1> {/* Changed title to "My Profile" */}
+                </div>
+                <div className="flex items-center space-x-3">
+                    <button className="text-neutral-medium-gray hover:text-neutral-white transition-colors text-lg md:text-xl" aria-label="Search"><FaSearch /></button>
+                    <button className="text-neutral-medium-gray hover:text-neutral-white transition-colors text-lg md:text-xl" aria-label="Notifications"><FaBell /></button>
+                    {/* Button for Upcoming Games Page is already here and correctly linked */}
+                    <Link to="/upcoming-games" className="text-neutral-medium-gray hover:text-neutral-white transition-colors text-lg md:text-xl" aria-label="Upcoming Games">
+                        <FaCalendarAlt />
+                    </Link>
+                    <div className="flex items-center text-neutral-white text-xs md:text-sm font-semibold cursor-pointer">
+                        <FaUserCircle className="text-xl md:text-2xl mr-1 text-gamepulse-yellow" />
+                        <span className="hidden sm:inline">User Profile</span>
+                    </div>
+                </div>
+            </header>
+
             <div className="pt-16 md:pt-20 container mx-auto px-2 py-4 md:px-4 md:py-6 grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
                 {/* Left Column */}
                 <div className="lg:col-span-2 space-y-4 md:space-y-6">
@@ -156,7 +179,7 @@ const MyProfilePage = () => {
                         <div className="absolute inset-0 bg-gradient-to-r from-gamepulse-blue-dark via-gamepulse-dark to-success-green/20 opacity-80 rounded-xl z-0"></div>
                         <div className="relative z-10 flex flex-col md:flex-row items-center w-full">
                             <img
-                                src={athleteProfile.profilePictureUrl || '/images/default-avatar.webp'} // Use profilePictureUrl from athleteProfile
+                                src={athleteProfile.profilePictureUrl || 'https://placehold.co/400x400/1A202C/FFFFFF?text=GP'} // Default placeholder
                                 alt={athleteProfile.fullName || 'Athlete'}
                                 className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-3 md:border-4 border-gamepulse-yellow shadow-lg flex-shrink-0 mb-3 md:mb-0 md:mr-6"
                             />
@@ -190,6 +213,12 @@ const MyProfilePage = () => {
                                     className="bg-neutral-dark-gray hover:bg-neutral-black text-neutral-white px-4 py-2 rounded-full flex items-center justify-center font-bold text-sm md:text-base transition-colors"
                                 >
                                     <FaEye className="mr-2" /> View Public Profile
+                                </Link>
+                                <Link
+                                    to="/upcoming-games"
+                                    className="bg-neutral-dark-gray hover:bg-neutral-black text-neutral-white px-4 py-2 rounded-full flex items-center justify-center font-bold text-sm md:text-base transition-colors"
+                                >
+                                    <FaEye className="mr-2" /> Upcoming Games
                                 </Link>
                             </div>
                         </div>
@@ -303,7 +332,7 @@ const MyProfilePage = () => {
                                     onClick={() => handleHighlightPlay(athleteProfile.media[0].title)}
                                 >
                                     {/* Placeholder for video thumbnail, or use actual video component */}
-                                    <img src={athleteProfile.media[0].thumbnail || 'https://via.placeholder.com/400x225/1A202C/FFFFFF?text=No+Thumbnail'} alt={athleteProfile.media[0].title} className="w-full h-auto object-cover" />
+                                    <img src={athleteProfile.media[0].thumbnail || 'https://placehold.co/400x225/1A202C/FFFFFF?text=No+Thumbnail'} alt={athleteProfile.media[0].title} className="w-full h-auto object-cover" />
                                     <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                         <FaPlay className="text-gamepulse-yellow text-4xl md:text-5xl" />
                                     </div>
@@ -329,7 +358,7 @@ const MyProfilePage = () => {
                                                 onClick={() => handleHighlightPlay(highlight.title)}
                                             >
                                                 <div className="relative w-full h-20 md:h-24 overflow-hidden">
-                                                    <img src={highlight.thumbnail || 'https://via.placeholder.com/160x90/2D3748/FFFFFF?text=No+Thumbnail'} alt={highlight.title} className="w-full h-full object-cover" />
+                                                    <img src={highlight.thumbnail || 'https://placehold.co/160x90/2D3748/FFFFFF?text=No+Thumbnail'} alt={highlight.title} className="w-full h-full object-cover" />
                                                     <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                                         <FaPlay className="text-gamepulse-yellow text-2xl md:text-3xl" />
                                                     </div>

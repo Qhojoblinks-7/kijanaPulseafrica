@@ -36,6 +36,7 @@ import DigitalClassroomPage from './pages/DigitalClassroomPage';
 // NEW IMPORT: NotificationsPage and MessagesPage
 import NotificationsPage from './pages/NotificationsPage';
 import MessagingPage from './pages/MessagingPage'; // You will need to create this page
+import NewsPage from './pages/NewsPage';
 
 
 function App() {
@@ -84,7 +85,7 @@ function App() {
               {/* Dashboard & Profile Routes */}
               <Route path="/my-profile/:slug" element={<MyProfilePage />} />
               <Route path="/my-profile" element={<MyProfilePage />} /> {/* For generic /my-profile access */}
-              <Route path="/athlete/:id" element={<AthleteProfilePage />} /> {/* For viewing other athletes by ID */}
+              <Route path="/athlete/:slug" element={<AthleteProfilePage />} /> {/* For viewing other athletes by ID */}
 
               <Route path="/dashboard" element={<UserDashboardPage />} />
               <Route path="/coach-dashboard" element={<UserDashboardPage />} />
@@ -112,7 +113,7 @@ function App() {
               <Route path="/search" element={<div>Mobile Search Page (Implement Me)</div>} />
               <Route path="/messages" element={<div>Messages Page (Implement Me)</div>} /> {/* Already defined above */}
               <Route path="/reports" element={<div>Scouting Reports Page (Implement Me)</div>} />
-              <Route path="/upcoming-matches" element={<UpcomingGamesPage />} />
+              <Route path="/upcoming-games" element={<UpcomingGamesPage />} />
               <Route path="/latest-highlights" element={<div>Latest Highlights Page (Implement Me)</div>} />
 
               {/* Coach/Team Specific Routes */}
@@ -141,6 +142,8 @@ function App() {
                   </Link>
                 </div>
               } />
+              <Route path="/news" element={<NewsPage />} />
+              <Route path="/upcoming-events" element={<UpcomingEvents />} />
             </Routes>
           </main>
         </div>

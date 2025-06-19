@@ -12,14 +12,13 @@ const MobileMenuOverlay = ({
   onCloseMenus,
   isDarkMode,
   toggleDarkMode,
-  unreadNotificationsCount, // NEW
-  recentNotifications,      // NEW - used for potential preview, though less common in full mobile overlay
-  hasNewMessages,           // NEW
-  user                      // NEW: User object
+  unreadNotificationsCount,
+  recentNotifications,
+  hasNewMessages,
+  user
 }) => {
   const navigate = useNavigate();
 
-  // Helper to get profile link for mobile
   const getUserProfileLink = () => {
     if (user && (user.slug || user.id)) {
       return `/my-profile/${user.slug || user.id}`;
@@ -28,10 +27,24 @@ const MobileMenuOverlay = ({
   };
 
   return (
-    <div className={`fixed inset-0 z-40 md:hidden transition-all duration-300 ease-in-out
-                    ${isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-800'}`}
-         style={{ transform: 'translateX(0%)' }}> {/* This component is only rendered when open */}
-      <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+    <div
+      className={`
+        fixed inset-0 z-40 md:hidden overflow-y-auto scrollbar-hide // Main overlay container
+        ${isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-800'}
+      `}
+      // The transform style here is typically for animating the entry/exit of the overlay itself.
+      // If the overlay itself slides in/out, this is where that logic usually resides,
+      // often controlled by a state variable. For a full-screen fixed overlay, `inset-0` is enough.
+      // style={{ transform: 'translateX(0%)' }} // Removed if you're using CSS classes for entry/exit
+    >
+      {/* FIXED MENU BAR AT THE TOP */}
+      <div
+        className={`
+          fixed top-0 left-0 w-full p-4 border-b z-50 // <--- CHANGED FROM sm:fixed to fixed
+          ${isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'}
+          flex justify-between items-center
+        `}
+      >
         <h2 className="text-2xl font-bold">Menu</h2>
         <button
           onClick={onCloseMenus}
@@ -41,7 +54,9 @@ const MobileMenuOverlay = ({
           <FaTimes className="text-2xl" />
         </button>
       </div>
-      <nav className="flex flex-col p-4 space-y-2 text-lg">
+
+      {/* NAVIGATION CONTENT - Padded to clear the fixed menu bar */}
+      <nav className="flex flex-col p-4 space-y-2 text-lg pt-20"> {/* Added pt-20 */}
         {mobileNavLinks.map((link, index) => (
           link.type === 'button' ? (
             <button
@@ -73,7 +88,12 @@ const MobileMenuOverlay = ({
               onClick={onCloseMenus}
               className={`flex items-center py-2 px-3 rounded-md ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}
             >
-              <FaUserCircle className="mr-3 text-xl" /> My Profile
+              <img
+                src={user?.userAvatarUrl || 'https://via.placeholder.com/40/CCCCCC/FFFFFF?text=GP'}
+                alt="User Avatar"
+                className="w-8 h-8 rounded-full object-cover mr-3"
+              />
+              My Profile
             </Link>
             {/* Notifications Link */}
             <Link

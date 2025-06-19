@@ -6,6 +6,7 @@ import image1 from '../../assets/freepik__the-style-is-candid-image-photography-
 import image2 from '../../assets/Gemini_Generated_Image_33sjng33sjng33sj.png'
 import image3 from '../../assets/Gemini_Generated_Image_j534tfj534tfj534.png'
 import image4 from '../../assets/playing-football-on-a-dusty-field.jpeg'
+import Header from '../Header/Header';
 
 // Mock Data
 const featuredHighlights = [
@@ -136,43 +137,10 @@ const ViewHighlightsPage = () => {
 
 
   return (
-    <div className="min-h-screen bg-gamepulse-dark text-neutral-white font-sans">
-      {/* Header - Mobile first padding, responsive text/icon sizes */}
-      <header className="bg-neutral-dark-gray py-2 px-4 md:py-3 md:px-6 flex items-center justify-between shadow-lg fixed top-0 left-0 w-full z-50">
-        <div className="flex items-center space-x-4 md:space-x-8">
-          <Link to="/" className="text-xl md:text-2xl font-heading font-extrabold text-gamepulse-blue-light hover:text-gamepulse-yellow transition-colors">
-            GamePulse Africa
-          </Link>
-          <nav className="hidden lg:flex space-x-4 md:space-x-6"> {/* Hidden on mobile, flex on large screens */}
-            {['Dashboard', 'Highlights', 'Athletes', 'Matches'].map((item) => (
-              <Link
-                key={item}
-                to={`/${item.toLowerCase().replace(/\s/g, '-')}`}
-                className={`text-neutral-medium-gray hover:text-neutral-white transition-colors text-xs md:text-sm font-semibold px-1 py-0.5 md:px-2 md:py-1 ${item === 'Highlights' ? 'text-gamepulse-yellow' : ''}`}
-              >
-                {item}
-              </Link>
-            ))}
-          </nav>
-        </div>
-        <div className="flex items-center space-x-3 md:space-x-4">
-          <div className="relative text-neutral-medium-gray hidden md:block"> {/* Hidden on mobile, block on medium screens */}
-            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-sm md:text-lg" />
-            <input
-              type="text"
-              placeholder="Search highlights, athletes, teams..."
-              className="bg-neutral-black/30 rounded-full pl-9 pr-3 py-1.5 text-xs md:text-sm text-neutral-white placeholder-neutral-medium-gray focus:outline-none focus:ring-1 focus:ring-gamepulse-blue w-40 md:w-64"
-            />
-          </div>
-          <button className="text-neutral-medium-gray hover:text-neutral-white transition-colors text-lg md:text-xl"><FaBell /></button>
-          <div className="flex items-center text-neutral-white text-sm font-semibold cursor-pointer">
-            <FaUserCircle className="text-xl md:text-2xl mr-1 md:mr-2 text-gamepulse-yellow" /> <span className="hidden sm:inline">George Chichua</span> {/* Hide name on smallest screens */}
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content Area - Adjusted pt for fixed header, mobile-first padding */}
-      <div className="pt-16 md:pt-20 container mx-auto px-2 py-4 md:px-4 md:py-6 grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6">
+    <div className="min-h-screen bg-neutral-dark-gray text-neutral-white font-sans">
+      <Header/>
+      
+      <div className="pt-16 md:pt-20 md:mt-10 mt-15 container mx-auto px-2 py-4 md:px-4 md:py-6 grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6">
 
         {/* Filter Sidebar - Mobile Overlay/Drawer */}
         {isFilterSidebarOpen && (
@@ -181,17 +149,23 @@ const ViewHighlightsPage = () => {
             onClick={() => setIsFilterSidebarOpen(false)} // Close when clicking outside
           ></div>
         )}
+        
+        {/* ASIDE - Filter Card (Fixed on Desktop, Drawer on Mobile) */}
         <aside
           className={`
             fixed top-0 left-0 w-full h-full bg-neutral-dark-gray z-50
             transform transition-transform duration-300 ease-in-out
             ${isFilterSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-            p-4 md:p-6 overflow-y-auto lg:static lg:top-auto lg:left-auto lg:w-auto lg:h-fit
-            lg:translate-x-0 lg:col-span-1 lg:block rounded-xl lg:sticky lg:top-20
+            p-4 md:p-6 overflow-y-auto
+            lg:fixed lg:top-20 lg:left-auto lg:right-auto lg:bottom-auto
+            lg:w-[280px] // *** Set explicit width for fixed sidebar ***
+            lg:translate-x-0 lg:block rounded-xl
+            lg:h-[calc(100vh-80px)] // Optional: Make it occupy almost full height, adjusted for header top-20
+            lg:overflow-y-auto scrollbar-hide
           `}
         >
           {/* Close button for mobile filter drawer */}
-          <div className="flex justify-between items-center mb-4 lg:hidden">
+          <div className="flex justify-between items-center mt-17 mb-4 lg:hidden">
             <h2 className="text-lg font-bold text-neutral-white">Filters</h2>
             <button
               onClick={() => setIsFilterSidebarOpen(false)}
@@ -333,6 +307,10 @@ const ViewHighlightsPage = () => {
           </AccordionItem>
         </aside>
 
+        {/* SPACER DIV: This div occupies the grid space that the fixed sidebar *would* take */}
+        {/* It is hidden on mobile and only appears on large screens to push the main content */}
+        <div className="hidden lg:block lg:col-span-1 lg:w-[280px]"></div> {/* Match the width of your fixed sidebar */}
+
         {/* Main Content Column */}
         <main className="lg:col-span-3 space-y-4 md:space-y-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
@@ -348,7 +326,7 @@ const ViewHighlightsPage = () => {
                 to="/upload-highlight"
                 className="bg-success-green hover:bg-success-green/80 text-gamepulse-dark px-4 py-1.5 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm transition-colors w-full sm:w-auto"
               >
-                <FaUpload className="mr-2 text-sm sm:text-base" /> Upload Highlight
+                <FaUpload className="mr-2 text-sm sm:text-sm" /> Upload Highlight
               </Link>
               {/* Filter button for mobile */}
               <button
