@@ -45,11 +45,13 @@ const placeholderFanMilk = 'https://via.placeholder.com/150x80/0D214F/FFFFFF?tex
 export const allAthleteProfilesData = [
   // --- BASKETBALL ATHLETE ---
   {
-    id: 'ama_owusu',
+    id: 'athlete123',
+    email: 'ama@example.com', // Link to AuthContext mockUsers by email
     firstName: 'Ama',
     lastName: 'Owusu',
     fullName: 'Ama Owusu',
     sportType: 'basketball',
+    slug: 'ama-owusu',
     athleteFullImage: athlete1FullImage,
     schoolLogo: athlete1SchoolLogo,
     teamLogo: athlete1TeamLogo,
@@ -134,6 +136,7 @@ export const allAthleteProfilesData = [
       { name: 'Red Bull', logoUrl: placeholderRedBull },
       { name: 'FanMilk', logoUrl: placeholderFanMilk },
     ],
+    
     // --- ADDED NEW FIELD: upcomingEvents ---
     upcomingEvents: [
       { date: '2025-07-20', time: '18:00', title: 'National League Playoffs - Game 1', location: 'Accra Sports Stadium Arena', description: 'Vs. Tema Ballers' },

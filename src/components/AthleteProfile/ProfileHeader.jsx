@@ -176,16 +176,11 @@ const ProfileHeader = ({ athlete }) => {
   const currentStatConfig = getStatConfig(athlete.sportType);
 
   // Helper function to render stat row with BLURRED background image
-  // This function will now always try to lay out items horizontally based on responsive grid columns.
   const renderStatRow = (stats, imageUrl, statConfig) => {
     if (!stats || !statConfig || statConfig.length === 0) {
       return null;
     }
 
-    // The grid columns are now defined to make sure they always display horizontally,
-    // wrapping based on standard Tailwind breakpoints.
-    // We aim for 2 columns on small, 4 on medium, and 8 on desktop.
-    // The inner flex-col ensures label is above value for each stat.
     return (
       <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-x-0.5 gap-y-1 text-center font-bold text-sm md:text-lg relative overflow-hidden p-2 rounded-lg">
         {/* Blurred background image element */}
@@ -221,10 +216,10 @@ const ProfileHeader = ({ athlete }) => {
     <section className="relative mt-4 lg:mt-16 w-full min-h-[50vh] md:min-h-[70vh] bg-gray-900 backdrop-blur-3xl text-white flex flex-col items-center justify-center overflow-hidden px-4 md:px-8 lg:px-16 py-4">
 
       {/* Container for Div1 and Div2: Always flex-row */}
-      <div className="relative z-30 w-full max-w-7xl mx-auto flex flex-row items-stretch justify-between gap-x-2 md:gap-x-4 lg:gap-x-8">
+      <div className="relative z-30 w-full max-w-7xl mx-auto flex flex-col md:flex-row items-stretch justify-between gap-y-4 md:gap-y-0 gap-x-0 md:gap-x-4 lg:gap-x-8">
 
         {/* Div 1: Left content (Athlete's Core Info) */}
-        <div className="flex-1 min-w-0 p-2 md:p-4 lg:p-6 rounded-l-lg shadow-xl bg-gradient-to-t from-black/20 to-transparent">
+        <div className="flex-1 min-w-0 p-2 md:p-4 lg:p-6 rounded-lg shadow-xl bg-gradient-to-t from-black/20 to-transparent">
           <div className="flex justify-between items-center mb-2 md:mb-4">
             <div>
               <p className="text-base md:text-xl font-normal text-gray-300">{athlete.firstName}</p>
@@ -235,8 +230,9 @@ const ProfileHeader = ({ athlete }) => {
             {/* Right Side of Div1: Current school Logo | Team Logo | position | Jersey Number */}
             <div className="flex flex-col items-end text-right text-xs md:text-sm">
               <div className="flex items-center space-x-1 md:space-x-2 mb-1 md:mb-2">
-                {athlete.schoolLogo && <img src={athlete.schoolLogo} alt="School Logo" className="w-15 h-15 md:w-25 md:h-25 rounded-full bg-transparent p-0.5 md:p-1" />}
-                {athlete.teamLogo && <img src={athlete.teamLogo} alt="Team Logo" className="w-15 h-15 md:w-25 md:h-25 rounded-full bg-transparent -ml-10 p-0.5 md:p-1" />}
+                {/* Adjust sizes for logos */}
+                {athlete.schoolLogo && <img src={athlete.schoolLogo} alt="School Logo" className="w-10 h-10 md:w-16 md:h-16 rounded-full bg-transparent p-0.5 md:p-1 object-contain" />}
+                {athlete.teamLogo && <img src={athlete.teamLogo} alt="Team Logo" className="w-10 h-10 md:w-16 md:h-16 rounded-full bg-transparent -ml-2 md:-ml-4 p-0.5 md:p-1 object-contain" />}
               </div>
               <p className="font-semibold text-base md:text-xl text-gamepulse-yellow">{athlete.position}</p>
               <p className="text-gray-300 text-base md:text-xl">{athlete.jerseyNumber}</p>
@@ -261,7 +257,8 @@ const ProfileHeader = ({ athlete }) => {
         </div>
 
         {/* Div 2: Right content (Full Athlete Image) */}
-        <div className="flex-1 relative z-20 min-w-0 overflow-hidden rounded-r-lg shadow-xl min-h-[200px] md:min-h-[300px] lg:min-h-0">
+        {/* Adjusted order for better responsiveness: image above info on small screens */}
+        <div className="flex-1 relative z-20 min-w-0 overflow-hidden rounded-lg shadow-xl min-h-[200px] md:min-h-[300px] lg:min-h-0 order-first md:order-last">
           {athlete.athleteFullImage && (
             <img
               src={athlete.athleteFullImage}
@@ -278,42 +275,7 @@ const ProfileHeader = ({ athlete }) => {
         <h2 className="font-bold text-sm md:text-xl lg:text-2xl text-white mb-1">Postseason</h2>
         <hr className="border-t border-gamepulse-yellow mb-1" />
         {athlete.postseasonStats && currentStatConfig.length > 0 ? (
-          <>
-            {/* Mobile View (Below MD breakpoint): Display in chunks of 4 if possible,
-                otherwise adapt using the renderStatRow's internal grid. */}
-            <div className="md:hidden">
-              {/* If you want exactly 2 stats per row on very small screens, you'd apply grid-cols-2 here
-                  and ensure renderStatRow is simple or always uses grid-cols-2.
-                  Given your screenshot, it looks like 2x2 blocks are desired on mobile.
-                  Let's make sure the `renderStatRow`'s grid-cols for smaller screens aligns with `chunkSize`. */}
-
-              {(() => {
-                // Determine chunkSize based on available stats for better distribution.
-                // If currentStatConfig has 8, and we want 2 rows of 4 on mobile, chunkSize is 4.
-                // If it has 6, and we want 2 rows of 3, chunkSize is 3.
-                // Let's set a default of 4, but be mindful of smaller total stat counts.
-                const mobileChunkSize = Math.min(4, currentStatConfig.length > 0 ? currentStatConfig.length : 1);
-                const rows = [];
-                for (let i = 0; i < currentStatConfig.length; i += mobileChunkSize) {
-                  const chunk = currentStatConfig.slice(i, i + mobileChunkSize);
-                  rows.push(
-                    <React.Fragment key={`postseason-mobile-row-${i}`}>
-                      {/* renderStatRow itself defines how many columns based on its grid-cols rules.
-                          We pass the chunk, and its internal grid will arrange those items. */}
-                      {renderStatRow(athlete.postseasonStats, athlete.athleteFullImage, chunk)}
-                      {i + mobileChunkSize < currentStatConfig.length && <div className="mt-4"></div>}
-                    </React.Fragment>
-                  );
-                }
-                return rows;
-              })()}
-            </div>
-
-            {/* Desktop View (MD breakpoint and above): Single row, using the full config */}
-            <div className="hidden md:block">
-              {renderStatRow(athlete.postseasonStats, athlete.athleteFullImage, currentStatConfig)}
-            </div>
-          </>
+          renderStatRow(athlete.postseasonStats, athlete.athleteFullImage, currentStatConfig)
         ) : (
           <p className="text-gray-400 text-xs md:text-base">No postseason stats available.</p>
         )}
@@ -322,31 +284,7 @@ const ProfileHeader = ({ athlete }) => {
         <h2 className="font-bold text-sm md:text-xl lg:text-2xl text-white mt-4 mb-1">Career Stats</h2>
         <hr className="border-t border-gamepulse-orange mb-1" />
         {athlete.careerStats && currentStatConfig.length > 0 ? (
-          <>
-            {/* Mobile View (Below MD breakpoint): Display in chunks.
-                Adjust chunkSize for career stats if different from postseason. */}
-            <div className="md:hidden">
-              {(() => {
-                const mobileChunkSize = Math.min(4, currentStatConfig.length > 0 ? currentStatConfig.length : 1); // Using 4 for consistency, adjust if 3 is preferred.
-                const rows = [];
-                for (let i = 0; i < currentStatConfig.length; i += mobileChunkSize) {
-                  const chunk = currentStatConfig.slice(i, i + mobileChunkSize);
-                  rows.push(
-                    <React.Fragment key={`career-mobile-row-${i}`}>
-                      {renderStatRow(athlete.careerStats, athlete.athleteFullImage, chunk)}
-                      {i + mobileChunkSize < currentStatConfig.length && <div className="mt-4"></div>}
-                    </React.Fragment>
-                  );
-                }
-                return rows;
-              })()}
-            </div>
-
-            {/* Desktop View (MD breakpoint and above): Single row */}
-            <div className="hidden md:block">
-              {renderStatRow(athlete.careerStats, athlete.athleteFullImage, currentStatConfig)}
-            </div>
-          </>
+          renderStatRow(athlete.careerStats, athlete.athleteFullImage, currentStatConfig)
         ) : (
           <p className="text-gray-400 text-xs md:text-base">No career stats available.</p>
         )}
