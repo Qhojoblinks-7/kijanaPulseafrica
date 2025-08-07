@@ -69,33 +69,33 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-light-gray flex flex-col lg:flex-row items-stretch justify-center font-sans">
+    <div className="min-h-screen bg-gray-100 flex flex-col lg:flex-row items-stretch justify-center font-sans">
       {/* Left Side - Hero Section */}
       <div
-        className="relative w-full lg:w-1/2 flex flex-col items-center justify-center text-neutral-white py-12 px-4 sm:px-6 lg:px-8 bg-cover bg-center bg-no-repeat transition-all duration-500 ease-in-out"
+        className="relative w-full lg:w-1/2 flex flex-col items-center justify-center text-white py-12 px-4 sm:px-6 lg:px-8 bg-cover bg-center bg-no-repeat transition-all duration-500 ease-in-out"
         style={{
-          backgroundImage: 'linear-gradient(135deg, rgba(18, 130, 162, 0.9), rgba(3, 64, 120, 0.9)), url("/images/login-hero.jpg")',
+          backgroundImage: 'linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(37, 99, 235, 0.9)), url("/images/login-hero.jpg")',
         }}
       >
         <div className="text-center max-w-md">
           <h1 className="text-4xl md:text-5xl font-extrabold font-heading mb-6">
             Welcome Back to GamePulse Africa
           </h1>
-          <p className="text-lg md:text-xl text-neutral-white/90 mb-8">
+          <p className="text-lg md:text-xl text-white/90 mb-8">
             Connect with Africa's brightest sports talents and continue your journey in the world of sports.
           </p>
           
-          <div className="mt-8 text-center text-neutral-white">
+          <div className="mt-8 text-center text-white">
             <p className="text-lg font-semibold mb-4">New to GamePulse Africa?</p>
             <div className="space-y-3">
               <button
-                className="w-full flex items-center justify-center px-4 py-2 border border-neutral-white/50 rounded-md shadow-sm text-neutral-white bg-transparent hover:bg-neutral-white/10 transition-colors"
+                className="w-full flex items-center justify-center px-4 py-2 border border-white/50 rounded-md shadow-sm text-white bg-transparent hover:bg-white/10 transition-colors"
               >
                 <FaGoogle className="mr-2" />
                 Continue with Google
               </button>
               <button
-                className="w-full flex items-center justify-center px-4 py-2 border border-neutral-white/50 rounded-md shadow-sm text-neutral-white bg-transparent hover:bg-gamepulse-blue transition-colors"
+                className="w-full flex items-center justify-center px-4 py-2 border border-white/50 rounded-md shadow-sm text-white bg-transparent hover:bg-blue-600 transition-colors"
               >
                 <FaFacebook className="mr-2" />
                 Continue with Facebook
@@ -106,12 +106,12 @@ const LoginPage = () => {
       </div>
 
       {/* Right Side - Login Form */}
-      <div className="relative z-10 w-full max-w-md bg-neutral-white rounded-xl shadow-lg p-6 sm:p-8 md:p-10 border border-neutral-light-gray">
+      <div className="relative z-10 w-full max-w-md bg-white rounded-xl shadow-lg p-6 sm:p-8 md:p-10 border border-gray-200">
         <div className="text-center">
-          <h1 className="mt-4 text-3xl md:text-4xl font-extrabold text-neutral-black font-heading">
+          <h1 className="mt-4 text-3xl md:text-4xl font-extrabold text-gray-900 font-heading">
             Sign In
           </h1>
-          <p className="mt-2 text-md md:text-lg text-neutral-medium-gray">
+          <p className="mt-2 text-md md:text-lg text-gray-600">
             Access your GamePulse Africa account
           </p>
         </div>
@@ -119,7 +119,7 @@ const LoginPage = () => {
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           {/* Email/Username Field */}
           <div>
-            <label htmlFor="emailOrUsername" className="block text-sm font-medium text-neutral-dark-gray mb-1">
+            <label htmlFor="emailOrUsername" className="block text-sm font-medium text-gray-700 mb-1">
               Email or Username
             </label>
             <input
@@ -129,19 +129,19 @@ const LoginPage = () => {
               required
               value={formData.emailOrUsername}
               onChange={handleChange}
-              className={`w-full px-3 py-3 border rounded-md text-neutral-black placeholder-neutral-medium-gray focus:outline-none focus:ring-2 focus:ring-gamepulse-blue transition-colors ${
-                errors.emailOrUsername ? 'border-error-red' : 'border-neutral-medium-gray'
+              className={`w-full px-3 py-3 border rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+                errors.emailOrUsername ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="Enter your email or username"
             />
             {errors.emailOrUsername && (
-              <p className="mt-1 text-sm text-error-red">{errors.emailOrUsername}</p>
+              <p className="mt-1 text-sm text-red-600">{errors.emailOrUsername}</p>
             )}
           </div>
 
           {/* Password Field */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-neutral-dark-gray mb-1">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
               Password
             </label>
             <div className="relative">
@@ -152,8 +152,8 @@ const LoginPage = () => {
                 required
                 value={formData.password}
                 onChange={handleChange}
-                className={`w-full px-3 py-3 pr-10 border rounded-md text-neutral-black placeholder-neutral-medium-gray focus:outline-none focus:ring-2 focus:ring-gamepulse-blue transition-colors ${
-                  errors.password ? 'border-error-red' : 'border-neutral-medium-gray'
+                className={`w-full px-3 py-3 pr-10 border rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+                  errors.password ? 'border-red-500' : 'border-gray-300'
                 }`}
                 placeholder="Enter your password"
               />
@@ -163,14 +163,14 @@ const LoginPage = () => {
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
-                  <FaEyeSlash className="h-5 w-5 text-neutral-medium-gray" />
+                  <FaEyeSlash className="h-5 w-5 text-gray-400" />
                 ) : (
-                  <FaEye className="h-5 w-5 text-neutral-medium-gray" />
+                  <FaEye className="h-5 w-5 text-gray-400" />
                 )}
               </button>
             </div>
             {errors.password && (
-              <p className="mt-1 text-sm text-error-red">{errors.password}</p>
+              <p className="mt-1 text-sm text-red-600">{errors.password}</p>
             )}
           </div>
 
@@ -181,14 +181,14 @@ const LoginPage = () => {
                 id="remember-me"
                 name="remember-me"
                 type="checkbox"
-                className="h-4 w-4 text-gamepulse-blue focus:ring-gamepulse-blue border-neutral-medium-gray rounded"
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-neutral-dark-gray">
+              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
                 Remember me
               </label>
             </div>
             <div className="text-sm">
-              <Link to="/forgot-password" className="font-medium text-gamepulse-blue hover:text-gamepulse-blue-dark transition-colors">
+              <Link to="/forgot-password" className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
                 Forgot your password?
               </Link>
             </div>
@@ -198,11 +198,11 @@ const LoginPage = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-gamepulse-blue text-neutral-white py-3 rounded-md font-semibold text-lg hover:bg-gamepulse-blue-dark transition-colors duration-300 shadow-lg flex items-center justify-center mt-6"
+            className="w-full bg-blue-600 text-white py-3 rounded-md font-semibold text-lg hover:bg-blue-700 transition-colors duration-300 shadow-lg flex items-center justify-center mt-6"
           >
             {isLoading ? (
               <>
-                <svg className="animate-spin h-5 w-5 text-neutral-white mr-3" viewBox="0 0 24 24">
+                <svg className="animate-spin h-5 w-5 text-white mr-3" viewBox="0 0 24 24">
                   <circle
                     className="opacity-25"
                     cx="12"
@@ -227,8 +227,8 @@ const LoginPage = () => {
 
         {/* Sign Up Link */}
         <div className="mt-6 text-center">
-          <p className="text-neutral-medium-gray">Don't have an account?</p>
-          <Link to="/signup" className="font-semibold text-gamepulse-blue hover:text-gamepulse-blue-dark transition-colors">
+          <p className="text-gray-600">Don't have an account?</p>
+          <Link to="/signup" className="font-semibold text-blue-600 hover:text-blue-500 transition-colors">
             Sign up for free
           </Link>
         </div>
