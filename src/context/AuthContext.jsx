@@ -2,12 +2,12 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { useNavigate } from 'react-router-dom';
 // Ensure these paths are correct relative to AuthContext.js
 import { allAthleteProfilesData } from '../data/allAthleteProfilesData'; 
-import { mockUsers } from '../data/mockUsers'; // <--- NEW IMPORT
+import { mockUsers } from '../data/staticData'; // Updated import
 
 const AuthContext = createContext();
 
 // --- NO MORE MOCK USER DATA DIRECTLY HERE ---
-// It's now imported from src/data/mockAuthUsers.js
+// It's now imported from src/data/staticData.js
 
 export const AuthProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
