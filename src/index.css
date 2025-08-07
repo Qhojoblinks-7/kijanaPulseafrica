@@ -2,59 +2,290 @@
 @import "tailwindcss";
 @tailwind utilities;
 
-.bold{
+/* Modern CSS Reset and Base Styles */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  line-height: 1.6;
+}
+
+/* Focus Management for Accessibility */
+:focus-visible {
+  outline: 2px solid var(--color-gamepulse-blue);
+  outline-offset: 2px;
+}
+
+/* Skip to content link for accessibility */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: var(--color-gamepulse-blue);
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  border-radius: 4px;
+  z-index: 1000;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+/* Utility Classes */
+.bold {
   font-weight: bold;
 }
-/* Hide scrollbar for the trending carousel */
-.scrollbar-hide::-webkit-scrollbar {
-    display: none;
-}
+
+/* Modern Scrollbar Styles */
 .scrollbar-hide {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-/* Custom scrollbar styles */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
-  height: 8px; /* For horizontal scrollbars */
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: #333; /* Dark track */
-  border-radius: 10px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #666; /* Gray thumb */
-  border-radius: 10px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #888;
-}
-
-/* Hide horizontal scrollbar but allow scrolling */
-.custom-scrollbar-hidden::-webkit-scrollbar {
+.scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
-.custom-scrollbar-hidden {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-/* Basic animation for score change */
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #2d3748;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-gamepulse-blue);
+  border-radius: 10px;
+  border: 2px solid #2d3748;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #106f8c;
+}
+
+/* Performance Optimized Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 @keyframes scoreChange {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.1); opacity: 0.8; }
-    100% { transform: scale(1); opacity: 1; }
+  0% { 
+    transform: scale(1); 
+    opacity: 1; 
+  }
+  50% { 
+    transform: scale(1.1); 
+    opacity: 0.8; 
+  }
+  100% { 
+    transform: scale(1); 
+    opacity: 1; 
+  }
 }
 
-/* Toggle Switch Styling */
-/* This now uses the new 'success-green' for the checked state */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    transform: translate3d(0, -30px, 0);
+  }
+  70% {
+    transform: translate3d(0, -15px, 0);
+  }
+  90% {
+    transform: translate3d(0, -4px, 0);
+  }
+}
+
+/* Animation Classes */
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slide-in-left {
+  animation: slideInFromLeft 0.3s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInFromRight 0.3s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out;
+}
+
+.animate-score-change {
+  animation: scoreChange 0.5s ease-in-out;
+}
+
+.animate-pulse-slow {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-bounce-gentle {
+  animation: bounce 1s infinite;
+}
+
+/* Modern Toggle Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
 .switch input:checked + .slider {
-  background-color: var(--color-success-green); /* Using the CSS variable for success green */
+  background-color: var(--color-success-green);
 }
 
 .switch input:checked + .slider:before {
-  transform: translateX(20px);
+  transform: translateX(26px);
+}
+
+.switch input:focus + .slider {
+  box-shadow: 0 0 1px var(--color-success-green);
+}
+
+/* Modern Loading States */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Glass Morphism Effect */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Modern Gradients */
+.gradient-primary {
+  background: linear-gradient(135deg, var(--color-gamepulse-blue) 0%, var(--color-gamepulse-blue-dark) 100%);
+}
+
+.gradient-secondary {
+  background: linear-gradient(135deg, var(--color-gamepulse-yellow) 0%, #f59e0b 100%);
+}
+
+.gradient-hero {
+  background: linear-gradient(135deg, var(--color-gamepulse-dark) 0%, var(--color-gamepulse-blue-dark) 50%, var(--color-gamepulse-blue) 100%);
 }
 
 /* Custom Tailwind Colors via CSS Variables */
@@ -68,8 +299,8 @@
     /* Secondary Accent Color */
     --color-gamepulse-yellow: #FCCA46;
 
-    /* Neutral Palette (Grays, Blacks, Whites) */
-    --color-gamepulse-dark: #0A1128; /* This is often used for very dark backgrounds */
+    /* Neutral Palette */
+    --color-gamepulse-dark: #0A1128;
     --color-neutral-black: #000000;
     --color-neutral-dark-gray: #333333;
     --color-neutral-medium-gray: #6B7280;
@@ -80,6 +311,15 @@
     --color-success-green: #00C9A7;
     --color-warning-orange: #FF9800;
     --color-error-red: #E71D36;
+  }
+
+  /* Dark mode variables */
+  .dark {
+    --color-neutral-black: #FFFFFF;
+    --color-neutral-white: #000000;
+    --color-neutral-light-gray: #1F2937;
+    --color-neutral-medium-gray: #9CA3AF;
+    --color-neutral-dark-gray: #F3F4F6;
   }
 }
 
@@ -113,30 +353,77 @@
   .text-warning-orange { color: var(--color-warning-orange); }
   .text-error-red { color: var(--color-error-red); }
 
-  /* Gradient 'from' colors (for Tailwind's gradient utilities) */
+  /* Gradient utilities */
   .from-gamepulse-blue-dark {
     --tw-gradient-from: var(--color-gamepulse-blue-dark) var(--tw-gradient-from-position);
     --tw-gradient-to: rgb(var(--color-gamepulse-blue-dark) / 0) var(--tw-gradient-to-position);
   }
 
-  /* Custom scrollbar for better UX and consistency */
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 8px; /* For vertical scrollbar */
-    height: 8px; /* For horizontal scrollbar */
+  /* Modern spacing utilities */
+  .space-y-responsive > * + * {
+    margin-top: clamp(0.5rem, 2vw, 1.5rem);
   }
 
-  .custom-scrollbar::-webkit-scrollbar-track {
-    background: #2d3748; /* bg-gray-800 - Consider using a neutral color variable here too if defined */
-    border-radius: 10px;
+  /* Container queries support */
+  .container-query {
+    container-type: inline-size;
   }
 
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: var(--color-gamepulse-blue); /* Using the primary blue */
-    border-radius: 10px;
-    border: 2px solid #2d3748; /* bg-gray-800 - Match track color */
+  /* Modern aspect ratios */
+  .aspect-video {
+    aspect-ratio: 16 / 9;
   }
 
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #106f8c; /* A slightly darker blue on hover - Consider deriving from var(--color-gamepulse-blue) */
+  .aspect-square {
+    aspect-ratio: 1 / 1;
+  }
+
+  /* Modern text utilities */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .bg-gamepulse-blue {
+    background-color: #000080;
+  }
+  
+  .text-gamepulse-blue {
+    color: #000080;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
