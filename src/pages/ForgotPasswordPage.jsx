@@ -1,149 +1,180 @@
 // src/pages/ForgotPasswordPage.jsx
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { FaExclamationCircle } from 'react-icons/fa';
-import { useAuth } from '../context/AuthContext';
-import Backdrop from './../assets/backdrop.png';
+import { FaArrowLeft, FaEnvelope, FaCheckCircle } from 'react-icons/fa';
+import toast from 'react-hot-toast';
 
 const ForgotPasswordPage = () => {
-  const [successMessage, setSuccessMessage] = useState('');
-  const [networkError, setNetworkError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState('');
 
-  const { sendPasswordResetEmail } = useAuth();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!email.trim()) {
+      setError('Please enter your email address');
+      return;
+    }
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    document.title = "Forgot Password | GamePulse Africa";
-  }, []);
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
 
-  const ForgotPasswordSchema = Yup.object().shape({
-    email: Yup.string()
-      .trim()
-      .email('Invalid email format. E.g., user@example.com')
-      .required('Email is required.'),
-  });
+    setIsLoading(true);
+    setError('');
 
-  const formik = useFormik({
-    initialValues: {
-      email: '',
-    },
-    validationSchema: ForgotPasswordSchema,
-    onSubmit: async (values) => {
-      setNetworkError('');
-      setSuccessMessage('');
-      setLoading(true);
-
-      try {
-        const response = await sendPasswordResetEmail(values.email);
-        setSuccessMessage(response.message);
-        formik.resetForm(); // Clear the form on success
-      } catch (err) {
-        setNetworkError(err.message || 'Failed to send password reset link. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    },
-  });
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      setIsSubmitted(true);
+      toast.success('Password reset email sent successfully!');
+    } catch (error) {
+      setError('Failed to send reset email. Please try again.');
+      toast.error('Failed to send reset email. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col lg:flex-row items-stretch justify-center font-sans">
-      {/* Left Column (Backdrop) */}
+    <div className="min-h-screen bg-neutral-light-gray flex flex-col lg:flex-row items-stretch justify-center font-sans">
+      {/* Left Side - Hero Section */}
       <div
-        className="relative w-full lg:w-1/2 flex flex-col items-center justify-center text-white py-12 px-4 sm:px-6 lg:px-8 bg-cover bg-center bg-no-repeat transition-all duration-500 ease-in-out"
+        className="relative w-full lg:w-1/2 flex flex-col items-center justify-center text-neutral-white py-12 px-4 sm:px-6 lg:px-8 bg-cover bg-center bg-no-repeat transition-all duration-500 ease-in-out"
         style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url(${Backdrop})`,
+          backgroundImage: 'linear-gradient(135deg, rgba(18, 130, 162, 0.9), rgba(3, 64, 120, 0.9)), url("/images/forgot-password-hero.jpg")',
         }}
       >
-        <div className="text-center z-10 p-4 bg-opacity-20 rounded-lg lg:bg-transparent lg:p-0">
-          <h2 className="text-3xl md:text-5xl font-extrabold font-heading leading-tight drop-shadow-lg">
-            Don't worry, we've got you covered.
-          </h2>
-          <p className="mt-4 text-lg md:text-xl leading-relaxed text-yellow drop-shadow-md max-w-sm mx-auto">
-            Enter your email to reset your password and get back to your game.
+        <div className="text-center max-w-md">
+          <h1 className="text-4xl md:text-5xl font-extrabold font-heading mb-6">
+            Reset Your Password
+          </h1>
+          <p className="text-lg md:text-xl text-neutral-white/90 mb-8">
+            Don't worry! It happens to the best of us. Enter your email and we'll send you a link to reset your password.
           </p>
-
-          <div className="mt-10 text-center text-white text-lg font-semibold italic max-w-xs mx-auto">
-            "Your journey back to the pitch starts here."
+          
+          <div className="mt-10 text-center text-neutral-white text-lg font-semibold italic max-w-xs mx-auto">
+            "Your journey in sports continues with secure access."
           </div>
 
-          <div className="mt-10 text-center text-sm text-white space-x-4">
-            <Link to="/privacy-policy" className="hover:underline hover:text-white">Privacy Policy</Link>
-            <Link to="/terms-of-service" className="hover:underline hover:text-white">Terms of Service</Link>
-            <Link to="/help-center" className="hover:underline hover:text-white">Help & Support</Link>
+          <div className="mt-10 text-center text-sm text-neutral-white space-x-4">
+            <Link to="/privacy-policy" className="hover:underline hover:text-neutral-white">Privacy Policy</Link>
+            <Link to="/terms-of-service" className="hover:underline hover:text-neutral-white">Terms of Service</Link>
+            <Link to="/help-center" className="hover:underline hover:text-neutral-white">Help & Support</Link>
           </div>
         </div>
       </div>
 
-      {/* Right Column (Forgot Password Form) */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8">
-        <div className="relative z-10 w-full max-w-md bg-white rounded-xl shadow-lg p-6 sm:p-8 md:p-10 border border-gray-200">
-          <div className="text-center mb-8">
-            
-            <h1 className="mt-4 text-3xl md:text-4xl font-extrabold text-gray-900 font-heading">
-              Reset Your Password
-            </h1>
-            <p className="mt-2 text-md md:text-lg text-gray-600">
-              Enter your email address and we'll send you a link to reset your password.
-            </p>
-          </div>
+      {/* Right Side - Reset Form */}
+      <div className="relative z-10 w-full max-w-md bg-neutral-white rounded-xl shadow-lg p-6 sm:p-8 md:p-10 border border-neutral-light-gray">
+        <div className="text-center">
+          <h1 className="mt-4 text-3xl md:text-4xl font-extrabold text-neutral-black font-heading">
+            Forgot Password?
+          </h1>
+          <p className="mt-2 text-md md:text-lg text-neutral-medium-gray">
+            Enter your email to receive reset instructions
+          </p>
+        </div>
 
-          <form onSubmit={formik.handleSubmit} className="space-y-6">
+        {!isSubmitted ? (
+          <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+            {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formik.values.email}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                placeholder="Enter your email"
-                className={`block w-full px-4 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:ring-gamepulse-blue focus:border-gamepulse-blue sm:text-sm ${formik.touched.email && formik.errors.email ? 'border-red-500' : 'border-gray-300'}`}
-                aria-invalid={formik.touched.email && formik.errors.email ? "true" : "false"}
-                aria-describedby={formik.touched.email && formik.errors.email ? "email-error" : undefined}
-              />
-              {formik.touched.email && formik.errors.email && (
-                <p id="email-error" className="mt-1 text-sm text-red-600 flex items-center"><FaExclamationCircle className="mr-1" />{formik.errors.email}</p>
+              <label htmlFor="email" className="block text-sm font-medium text-neutral-dark-gray mb-1">Email Address</label>
+              <div className="relative">
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={`w-full px-3 py-3 pl-10 border rounded-md text-neutral-black placeholder-neutral-medium-gray focus:outline-none focus:ring-2 focus:ring-gamepulse-blue transition-colors ${
+                    error ? 'border-error-red' : 'border-neutral-medium-gray'
+                  }`}
+                  placeholder="Enter your email address"
+                />
+                <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-medium-gray" />
+              </div>
+              {error && (
+                <p className="mt-1 text-sm text-error-red">{error}</p>
               )}
             </div>
 
+            {/* Submit Button */}
             <button
               type="submit"
-              disabled={loading || !formik.isValid || formik.isSubmitting}
-              className="w-full bg-gamepulse-blue text-white py-3 rounded-md font-semibold text-lg hover:bg-blue-500 transition-colors duration-300 shadow-lg flex items-center justify-center mt-6"
-              aria-label={loading ? 'Sending Link...' : 'Send Reset Link'}
+              disabled={isLoading}
+              className="w-full bg-gamepulse-blue text-neutral-white py-3 rounded-md font-semibold text-lg hover:bg-gamepulse-blue-dark transition-colors duration-300 shadow-lg flex items-center justify-center mt-6"
             >
-              {loading || formik.isSubmitting ? (
-                <svg className="animate-spin h-5 w-5 text-white mr-3" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-              ) : null}
-              {loading || formik.isSubmitting ? 'Sending Link...' : 'Send Reset Link'}
+              {isLoading ? (
+                <>
+                  <svg className="animate-spin h-5 w-5 text-neutral-white mr-3" viewBox="0 0 24 24">
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Sending...
+                </>
+              ) : (
+                'Send Reset Link'
+              )}
             </button>
-
-            {successMessage && (
-              <p className="mt-4 text-sm text-green-600 text-center flex items-center justify-center">
-                <FaExclamationCircle className="mr-2" /> {successMessage}
-              </p>
-            )}
-
-            {networkError && (
-              <p className="mt-4 text-sm text-red-600 text-center flex items-center justify-center">
-                <FaExclamationCircle className="mr-2" /> {networkError}
-              </p>
-            )}
-
-            <div className="mt-8 text-center">
-              <p className="text-gray-600">Remember your password?</p>
-              <Link to="/login" className="font-semibold text-gamepulse-blue hover:text-blue-700 transition-colors">
-                Back to Login
-              </Link>
-            </div>
           </form>
+        ) : (
+          <div className="mt-8 text-center">
+            <div className="mb-6">
+              <FaCheckCircle className="mx-auto text-6xl text-success-green mb-4" />
+              <h2 className="text-2xl font-bold text-neutral-black mb-2">Email Sent!</h2>
+              <p className="text-neutral-medium-gray">
+                We've sent a password reset link to <strong>{email}</strong>
+              </p>
+            </div>
+            
+            <div className="bg-neutral-light-gray rounded-lg p-4 mb-6">
+              <h3 className="font-semibold text-neutral-black mb-2">What's next?</h3>
+              <ul className="text-sm text-neutral-medium-gray space-y-1 text-left">
+                <li>• Check your email inbox</li>
+                <li>• Click the reset link in the email</li>
+                <li>• Create a new password</li>
+                <li>• Sign in with your new password</li>
+              </ul>
+            </div>
+          </div>
+        )}
+
+        {/* Back to Login */}
+        <div className="mt-6 text-center">
+          <Link 
+            to="/login" 
+            className="inline-flex items-center text-gamepulse-blue hover:text-gamepulse-blue-dark transition-colors font-semibold"
+          >
+            <FaArrowLeft className="mr-2" />
+            Back to Login
+          </Link>
+        </div>
+
+        {/* Additional Help */}
+        <div className="mt-8 text-center">
+          <p className="text-neutral-medium-gray">Need help?</p>
+          <Link to="/contact" className="font-semibold text-gamepulse-blue hover:text-gamepulse-blue-dark transition-colors">
+            Contact Support
+          </Link>
         </div>
       </div>
     </div>

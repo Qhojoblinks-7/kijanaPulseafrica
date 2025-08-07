@@ -31,21 +31,21 @@ const MobileMenuOverlay = ({
     <div
       className={`
         fixed inset-0 z-40 md:hidden overflow-y-auto scrollbar-hide
-        ${isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-800'}
+        ${isDarkMode ? 'bg-gamepulse-dark text-neutral-white' : 'bg-neutral-white text-neutral-black'}
       `}
     >
       {/* FIXED MENU BAR AT THE TOP */}
       <div
         className={`
           fixed top-0 left-0 w-full p-4 border-b z-50
-          ${isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'}
+          ${isDarkMode ? 'bg-gamepulse-dark border-neutral-medium-gray' : 'bg-neutral-white border-neutral-light-gray'}
           flex justify-between items-center
         `}
       >
         <h2 className="text-2xl font-bold">Menu</h2>
         <button
           onClick={onCloseMenus}
-          className={`p-2 rounded-full ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+          className={`p-2 rounded-full ${isDarkMode ? 'hover:bg-neutral-dark-gray' : 'hover:bg-neutral-light-gray'}`}
           aria-label="Close Mobile Menu"
         >
           <FaTimes className="text-2xl" />
@@ -69,7 +69,7 @@ const MobileMenuOverlay = ({
               key={index}
               to={link.to}
               onClick={onCloseMenus}
-              className={`block py-2 px-3 rounded-md ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'} transition-colors`}
+              className={`block py-2 px-3 rounded-md ${isDarkMode ? 'hover:bg-neutral-dark-gray' : 'hover:bg-neutral-light-gray'} transition-colors`}
             >
               {link.label}
             </Link>
@@ -78,13 +78,13 @@ const MobileMenuOverlay = ({
 
         {isLoggedIn && (
           <>
-            <div className={`border-t my-2 ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}></div>
+            <div className={`border-t my-2 ${isDarkMode ? 'border-neutral-medium-gray' : 'border-neutral-light-gray'}`}></div>
 
             {/* Dashboard Link */}
             <Link
               to={getUserDashboardPath ? getUserDashboardPath(userType) : '/dashboard'}
               onClick={onCloseMenus}
-              className={`flex items-center py-2 px-3 rounded-md ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}
+              className={`flex items-center py-2 px-3 rounded-md ${isDarkMode ? 'hover:bg-neutral-dark-gray' : 'hover:bg-neutral-light-gray'}`}
             >
               <FaUserCircle className="mr-3 text-xl" />
               Dashboard
@@ -94,12 +94,12 @@ const MobileMenuOverlay = ({
             <Link
               to="/notifications"
               onClick={onCloseMenus}
-              className={`flex items-center py-2 px-3 rounded-md ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}
+              className={`flex items-center py-2 px-3 rounded-md ${isDarkMode ? 'hover:bg-neutral-dark-gray' : 'hover:bg-neutral-light-gray'}`}
             >
               <div className="relative mr-3">
                 <FaBell className="text-xl" />
                 {unreadNotificationsCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  <span className="absolute -top-2 -right-2 bg-error-red text-neutral-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                     {unreadNotificationsCount}
                   </span>
                 )}
@@ -111,12 +111,12 @@ const MobileMenuOverlay = ({
             <Link
               to="/messages"
               onClick={onCloseMenus}
-              className={`flex items-center py-2 px-3 rounded-md ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}
+              className={`flex items-center py-2 px-3 rounded-md ${isDarkMode ? 'hover:bg-neutral-dark-gray' : 'hover:bg-neutral-light-gray'}`}
             >
               <div className="relative mr-3">
                 <FaEnvelope className="text-xl" />
                 {hasNewMessages && (
-                  <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs rounded-full w-3 h-3"></span>
+                  <span className="absolute -top-2 -right-2 bg-gamepulse-blue text-neutral-white text-xs rounded-full w-3 h-3"></span>
                 )}
               </div>
               Messages
@@ -126,7 +126,7 @@ const MobileMenuOverlay = ({
             <Link
               to="/settings"
               onClick={onCloseMenus}
-              className={`flex items-center py-2 px-3 rounded-md ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}
+              className={`flex items-center py-2 px-3 rounded-md ${isDarkMode ? 'hover:bg-neutral-dark-gray' : 'hover:bg-neutral-light-gray'}`}
             >
               <FaCog className="mr-3 text-xl" />
               Settings
@@ -136,7 +136,7 @@ const MobileMenuOverlay = ({
             <Link
               to="/help"
               onClick={onCloseMenus}
-              className={`flex items-center py-2 px-3 rounded-md ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}
+              className={`flex items-center py-2 px-3 rounded-md ${isDarkMode ? 'hover:bg-neutral-dark-gray' : 'hover:bg-neutral-light-gray'}`}
             >
               <FaQuestionCircle className="mr-3 text-xl" />
               Help
@@ -145,7 +145,7 @@ const MobileMenuOverlay = ({
             {/* Dark Mode Toggle */}
             <button
               onClick={toggleDarkMode}
-              className={`flex items-center w-full py-2 px-3 rounded-md ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}
+              className={`flex items-center w-full py-2 px-3 rounded-md ${isDarkMode ? 'hover:bg-neutral-dark-gray' : 'hover:bg-neutral-light-gray'}`}
             >
               {isDarkMode ? (
                 <>
@@ -166,7 +166,7 @@ const MobileMenuOverlay = ({
                 handleLogout();
                 onCloseMenus();
               }}
-              className={`flex items-center w-full py-2 px-3 rounded-md text-red-600 ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}
+              className={`flex items-center w-full py-2 px-3 rounded-md text-error-red ${isDarkMode ? 'hover:bg-neutral-dark-gray' : 'hover:bg-neutral-light-gray'}`}
             >
               <FaSignOutAlt className="mr-3 text-xl" />
               Logout
@@ -176,13 +176,13 @@ const MobileMenuOverlay = ({
 
         {!isLoggedIn && (
           <>
-            <div className={`border-t my-2 ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}></div>
+            <div className={`border-t my-2 ${isDarkMode ? 'border-neutral-medium-gray' : 'border-neutral-light-gray'}`}></div>
             
             {/* Login Link */}
             <Link
               to="/login"
               onClick={onCloseMenus}
-              className={`block py-2 px-3 rounded-md ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'} transition-colors`}
+              className={`block py-2 px-3 rounded-md ${isDarkMode ? 'hover:bg-neutral-dark-gray' : 'hover:bg-neutral-light-gray'} transition-colors`}
             >
               Login
             </Link>
@@ -191,7 +191,7 @@ const MobileMenuOverlay = ({
             <Link
               to="/signup"
               onClick={onCloseMenus}
-              className={`block py-2 px-3 rounded-md ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'} transition-colors`}
+              className={`block py-2 px-3 rounded-md ${isDarkMode ? 'hover:bg-neutral-dark-gray' : 'hover:bg-neutral-light-gray'} transition-colors`}
             >
               Sign Up
             </Link>
@@ -199,7 +199,7 @@ const MobileMenuOverlay = ({
             {/* Dark Mode Toggle for non-logged in users */}
             <button
               onClick={toggleDarkMode}
-              className={`flex items-center w-full py-2 px-3 rounded-md ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}
+              className={`flex items-center w-full py-2 px-3 rounded-md ${isDarkMode ? 'hover:bg-neutral-dark-gray' : 'hover:bg-neutral-light-gray'}`}
             >
               {isDarkMode ? (
                 <>
