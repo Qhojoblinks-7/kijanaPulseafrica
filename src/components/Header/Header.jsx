@@ -127,37 +127,67 @@ const Header = () => {
   };
 
   const getNavLinks = (type, currentPath) => {
-    const baseLinks = [
-      { to: '/', label: 'Home' },
-      { to: '/discover-talent', label: 'Discover Talent' },
-      { to: '/live-matches', label: 'Live Matches' },
-      { to: '/upcoming-games', label: 'Upcoming Games' },
-      { to: '/highlights', label: 'Highlights' },
-    ];
-
-    const userSpecificLinks = {
+    // Role-based navigation links - only 3 links per role
+    const roleBasedLinks = {
+      // Not logged in - public links
+      public: [
+        { to: '/', label: 'Home' },
+        { to: '/discover-talent', label: 'Discover Talent' },
+        { to: '/live-matches', label: 'Live Matches' },
+      ],
+      
+      // Athlete-specific links
       athlete: [
         { to: '/my-profile', label: 'My Profile' },
         { to: '/upload-highlight', label: 'Upload Highlight' },
         { to: '/digital-classroom', label: 'Digital Classroom' },
-        { to: '/my-calendar', label: 'My Calendar' },
       ],
+      
+      // Coach-specific links
       coach: [
         { to: '/my-teams', label: 'My Teams' },
         { to: '/match-reporting/new', label: 'Report Match' },
         { to: '/analytics/regions', label: 'Analytics' },
       ],
+      
+      // Scout-specific links
       scout: [
         { to: '/reports', label: 'Scouting Reports' },
         { to: '/analytics/regions', label: 'Regional Analytics' },
+        { to: '/discover-talent', label: 'Discover Talent' },
       ],
+      
+      // Fan-specific links
       fan: [
         { to: '/my-profile', label: 'My Profile' },
         { to: '/favorites', label: 'Favorites' },
+        { to: '/live-matches', label: 'Live Matches' },
       ],
     };
 
-    return [...baseLinks, ...(userSpecificLinks[type] || [])];
+    // Get the appropriate links based on user type
+    const links = roleBasedLinks[type] || roleBasedLinks.public;
+
+    // Filter out the current page link to avoid showing it twice
+    const normalizedCurrentPath = currentPath.endsWith('/') && currentPath.length > 1
+      ? currentPath.slice(0, -1)
+      : currentPath;
+
+    const filteredLinks = links.filter(link => {
+      const normalizedLinkTo = link.to.endsWith('/') && link.to.length > 1
+        ? link.to.slice(0, -1)
+        : link.to;
+
+      // Special handling for profile pages
+      if (link.to.startsWith("/my-profile") && normalizedCurrentPath.startsWith("/my-profile")) {
+        return false;
+      }
+
+      return normalizedLinkTo !== normalizedCurrentPath;
+    });
+
+    // Ensure we always return exactly 3 links (or less if filtered)
+    return filteredLinks.slice(0, 3);
   };
 
   const navLinks = getNavLinks(userType, location.pathname);
